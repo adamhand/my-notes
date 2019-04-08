@@ -96,44 +96,102 @@
 
 ## 计算机操作系统
 
+- [计算机操作系统](https://github.com/adamhand/my-notes/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md)
+
 # 网络
 ## 计算机网络
 
+- [计算机网络](https://github.com/adamhand/my-notes/blob/master/%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md)
+
 ## HTTP
 
+- [HTTP](https://github.com/adamhand/my-notes/blob/master/%E7%BD%91%E7%BB%9C/HTTP.md)
+
 ## Socket
+
+- [Socket](https://github.com/adamhand/my-notes/blob/master/%E7%BD%91%E7%BB%9C/Socket.md)
 
 # 分布式
 ## 分布式基础
 
+- [分布式基础](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%88%86%E5%B8%83%E5%BC%8F%E5%9F%BA%E7%A1%80.md)
+
 ## 分布式事务
+
+- [分布式事务](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1.md)
 
 ## 分布式锁
 
+- [分布式锁](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81.md)
+
+## Hadoop
+
+- [Hadoop单节点安装](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/hadoop%E5%8D%95%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85.md)
+
+- [PacificA：微软设计的分布式存储框架](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/PacificA%EF%BC%9A%E5%BE%AE%E8%BD%AF%E8%AE%BE%E8%AE%A1%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E6%A1%86%E6%9E%B6.md)
+
 ## 区块链
+
+- [区块链札记](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%AD%E8%AE%B0.md)
+- [tendermint](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/tendermint.md)
 
 # 消息队列
 ## RabbitMQ
 
+- [Windows下安装RabbitMQ](https://github.com/adamhand/my-notes/blob/master/RabbitMQ/Windows%E4%B8%8B%E5%AE%89%E8%A3%85RabbitMQ.md)
+- [认识消息中间件](https://github.com/adamhand/my-notes/blob/master/RabbitMQ/RabbitMQ%E7%B3%BB%E5%88%97(1)--%E8%AE%A4%E8%AF%86%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B8%AD%E9%97%B4%E4%BB%B6.md)
+- [交换器Exchange](https://github.com/adamhand/my-notes/blob/master/RabbitMQ/RabbitMQ%E7%B3%BB%E5%88%97(2)--%E4%BA%A4%E6%8D%A2%E5%99%A8.md)
+- [第一个程序](https://github.com/adamhand/my-notes/blob/master/RabbitMQ/RabbitMQ%E7%B3%BB%E5%88%97(3)--%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F.md)
+- [Spring整合RabbitMQ](https://github.com/adamhand/my-notes/blob/master/RabbitMQ/RabbitMQ%E7%B3%BB%E5%88%97(4)--Spring%20%E6%95%B4%E5%90%88RabbitMQ.md)
+
 ## Kafka
+
+- [kafka](https://github.com/adamhand/my-notes/blob/master/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E5%8C%BA%E5%9D%97%E9%93%BE/Kafka.md)
 
 # Netty
 ## Netty基础
 
+- [初识Netty](https://github.com/adamhand/my-notes/blob/master/Netty/Netty%E7%B3%BB%E5%88%97(1)--%E5%88%9D%E8%AF%86Netty.md)
+- [第一个Netty程序](https://github.com/adamhand/my-notes/blob/master/Netty/Netty%E7%B3%BB%E5%88%97(2)--%E7%AC%AC%E4%B8%80%E4%B8%AAnetty%E7%A8%8B%E5%BA%8F.md)
+- [Netty传输](https://github.com/adamhand/my-notes/blob/master/Netty/Netty%E7%B3%BB%E5%88%97(3)--netty%E4%BC%A0%E8%BE%93.md)
+- [ByteBuf](https://github.com/adamhand/my-notes/blob/master/Netty/Netty%E7%B3%BB%E5%88%97(4)--ByteBuf.md)
+- [零拷贝](https://github.com/adamhand/my-notes/blob/master/Netty/Netty%E7%B3%BB%E5%88%97(5)--%E9%9B%B6%E6%8B%B7%E8%B4%9D.md)
+
 ## Netty源码阅读
+
+- [Netty源码阅读-客户端启动](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB--%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8.md)
+- [Netty源码阅读-服务端启动](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB--%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%90%AF%E5%8A%A8.md)
+- [Netty源码阅读-ChannelPipeline](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB--ChannelPipeline.md)
+- [Netty源码阅读-EventLoopGroup](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-EventLoopGroup.md)
 
 # 面试相关
 ## 面试资料
 
+- [Java复习资料](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E8%AF%95%E8%B5%84%E6%96%99/Java%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99.md)
+- [若干面试题](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E8%AF%95%E8%B5%84%E6%96%99/%E8%8B%A5%E5%B9%B2%E9%9D%A2%E8%AF%95%E9%A2%98.md)
+
 ## 面经
+
+- [字节跳动后台开发面试总结](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93.md)
+- [字节跳动基础架构部面试总结](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93.md)
+ -[滴滴基础平台部Java研发实习生面经](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E6%BB%B4%E6%BB%B4%E5%9F%BA%E7%A1%80%E5%B9%B3%E5%8F%B0%E9%83%A8Java%E7%A0%94%E5%8F%91%E5%AE%9E%E4%B9%A0%E7%94%9F%E9%9D%A2%E7%BB%8F.md)
+ - [阿里天猫事业部面经(师兄)](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E9%98%BF%E9%87%8C%E5%A4%A9%E7%8C%AB%E4%BA%8B%E4%B8%9A%E9%83%A8%E9%9D%A2%E7%BB%8F(%E5%B8%88%E5%85%84).md)
+ - [腾讯PCG事业部腾讯视频面经](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E8%85%BE%E8%AE%AFPCG%E4%BA%8B%E4%B8%9A%E9%83%A8%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E9%9D%A2%E7%BB%8F.md)
 
 # 面向对象
 
+- [面向对象思想](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E6%80%9D%E6%83%B3.md)
 
 # 开源软件
 ## 开源软件汇总
 
+- [开源软件汇总](https://github.com/adamhand/my-notes/blob/master/%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6/%E5%BC%80%E6%BA%90%E8%BD%AF%E4%BB%B6%E6%B1%87%E6%80%BB.md)
+
 # 工具与其他
 ## Docker
 
+- [Docket札记](https://github.com/adamhand/my-notes/blob/master/%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%85%B6%E4%BB%96/Docker%E6%9C%AD%E8%AE%B0.md)
+
 ## Git
+
+- [git札记](https://github.com/adamhand/my-notes/blob/master/%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%85%B6%E4%BB%96/git%E6%9C%AD%E8%AE%B0.md)
