@@ -5,6 +5,8 @@
 # Java
 ## Java基础
 
+- [Java基础(补充)](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%9F%BA%E7%A1%80%EF%BC%88%E8%A1%A5%E5%85%85%EF%BC%89.md)
+
 ## Java并发
 
 ## Java虚拟机
