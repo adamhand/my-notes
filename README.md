@@ -6,14 +6,42 @@
 ## Java基础
 
 - [Java基础(补充)](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%9F%BA%E7%A1%80%EF%BC%88%E8%A1%A5%E5%85%85%EF%BC%89.md)
+- [Java集合](https://github.com/adamhand/my-notes/blob/master/Java/Java%E9%9B%86%E5%90%88.md)
+- [Java泛型数组](https://github.com/adamhand/my-notes/blob/master/Java/Java--%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84.md)
+- [Java代理](https://github.com/adamhand/my-notes/blob/master/Java/Java--%E4%BB%A3%E7%90%86.md)
+- [Java序列化](https://github.com/adamhand/my-notes/blob/master/Java/%E5%BA%8F%E5%88%97%E5%8C%96.md)
+- [HashMap--从jdk1.7到jdk1.8](https://github.com/adamhand/my-notes/blob/master/Java/HashMap--%E4%BB%8Ejdk1.7%E5%88%B0jdk1.8.md)
+- [ConcurrentHashMap--从jdk1.7到jdk1.8](https://github.com/adamhand/my-notes/blob/master/Java/ConcurrentHashMap--%E4%BB%8Ejdk1.7%E5%88%B0jdk1.8.md)
+- [HashMap是否线程安全](https://github.com/adamhand/my-notes/blob/master/Java/HashMap%E6%98%AF%E5%90%A6%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8.md)
+- [Java--Unsafe类](https://github.com/adamhand/my-notes/blob/master/Java/Java--Unsafe%E7%B1%BB.md)
 
 ## Java并发
 
+- [Java并发](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91.md)
+- [Java并发--阻塞队列](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91--%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97.md)
+- [Java并发-Executor框架和线程池](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91-Executor%E6%A1%86%E6%9E%B6%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%B1%A0.md)
+- [Java并发-从synchronized到锁优化](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E2%80%94%E2%80%94%E4%BB%8Esynchronized%E5%88%B0%E9%94%81%E4%BC%98%E5%8C%96.md)
+- [Java并发-CAS和Atomic](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8BCAS%E5%92%8CAtomic.md)
+- [Java并发-J.U.C](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8BJ.U.C(java.util.concurrent).md)
+- [Java并发-ThreadLocal](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8BThreadLocal.md)
+- [Java并发-volatile](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8Bvolatile.md)
+- [Java并发-ReentrantReadWriteLock](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8BReentrantReadWriteLock.md)
+- [Java并发-CountDownLatch、CyclicBarrier和Semaphore](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%B9%B6%E5%8F%91%E4%B9%8BCountDownLatch%E3%80%81CyclicBarrier%E5%92%8CSemaphore.md)
+
 ## Java虚拟机
+
+- [Java虚拟机](https://github.com/adamhand/my-notes/blob/master/Java/Java%E8%99%9A%E6%8B%9F%E6%9C%BA.md)
 
 ## Java I/O
 
+- [Java-I/O](https://github.com/adamhand/my-notes/blob/master/Java/Java%E2%80%94%E2%80%94I_O.md)
+- [Java I/O-FileDescriptor](https://github.com/adamhand/my-notes/blob/master/Java/Java%20I_O%E4%B9%8BFileDescriptor.md)
+
 ## 常用框架
+
+- [Spring基础](https://github.com/adamhand/my-notes/blob/master/%E6%A1%86%E6%9E%B6/Spring.md)
+- [Spring-AOP](https://github.com/adamhand/my-notes/blob/master/%E6%A1%86%E6%9E%B6/Spring--AOP.md)
+- [Spring Boot](https://github.com/adamhand/my-notes/blob/master/%E6%A1%86%E6%9E%B6/spring%20boot.md)
 
 # 算法
 
