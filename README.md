@@ -45,12 +45,13 @@
 
 # 算法
 
-- 查找算法总结
-- 排序算法总结
-- 数据结构中的算法
-- 常用算法
-- 《剑指offer》题目小结
-- leetcode算法题解
+- [查找算法总结](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93.md)
+- [排序算法总结](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93.md)
+- [数据结构中的算法](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%AD%E7%9A%84%E7%AE%97%E6%B3%95.md)
+- [常用算法](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95.md)
+- [《剑指offer》题目小结](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/%E3%80%8A%E5%89%91%E6%8C%87offer%E3%80%8B%E9%A2%98%E7%9B%AE%E5%B0%8F%E7%BB%93.md)
+- [leetcode算法题解](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/LeetCode%E9%A2%98%E8%A7%A3.md)
+- [LeetCode笔记之数组(一)](https://github.com/adamhand/my-notes/blob/master/%E7%AE%97%E6%B3%95/LeetCode%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%95%B0%E7%BB%84(%E4%B8%80).md)
 
 # 数据库
 ## 数据库原理
