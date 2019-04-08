@@ -56,16 +56,25 @@
 # 数据库
 ## 数据库原理
 
+- [数据库原理](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86.md)
+
 ## MySQL常用语法小结
+
+- [MySQL常用语法小结](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%E5%B8%B8%E7%94%A8%E8%AF%AD%E6%B3%95%E5%B0%8F%E7%BB%93.md)
 
 ## MySQL深入
 
+- [MySQL深入](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/MySql%E6%B7%B1%E5%85%A5.md)
+
 ## leetcode之MySQL题解
 
+- [leetcode之mysql题解](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/leetcode%E4%B9%8Bmysql%E9%A2%98%E8%A7%A3.md)
 
 ## MySQL 45讲笔记
 
 ## Redis
+
+- [Redis](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/Redis.md)
 
 # 操作系统
 ## Linux
