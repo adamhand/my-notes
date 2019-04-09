@@ -54,7 +54,7 @@ try {
 </div>
 
 下面看一下channel()方法：
-```
+```java
 public B channel(Class<? extends C> channelClass) {
     if (channelClass == null) {
         throw new NullPointerException("channelClass");
