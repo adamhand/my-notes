@@ -27,8 +27,13 @@ public static final FileDescriptor err = standardStream(2);
 
 参考：
 [Channel & FileDescriptor](http://www.udpwork.com/item/5618.html)
+
 [java NIO之FileChannel实现原理](https://blog.csdn.net/qq_26222859/article/details/80885757)
+
 [[一]FileDescriptor文件描述符 标准输入输出错误 文件描述符](https://cloud.tencent.com/developer/article/1333548)
+
 [JavaIO流复习与巩固--FileDescriptor与File](https://blog.csdn.net/Holmofy/article/details/75269866)
+
 [Java中的Java.io.FileDescriptor](http://www.breakyizhan.com/java/4303.html)
+
 [Java NIO3：通道和文件通道](https://www.cnblogs.com/szlbm/p/5513155.html)
