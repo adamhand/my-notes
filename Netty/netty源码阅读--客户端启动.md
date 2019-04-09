@@ -63,7 +63,7 @@ public B channel(Class<? extends C> channelClass) {
 }
 ```
 这个方法返回了一个ReflectiveChannelFactory类型的ChannelFactory，由名字可以看出，这是一个工厂类，用于生产Channel，ReflectiveChannelFactory中用于产生Channel的函数为newChannel，它的逻辑如下：
-```
+```java
 public T newChannel() {
     try {
         return constructor.newInstance();
@@ -75,25 +75,25 @@ public T newChannel() {
 不过此时这个方法还没有调用，而是等到下面使用BootStrap.connet()方法的时候才会调用，这里只是生成了一个Channel工厂。
 
 当调用BootStrap.connet()方法时，才真正开始实例化一个Channel，它的引用链为：
-```
+```java
 Bootstrap.connect -> Bootstrap.doResolveAndConnect -> AbstractBootstrap.initAndRegister
 ```
 initAndRegister的关键语句为：
-```
+```java
 channel = channelFactory.newChannel();
 init(channel);
 ChannelFuture regFuture = config().group().register(channel);
 ```
 newChannel()方法就是刚才所说的实例化Channel的方法，它的关键逻辑如下：
-```
+```java
 return constructor.newInstance();
 ```
 这里的constructor是Constructor的一个实例，Constructor的作用是调用相应类的构造方法对对象进行初始化，constructor的实例代码如下：
-```
+```java
 private final Constructor<? extends T> constructor;
 ```
 而在`b.group(group).channel(NioSocketChannel.class)`时传入的是`NioSocketChannel.class`，所以，这里其实是调用的NioSocketChannel的构造方法进行的初始化，该构造方法如下：
-```
+```java
  public NioSocketChannel() {
         this(DEFAULT_SELECTOR_PROVIDER);
     }
