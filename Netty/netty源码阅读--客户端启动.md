@@ -110,7 +110,7 @@ newSocket()操作是先于父类构造函数执行的，也就是说，执行顺
 - NioSocketChannel(SocketChannel socket)
 - NioSocketChannel(SelectorProvider provider)
 
-```
+```java
 //构造方法1
 public NioSocketChannel(SelectorProvider provider) {
     this(newSocket(provider));
@@ -147,7 +147,7 @@ protected AbstractChannel(Channel parent) {
 ```
 
 下面看一下newSocket()的执行过程。它的引用链为：
-```
+```java
 NioSocketChannel.newSocket() -> SelectorProviderImpl.openSocketChannel() -> SocketChannelImpl.SocketChannelImpl() -> Net.socket() -> Net.socket(ProtocolFamily var0, boolean var1) -> IOUtil.newFD() ->  FileDescriptor var1 = new FileDescriptor();
 ```
 可以看到，最终是绑定了一个FileDescriptor。
