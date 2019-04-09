@@ -1,5 +1,4 @@
 ﻿# Java I/O之FileDescriptor
----
 
 # 基本概念
 FileDescriptor即“文件描述符”，可以用来表示开放文件、开放套接字。这个概念来自于Unix操作系统，Unix操作系统中“一切皆文件”，比如文件、目录、进程、网络socket、各种硬件设备等，都被看成文件；
