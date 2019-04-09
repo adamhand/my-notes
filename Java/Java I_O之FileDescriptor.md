@@ -25,7 +25,7 @@ public static final FileDescriptor out = standardStream(1);
 public static final FileDescriptor err = standardStream(2);
 ```
 
-参考：
+# 参考：
 
 - [Channel & FileDescriptor](http://www.udpwork.com/item/5618.html)
 - [java NIO之FileChannel实现原理](https://blog.csdn.net/qq_26222859/article/details/80885757)
