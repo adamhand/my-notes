@@ -1,5 +1,4 @@
 ﻿# netty源码阅读--客户端启动
----
 
 # netty版本
 
@@ -10,7 +9,7 @@
 
 # 客户端
 下面是客户端启动的关键代码：
-```
+```java
 EventLoopGroup group = new NioEventLoopGroup();
 try {
     Bootstrap b = new Bootstrap();
@@ -50,9 +49,9 @@ try {
 ## Channel建立过程
 在 Netty 中, Channel 是一个 Socket 的抽象, 它为用户提供了关于 Socket 状态以及对 Socket 的读写等操作。这里新建的是一个 NioSocketChannel，它的继承关系图如下图所示：
 
-<center>
+<div align = "center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/niosocketchannel.PNG">
-</center>
+</div>
 
 下面看一下channel()方法：
 ```
