@@ -1,11 +1,10 @@
 ﻿# Socket
----
 
 # Socket是什么
 Socket是应用层与TCP/IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP/IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。
-<center>
+<div align = "center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/whatissocket.jpg" width="500">
-</center>
+</div>
 
 # 缓存I/O
 缓存 I/O 又被称作标准 I/O，大多数文件系统的默认 I/O 操作都是缓存 I/O。在 Linux 的缓存 I/O 机制中，操作系统会将 I/O 的数据缓存在文件系统的页缓存（ page cache ）中，也就是说，数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间。
