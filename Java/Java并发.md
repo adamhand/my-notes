@@ -57,7 +57,7 @@
 <strong>阻塞（blocked）状态</strong>：BLOCKED称为阻塞状态，或者说线程已经被挂起，它“睡着”了，原因通常是它在等待一个“锁”，当尝试进入一个synchronized语句块/方法时，锁已经被其它线程占有，就会被阻塞，直到另一个线程走完临界区或发生了相应锁对象的wait()操作后，它才有机会去争夺进入临界区的权利
 在Java代码中，需要考虑synchronized的粒度问题，否则一个线程长时间占用锁，其它争抢锁的线程会一直阻塞，直到拥有锁的线程释放锁
 处于BLOCKED状态的线程，即使对其调用 thread.interrupt()也无法改变其阻塞状态，因为interrupt()方法只是设置线程的中断状态，即做一个标记，不能唤醒处于阻塞状态的线程。（但是能将处于wait状态的线程强制唤醒）。<li>
-<strong>注意<strong>：ReentrantLock.lock()操作后进入的是WAITING状态，其内部调用的是LockSupport.park()方法。<li>
+<strong>注意</strong>：ReentrantLock.lock()操作后进入的是WAITING状态，其内部调用的是LockSupport.park()方法。<li>
 <strong>无期限等待（waiting）状态：</strong>处于无期限等待状态的线程不会被分配CPU执行时间，它们要等待显示的被其它线程唤醒。这种状态通常是指一个线程拥有对象锁后进入到相应的代码区域后，调用相应的“锁对象”的wait()方法操作后产生的一种结果。变相的实现还有LockSupport.park()、Thread.join()等，它们也是在等待另一个事件的发生，也就是描述了等待的意思。
 
 |进入方法|退出方法|
