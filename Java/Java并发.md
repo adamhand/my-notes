@@ -60,11 +60,13 @@
 <strong>注意</strong>：ReentrantLock.lock()操作后进入的是WAITING状态，其内部调用的是LockSupport.park()方法。<li>
 <strong>无期限等待（waiting）状态：</strong>处于无期限等待状态的线程不会被分配CPU执行时间，它们要等待显示的被其它线程唤醒。这种状态通常是指一个线程拥有对象锁后进入到相应的代码区域后，调用相应的“锁对象”的wait()方法操作后产生的一种结果。变相的实现还有LockSupport.park()、Thread.join()等，它们也是在等待另一个事件的发生，也就是描述了等待的意思。
 
+<div align="center">
 |进入方法|退出方法|
 |-|-|
 |没有设置 Timeout 参数的 Object.wait() 方法|Object.notify() / Object.notifyAll()|
 |没有设置 Timeout 参数的 Thread.join() 方法|被调用的线程执行完毕|
 |LockSupport.park() 方法|-|
+</div>
 
 &emsp; **注意：**
 &emsp; LockSupport.park(Object blocker) 会挂起当前线程，参数blocker是用于设置当前线程的“volatile Object parkBlocker 成员变量”
