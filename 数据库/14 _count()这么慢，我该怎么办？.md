@@ -20,7 +20,7 @@
 下表中，从上到下是按照时间顺序执行的，同一行语句是在同一时刻执行的。
 
 <div align="center">
-<img src="">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_1.png">
 
 `图 1 会话 A、B、C的执行流程`
 </div>
@@ -45,3 +45,68 @@ MySQL在执行count(*)的时候也是做了优化的。InnoDB 是索引组织表
 
 - 丢失更新
 - 缓存一致性
+
+丢失更新的情况为，如果在数据库中插入了一条数据，当将这条记录插入redis的时候，redis异常重启了，这时redis的数据就不是最新的数据。这种问题还是有解决办法的，那就是在redis异常重启之后，去数据库中读一次记录。
+
+缓存一致性的问题比较难解决，假如这么一个页面，要显示操作记录的总数，同时还要显示最近操作的 100 条记录。那么，这个页面的逻辑就需要先到 Redis 里面取出计数，再到数据表里面取数据记录。这种情况下有两种缓存不一致的问题：
+
+- 一种是，查到的 100 行结果里面有最新插入记录，而 Redis 的计数里还没加 1；
+- 另一种是，查到的 100 行结果里没有最新插入的记录，而 Redis 的计数里已经加了 1。
+
+时序图如下：
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_2.png">
+图2 会话A B执行时序图
+</div>
+
+上面是先向数据库中插入数据，再向redis中插入数据，如果反过来，还是会出现缓存不一致的错误。如下图所示：
+
+时序图如下：
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_3.png">
+图3 更改后的会话A B执行时序图
+</div>
+
+# 在数据库保存数据
+使用redis会出现丢失数据和缓存不一致的问题，可以考虑在数据库中建立一张单独的计数表C，用来存放count()的数据。
+
+因为InnoDB具有crash-safe的能力，所以能够保证崩溃不丢失数据。
+
+同时，InnoDB支持事务，可以利用这个特性解决利用缓存不一致导致的查询结果不精确的问题。如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_4.png">
+图4 使用数据库时会话A B执行时序图
+</div>
+
+# 不同count的用法
+下面看一下count(*)、count(主键 id)、count(字段) 和 count(1) 等不同用法和性能差别。
+
+首先需要明确的是，count() 是一个聚合函数，对于返回的结果集，一行行地判断，如果 count 函数的参数不是 NULL，累计值就加 1，否则不加。最后返回累计值。</p><p>所以，count(*)、count(主键 id) 和 count(1) 都表示返回满足条件的结果集的总行数；而 count(字段），则表示返回满足条件的数据行里面，参数“字段”不为 NULL 的总个数。
+
+分析性能时，需要根据下面几个原则：
+
+- server 层要什么就给什么；
+- InnoDB 只给必要的值；
+- 现在的优化器只优化了 count(*) 的语义为“取行数”，其他“显而易见”的优化并没有做。
+
+也就是说：
+
+<strong>对于 count(主键 id) 来说</strong>，InnoDB 引擎会遍历整张表，把每一行的 id 值都取出来，返回给 server 层。server 层拿到 id 后，判断是不可能为空的，就按行累加。
+
+<strong>对于 count(1) 来说</strong>，InnoDB 引擎遍历整张表，但不取值。server 层对于返回的每一行，放一个数字“1”进去，判断是不可能为空的，按行累加。
+
+<strong>对于 count(字段) 来说</strong>：</p><ol>
+
+- 如果这个“字段”是定义为 not null 的话，一行行地从记录里面读出这个字段，判断不能为 null，按行累加；
+- 如果这个“字段”定义允许为 null，那么执行的时候，判断到有可能是 null，还要把值取出来再判断一下，不是 null 才累加。
+
+也就是前面的第一条原则，server 层要什么字段，InnoDB 就返回什么字段。
+
+<strong>但是 `count(*)` 是例外</strong>，并不会把全部字段取出来，而是专门做了优化，不取值。count(*) 肯定不是 null，按行累加。
+
+所以结论是：按照效率排序的话，count(字段)&lt;count(主键 id)&lt;count(1)≈count(*)，所以建议尽量使用 `count(*)`。
+
+# 小结
+其实，把计数放在 Redis 里面，不能够保证计数和 MySQL 表里的数据精确一致的原因，是<strong>这两个不同的存储构成的系统，不支持分布式事务，无法拿到精确一致的视图。</strong>而把计数值也放在 MySQL 中，就解决了一致性视图的问题。
+
