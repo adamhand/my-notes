@@ -84,6 +84,7 @@
 - [11 | 怎么给字符串字段加索引](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/11%20_%20%E6%80%8E%E4%B9%88%E7%BB%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AD%97%E6%AE%B5%E5%8A%A0%E7%B4%A2%E5%BC%95.md)
 - [12 | 为什么我的MySQL会“抖”一下](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/12%20_%20%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84MySQL%E4%BC%9A%E2%80%9C%E6%8A%96%E2%80%9D%E4%B8%80%E4%B8%8B%EF%BC%9F.md)
 - [13 | 为什么表数据删掉一半，表文件大小不变](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/13%20_%20%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A1%A8%E6%95%B0%E6%8D%AE%E5%88%A0%E6%8E%89%E4%B8%80%E5%8D%8A%EF%BC%8C%E8%A1%A8%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F%E4%B8%8D%E5%8F%98%EF%BC%9F.md)
+- [14 | count(*)这么慢，我该怎么办](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/14%20_count()%E8%BF%99%E4%B9%88%E6%85%A2%EF%BC%8C%E6%88%91%E8%AF%A5%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F.md)
 - [16 | “order%20by”是怎么工作的](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/16%20_%20%E2%80%9Corder%20by%E2%80%9D%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F.md)
 - [34 | 到底可不可以使用join](https://github.com/adamhand/my-notes/blob/master/%E6%95%B0%E6%8D%AE%E5%BA%93/34%20_%20%E5%88%B0%E5%BA%95%E5%8F%AF%E4%B8%8D%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8join%EF%BC%9F.md)
 
