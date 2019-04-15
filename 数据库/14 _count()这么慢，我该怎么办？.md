@@ -56,7 +56,8 @@ MySQL在执行count(*)的时候也是做了优化的。InnoDB 是索引组织表
 时序图如下：
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_2.png">
-图2 会话A B执行时序图
+
+`图2 会话A B执行时序图`
 </div>
 
 上面是先向数据库中插入数据，再向redis中插入数据，如果反过来，还是会出现缓存不一致的错误。如下图所示：
@@ -64,7 +65,8 @@ MySQL在执行count(*)的时候也是做了优化的。InnoDB 是索引组织表
 时序图如下：
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_3.png">
-图3 更改后的会话A B执行时序图
+
+`图3 更改后的会话A B执行时序图`
 </div>
 
 # 在数据库保存数据
@@ -76,7 +78,8 @@ MySQL在执行count(*)的时候也是做了优化的。InnoDB 是索引组织表
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mysql_45_14_4.png">
-图4 使用数据库时会话A B执行时序图
+
+`图4 使用数据库时会话A B执行时序图`
 </div>
 
 # 不同count的用法
@@ -96,7 +99,7 @@ MySQL在执行count(*)的时候也是做了优化的。InnoDB 是索引组织表
 
 <strong>对于 count(1) 来说</strong>，InnoDB 引擎遍历整张表，但不取值。server 层对于返回的每一行，放一个数字“1”进去，判断是不可能为空的，按行累加。
 
-<strong>对于 count(字段) 来说</strong>：</p><ol>
+<strong>对于 count(字段) 来说</strong>：</p>
 
 - 如果这个“字段”是定义为 not null 的话，一行行地从记录里面读出这个字段，判断不能为 null，按行累加；
 - 如果这个“字段”定义允许为 null，那么执行的时候，判断到有可能是 null，还要把值取出来再判断一下，不是 null 才累加。
