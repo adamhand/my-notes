@@ -66,14 +66,18 @@
 |没有设置 Timeout 参数的 Thread.join() 方法|被调用的线程执行完毕|
 |LockSupport.park() 方法|-|
 
-&emsp; **注意：**
-&emsp; LockSupport.park(Object blocker) 会挂起当前线程，参数blocker是用于设置当前线程的“volatile Object parkBlocker 成员变量”
-&emsp; parkBlocker 是用于记录线程是被谁阻塞的，可以通过LockSupport.getBlocker()获取到阻塞的对象，用于监控和分析线程用的。
-&emsp; “阻塞”与“等待”的区别：
-> - “阻塞”状态是等待着获取到一个排他锁，进入“阻塞”状态都是被动的，离开“阻塞”状态是因为其它线程释放了锁，不阻塞了；
-> - “等待”状态是在等待一段时间 或者 唤醒动作的发生，进入“等待”状态是主动的。
+**注意：**
+LockSupport.park(Object blocker) 会挂起当前线程，参数blocker是用于设置当前线程的“volatile Object parkBlocker 成员变量”
 
-&emsp; **期限等待（time waiting）状态：**处于期限等待状态的线程也不会被分配CPU执行时间，不过无需等待被其它线程显示的唤醒，在一定时间之后它们会由系统自动的唤醒。
+parkBlocker 是用于记录线程是被谁阻塞的，可以通过LockSupport.getBlocker()获取到阻塞的对象，用于监控和分析线程用的。
+
+“阻塞”与“等待”的区别：
+
+- “阻塞”状态是等待着获取到一个排他锁，进入“阻塞”状态都是被动的，离开“阻塞”状态是因为其它线程释放了锁，不阻塞了；
+- “等待”状态是在等待一段时间 或者 唤醒动作的发生，进入“等待”状态是主动的。
+
+**期限等待（time waiting）状态：**处于期限等待状态的线程也不会被分配CPU执行时间，不过无需等待被其它线程显示的唤醒，在一定时间之后它们会由系统自动的唤醒。
+
 |进入方法|退出方法|
 |-|-|
 |Thread.sleep() 方法|时间结束|
@@ -81,13 +85,16 @@
 |设置了 Timeout 参数的 Thread.join() 方法|时间结束 / 被调用的线程执行完毕|
 |LockSupport.parkNanos() 方法|-|
 |LockSupport.parkUntil() 方法|-|
-&emsp; **消亡（terminated）状态:**当由于突然中断或者子任务执行完毕，线程就会被消亡。
+
+**消亡（terminated）状态:**当由于突然中断或者子任务执行完毕，线程就会被消亡。
 
 ## 1.3 实现线程的方法
-&emsp; 实现线程有三种方法：
-> - 继承 Thread 类。
-> - 实现 Runnable 接口；
-> - 实现 Callable 接口;
+
+实现线程有三种方法：
+
+- 继承 Thread 类。
+- 实现 Runnable 接口；
+- 实现 Callable 接口;
 
 ### 1.3.1 继承Tread类
 (1)步骤：
