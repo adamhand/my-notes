@@ -605,3 +605,300 @@ private static void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 
 下面具体分析一下这三个事件。
 
+## OP_READ 处理
+当就绪的 IO 事件是 OP_READ, 代码会调用 unsafe.read() 方法, 即:
+
+```java
+// 可读事件
+if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+    unsafe.read();
+    if (!ch.isOpen()) {
+        // Connection already closed - no need to handle write.
+        return;
+    }
+}
+```
+
+通过前面的分析，unsafe类是NioSocketChannelUnsafe 的实例, 负责的是 Channel 的底层 IO 操作。这个方法没有在 NioSocketChannelUnsafe 中实现, 而是在它的父类 AbstractNioByteChannel 实现的, 它的实现源码如下:
+
+```java
+public final void read() {
+    final ChannelConfig config = config();
+    if (shouldBreakReadReady(config)) {
+        clearReadPending();
+        return;
+    }
+    final ChannelPipeline pipeline = pipeline();
+    final ByteBufAllocator allocator = config.getAllocator();
+    final RecvByteBufAllocator.Handle allocHandle = recvBufAllocHandle();
+    allocHandle.reset(config);
+
+    ByteBuf byteBuf = null;
+    boolean close = false;
+    try {
+        do {
+            byteBuf = allocHandle.allocate(allocator);
+            allocHandle.lastBytesRead(doReadBytes(byteBuf));
+            if (allocHandle.lastBytesRead() <= 0) {
+                // nothing was read. release the buffer.
+                byteBuf.release();
+                byteBuf = null;
+                close = allocHandle.lastBytesRead() < 0;
+                if (close) {
+                    // There is nothing left to read as we received an EOF.
+                    readPending = false;
+                }
+                break;
+            }
+
+            allocHandle.incMessagesRead(1);
+            readPending = false;
+            pipeline.fireChannelRead(byteBuf);
+            byteBuf = null;
+        } while (allocHandle.continueReading());
+
+        allocHandle.readComplete();
+        pipeline.fireChannelReadComplete();
+
+        if (close) {
+            closeOnRead(pipeline);
+        }
+    } catch (Throwable t) {
+        handleReadException(pipeline, byteBuf, t, close, allocHandle);
+    } finally {
+        // Check if there is a readPending which was not processed yet.
+        // This could be for two reasons:
+        // * The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method
+        // * The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method
+        //
+        // See https://github.com/netty/netty/issues/2254
+        if (!readPending && !config.isAutoRead()) {
+            removeReadOp();
+        }
+    }
+}
+```
+
+上面的代码主要做了三件事：
+
+- 分配 ByteBuf
+- 从 SocketChannel 中读取数据
+- 调用 pipeline.fireChannelRead 发送一个 inbound 事件
+
+主要看一下第三点。pipeline.fireChannelRead 正好就是我们在前面的ChannelPipeline中分析的 inbound 事件起点. 当调用了 pipeline.fireIN_EVT() 后, 那么就产生了一个 inbound 事件, 此事件会以 head -> customContext -> tail 的方向依次流经 ChannelPipeline 中的各个 handler.调用了 pipeline.fireChannelRead 后, 就是 ChannelPipeline 中所需要做的工作了,具体的分析可以参见ChannelPipeline中的分析。
+
+## OP_WRITE 处理
+OP_WRITE 可写事件代码如下。这里留待后面分析。
+
+```java
+if ((readyOps & SelectionKey.OP_WRITE) != 0) {
+    // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
+    ch.unsafe().forceFlush();
+}
+```
+
+## OP_CONNECT 处理
+最后一个事件是 OP_CONNECT, 即 TCP 连接已建立事件.
+
+```java
+if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
+    // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
+    // See https://github.com/netty/netty/issues/924
+    int ops = k.interestOps();
+    ops &= ~SelectionKey.OP_CONNECT;
+    k.interestOps(ops);
+
+    unsafe.finishConnect();
+}
+```
+OP_CONNECT 事件的处理中, 只做了两件事情:
+
+- 将 OP_CONNECT 从就绪事件集中清除, 不然会一直有 OP_CONNECT 事件.
+- 调用 unsafe.finishConnect() 通知上层连接已建立。
+
+unsafe.finishConnect() 调用最后会调用到 pipeline().fireChannelActive()(调用链为：AbstractNioChannel.AbstractNioUnsafe.finishConnect() -> AbstractNioChannel.AbstractNioUnsafe.fulfillConnectPromise() -> DefaultChannelPipeline.fireChannelActive()), 产生一个 inbound 事件, 通知 pipeline 中的各个 handler TCP 通道已建立(即 ChannelInboundHandler.channelActive 方法会被调用)。
+
+到此为止，NioEventLoop 的 IO 操作部分已经了解完了。下面分析一下 Netty 的任务队列机制。
+
+# Netty 的任务队列机制
+前面说过，在Netty 中, 一个 NioEventLoop 通常需要肩负起两种任务, 第一个是作为 IO 线程, 处理 IO 操作; 第二个就是作为任务线程, 处理 taskQueue 中的任务. 这一节的重点就是分析一下 NioEventLoop 的任务队列机制的。
+
+## Task 的添加
+
+### 普通 Runnable 任务
+
+NioEventLoop 间接继承于 SingleThreadEventExecutor, 而 SingleThreadEventExecutor 中有一个 Queue<Runnable> taskQueue 字段, 用于存放添加的 Task. 在 Netty 中, 每个 Task 都使用一个实现了 Runnable 接口的实例来表示。
+
+例如当需要将一个 Runnable 添加到 taskQueue 中时, 可以进行如下操作:
+
+```java
+EventLoop eventLoop = channel.eventLoop();
+eventLoop.execute(new Runnable() {
+    @Override
+    public void run() {
+        System.out.println("Hello, Netty!");
+    }
+});
+```
+
+当调用 execute 后, 实际上是调用到了 SingleThreadEventExecutor.execute() 方法, 它的实现如下:
+
+```java
+@Override
+public void execute(Runnable task) {
+    if (task == null) {
+        throw new NullPointerException("task");
+    }
+
+    boolean inEventLoop = inEventLoop();
+    if (inEventLoop) {
+        addTask(task);
+    } else {
+        startThread();
+        addTask(task);
+        if (isShutdown() && removeTask(task)) {
+            reject();
+        }
+    }
+
+    if (!addTaskWakesUp && wakesUpForTask(task)) {
+        wakeup(inEventLoop);
+    }
+}
+```
+
+而添加任务的 addTask 方法的源码如下:
+
+```java
+protected void addTask(Runnable task) {
+    if (task == null) {
+        throw new NullPointerException("task");
+    }
+    if (isShutdown()) {
+        reject();
+    }
+    taskQueue.add(task);
+}
+```
+因此实际上, taskQueue 是存放着待执行的任务的队列。
+
+### schedule 任务
+
+除了通过 execute 添加普通的 Runnable 任务外, 还可以通过调用 eventLoop.scheduleXXX 之类的方法来添加一个定时任务。
+
+EventLoop 中实现任务队列的功能在超类 SingleThreadEventExecutor 实现的, 而 schedule 功能的实现是在 SingleThreadEventExecutor 的父类, 即 AbstractScheduledEventExecutor 中实现的。
+
+在 AbstractScheduledEventExecutor 中, 有以下 scheduledTaskQueue 字段:
+
+```java
+PriorityQueue<ScheduledFutureTask<?>> scheduledTaskQueue;
+```
+
+scheduledTaskQueue 是一个队列(Queue), 其中存放的元素是 ScheduledFutureTask。而 ScheduledFutureTask, 根据名字容易猜到，它是对 Schedule 任务的一个抽象.
+
+AbstractScheduledEventExecutor 所实现的 schedule 方法如下：
+
+```java
+public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+    ObjectUtil.checkNotNull(command, "command");
+    ObjectUtil.checkNotNull(unit, "unit");
+    if (delay < 0) {
+        delay = 0;
+    }
+    validateScheduled0(delay, unit);
+
+    return schedule(new ScheduledFutureTask<Void>(
+            this, command, null, ScheduledFutureTask.deadlineNanos(unit.toNanos(delay))));
+}
+```
+
+这是其中一个重载的 schedule, 当一个 Runnable 传递进来后, 会被封装为一个 ScheduledFutureTask 对象, 这个对象会记录下这个 Runnable 在何时运行、已何种频率运行等信息.
+
+当构建了 ScheduledFutureTask 后, 会继续调用 另一个重载的 schedule 方法:
+
+```java
+@Override
+public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
+    ObjectUtil.checkNotNull(callable, "callable");
+    ObjectUtil.checkNotNull(unit, "unit");
+    if (delay < 0) {
+        delay = 0;
+    }
+    validateScheduled0(delay, unit);
+
+    return schedule(new ScheduledFutureTask<V>(
+            this, callable, ScheduledFutureTask.deadlineNanos(unit.toNanos(delay))));
+}
+```
+
+在这个方法中, ScheduledFutureTask 对象就会被添加到 scheduledTaskQueue 中了。
+
+## 任务的执行
+当一个任务被添加到 taskQueue 后, 它是怎么被 EventLoop 执行的呢?
+
+回到 NioEventLoop.run() 方法中, 在这个方法里, 会分别调用 processSelectedKeys() 和 runAllTasks() 方法, 来进行 IO 事件的处理和 task 的处理. processSelectedKeys() 方法已经分析过了, 下面来看一下 runAllTasks()。
+
+runAllTasks 方法有两个重载的方法, 一个是无参数的, 另一个有一个参数的. 首先来看一下无参数的 runAllTasks:
+
+```java
+protected boolean runAllTasks() {
+    assert inEventLoop();
+    boolean fetchedAll;
+    boolean ranAtLeastOne = false;
+
+    do {
+        fetchedAll = fetchFromScheduledTaskQueue();
+        if (runAllTasksFrom(taskQueue)) {
+            ranAtLeastOne = true;
+        }
+    } while (!fetchedAll); // keep on processing until we fetched all scheduled tasks.
+
+    if (ranAtLeastOne) {
+        lastExecutionTime = ScheduledFutureTask.nanoTime();
+    }
+    afterRunningAllTasks();
+    return ranAtLeastOne;
+}
+```
+
+前面说到，EventLoop 可以通过调用 EventLoop.execute 来将一个 Runnable 提交到 taskQueue 中, 也可以通过调用 EventLoop.schedule 来提交一个 schedule 任务到 scheduledTaskQueue 中. 在此方法的一开始调用的 fetchFromScheduledTaskQueue() 其实就是将 scheduledTaskQueue 中已经可以执行的(即定时时间已到的 schedule 任务) 拿出来并添加到 taskQueue 中, 作为可执行的 task 等待被调度执行.
+
+它的源码如下:
+
+```java
+private boolean fetchFromScheduledTaskQueue() {
+    long nanoTime = AbstractScheduledEventExecutor.nanoTime();
+    Runnable scheduledTask  = pollScheduledTask(nanoTime);
+    while (scheduledTask != null) {
+        if (!taskQueue.offer(scheduledTask)) {
+            // No space left in the task queue add it back to the scheduledTaskQueue so we pick it up again.
+            scheduledTaskQueue().add((ScheduledFutureTask<?>) scheduledTask);
+            return false;
+        }
+        scheduledTask  = pollScheduledTask(nanoTime);
+    }
+    return true;
+}
+```
+
+而runAllTasksFrom的源码如下：
+
+```java
+protected final boolean runAllTasksFrom(Queue<Runnable> taskQueue) {
+    Runnable task = pollTaskFrom(taskQueue);
+    if (task == null) {
+        return false;
+    }
+    for (;;) {
+        safeExecute(task);
+        task = pollTaskFrom(taskQueue);
+        if (task == null) {
+            return true;
+        }
+    }
+}
+```
+
+接下来 runAllTasks() 方法就会不断调用 task = pollTask() 从 taskQueue 中获取一个可执行的 task, 然后调用它的 run() 方法来运行此 task。
+
+## 带参数的runAllTasks(...)，待续。
