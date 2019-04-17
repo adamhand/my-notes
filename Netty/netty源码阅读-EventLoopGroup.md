@@ -899,6 +899,6 @@ protected final boolean runAllTasksFrom(Queue<Runnable> taskQueue) {
 }
 ```
 
-接下来 runAllTasks() 方法就会不断调用 task = pollTask() 从 taskQueue 中获取一个可执行的 task, 然后调用它的 run() 方法来运行此 task。
+接下来 runAllTasks() 方法就会不断调用 task = pollTask() 从 taskQueue 中获取一个可执行的 task, 然后通过safeExecute()方法调用它的 run() 方法来运行此 task。
 
-## 带参数的runAllTasks(...)，待续。
+带参数的runAllTasks()方法的逻辑类似，参数的意思是运行一个任务的最长时间，如果超过就会跳出，单位为ns。
