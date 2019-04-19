@@ -467,14 +467,18 @@ Thread.sleep(millisec) 方法会休眠当前正在执行的线程，millisec 单
 sleep() 可能会抛出 InterruptedException，因为异常不能跨线程传播回 main() 中，因此必须在本地进行处理。线程中抛出的其它异常也同样需要在本地进行处理。
 
 ### yield()
-&emsp; 对静态方法 Thread.yield()的调用声明了当前线程已经完成了生命周期中最重要的部分，可以切换给其它线程来执行。该方法只是对线程调度器的一个建议，而且也只是建议具有相同优先级的其它线程可以运行。
+
+对静态方法 Thread.yield()的调用声明了当前线程已经完成了生命周期中最重要的部分，可以切换给其它线程来执行。该方法只是对线程调度器的一个建议，而且也只是建议具有相同优先级的其它线程可以运行。
 
 ## 1.6 停止线程的方法
 ### 使用stop方法强行终止线程
-&emsp; 不推荐使用这个方法，因为stop和suspend及resume一样，都是作废过期的方法，使用他们可能产生不可预料的结果。
+
+不推荐使用这个方法，因为stop和suspend及resume一样，都是作废过期的方法，使用他们可能产生不可预料的结果。
 
 ### 使用退出标志，使线程正常退出，也就是当run方法完成后线程终止
-&emsp; 要想使线程在某一特定条件下退出，最直接的方法就是设一个boolean类型的标志，并通过设置这个标志为true或false来控制while循环是否退出：
+
+要想使线程在某一特定条件下退出，最直接的方法就是设一个boolean类型的标志，并通过设置这个标志为true或false来控制while循环是否退出：
+
 ```java
 /**
  * 使用标志位来退出线程
@@ -513,8 +517,11 @@ public class ExitThread {
     }
 }
 ```
-&emsp; 在定义exit时，使用了一个Java关键字volatile，这个关键字的目的是使exitFlag同步，也就是说在同一时刻只能由一个线程来修改exitFlag的值。
-&emsp; 但是有一种情况下使用标志也是退不出线程的，比如下面：
+
+在定义exit时，使用了一个Java关键字volatile，这个关键字的目的是使exitFlag同步，也就是说在同一时刻只能由一个线程来修改exitFlag的值。
+
+但是有一种情况下使用标志也是退不出线程的，比如下面：
+
 ```java
 /**
  * 使用标志位来退出线程
@@ -556,11 +563,14 @@ public class ExitThread {
     }
 }
 ```
-&emsp; 该程序中，在run方法上加了同步锁，并且加了wait函数，这种情况下，两个子线程都停不下来，但是主线程可以停。
+该程序中，在run方法上加了同步锁，并且加了wait函数，这种情况下，两个子线程都停不下来，但是主线程可以停。
 
 ### 使用interrupt方法中断线程，但这个不会终止一个正在运行的线程，还需要加入一个判断才可以完成线程的停止
-&emsp; 使用interrupt()方法来中断线程有两种情况：
-&emsp; **(1)线程处于阻塞状态**：如使用了sleep,同步锁的wait,socket中的receiver,accept等方法时，会使线程处于阻塞状态。当调用线程的interrupt()方法时，会抛出InterruptException异常。阻塞中的那个方法抛出这个异常，通过代码捕获该异常，然后break跳出循环状态或者修改标志位，从而让我们有机会结束这个线程的执行。**也就是说，interrupt()方法其实是将线程强制唤醒，让它们具有执行资格，然后再将其停止。但强制动作发生时会产生InterruptedException，所以要处理一下。**通常很多人认为只要调用interrupt方法线程就会结束，实际上是错的， 一定要先捕获InterruptedException异常之后通过break来跳出循环，才能正常结束run方法。例子如下：
+
+使用interrupt()方法来中断线程有两种情况：
+
+**(1)线程处于阻塞状态**：如使用了sleep,同步锁的wait,socket中的receiver,accept等方法时，会使线程处于阻塞状态。当调用线程的interrupt()方法时，会抛出InterruptException异常。阻塞中的那个方法抛出这个异常，通过代码捕获该异常，然后break跳出循环状态或者修改标志位，从而让我们有机会结束这个线程的执行。**也就是说，interrupt()方法其实是将线程强制唤醒，让它们具有执行资格，然后再将其停止。但强制动作发生时会产生InterruptedException，所以要处理一下。**通常很多人认为只要调用interrupt方法线程就会结束，实际上是错的， 一定要先捕获InterruptedException异常之后通过break来跳出循环，才能正常结束run方法。例子如下：
+
 ```java
 /**
  * interrupt方法结束线程
@@ -598,8 +608,10 @@ public class InterruptExitThread {
     }
 }
 ```
-&emsp; 本例中，在主线程中调用myThread0线程的interrupt()并且在run方法中用break跳出循环，最终结果是打印InterruptedException信息，并且程序能够终止。
-&emsp; **（2）线程未处于阻塞状态**：使用isInterrupted()判断线程的中断标志来退出循环。当使用interrupt()方法时，中断标志就会置true，和使用自定义的标志来控制循环是一样的道理。如下例：
+本例中，在主线程中调用myThread0线程的interrupt()并且在run方法中用break跳出循环，最终结果是打印InterruptedException信息，并且程序能够终止。
+
+**（2）线程未处于阻塞状态**：使用isInterrupted()判断线程的中断标志来退出循环。当使用interrupt()方法时，中断标志就会置true，和使用自定义的标志来控制循环是一样的道理。如下例：
+
 ```java
 public class ThreadSafe extends Thread {
     public void run() {
@@ -609,8 +621,11 @@ public class ThreadSafe extends Thread {
     }
 }
 ```
-&emsp; 为什么要区分进入阻塞状态和和非阻塞状态两种情况了，是因为当阻塞状态时，如果有interrupt()发生，系统除了会抛出InterruptedException异常外，还会调用interrupted()函数，调用时能获取到中断状态是true的状态，调用完之后会复位中断状态为false，所以异常抛出之后通过isInterrupted()是获取不到中断状态是true的状态，从而不能退出循环。
-&emsp; 因此在线程未进入阻塞的代码段时是可以通过isInterrupted()来判断中断是否发生来控制循环，在进入阻塞状态后要通过捕获异常来退出循环。因此使用interrupt()来退出线程的最好的方式应该是两种情况都要考虑：
+
+为什么要区分进入阻塞状态和和非阻塞状态两种情况了，是因为当阻塞状态时，如果有interrupt()发生，系统除了会抛出InterruptedException异常外，还会调用interrupted()函数，调用时能获取到中断状态是true的状态，调用完之后会复位中断状态为false，所以异常抛出之后通过isInterrupted()是获取不到中断状态是true的状态，从而不能退出循环。
+
+因此在线程未进入阻塞的代码段时是可以通过isInterrupted()来判断中断是否发生来控制循环，在进入阻塞状态后要通过捕获异常来退出循环。因此使用interrupt()来退出线程的最好的方式应该是两种情况都要考虑：
+
 ```java
 public class ThreadSafe extends Thread {
     public void run() {
@@ -627,11 +642,14 @@ public class ThreadSafe extends Thread {
 ```
 # 2. 多线程基础
 ## 2.1 同步
-&emsp; 同步的方法大概有以下几种：
+
+同步的方法大概有以下几种：
 
 ### synchronized机制
 #### (1) 同步代码块
-&emsp; 它只作用于同一个对象，如果调用两个对象上的同步代码块，就不会进行同步。同步代码块的格式如下：
+
+它只作用于同一个对象，如果调用两个对象上的同步代码块，就不会进行同步。同步代码块的格式如下：
+
 ```java
 synchronized(对象)
 {
@@ -684,7 +702,9 @@ public class TicketDemo {
 ```
 
 #### (2)同步函数
-&emsp; 同步函数就是将同步关键字synchronized加载需要被同步的函数上，函数内部是需要被同步的代码，示例如下：
+
+同步函数就是将同步关键字synchronized加载需要被同步的函数上，函数内部是需要被同步的代码，示例如下：
+
 ```java
 /**
  * 多线程同步：存钱问题
@@ -729,7 +749,8 @@ public class BandDemo {
 ```
 
 #### (3)同步一个类
-&emsp; 作用于整个类，也就是说两个线程调用同一个类的不同对象上的这种同步语句，也会进行同步。
+作用于整个类，也就是说两个线程调用同一个类的不同对象上的这种同步语句，也会进行同步。
+
 ```java
 public class SynchronizedExample {
 
@@ -751,7 +772,8 @@ public static void main(String[] args) {
 结果为：0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9
 ```
 ### 同步锁机制（Lock）
-&emsp; 使用显式的lock来进行同步，一个lock上面可以挂多个监视器。示例如下：
+使用显式的lock来进行同步，一个lock上面可以挂多个监视器。示例如下：
+
 ```java
 /**
  * 多生产者和消费者问题:lock
@@ -868,9 +890,11 @@ public class ProducerAndCustomer {
 }
 ```
 ### volatile关键字实现同步
-&emsp; volatile关键字为域变量的访问提供了一种免锁机制，使用volatile修饰域相当于告诉虚拟机该域可能会被其他线程更新，因此每次使用该域就要重新计算，而不是使用寄存器中的值，volatile不会提供任何原子操作，它也不能用来修饰final类型的变量。
-&emsp; 注：多线程中的非同步问题主要出现在对域的读写上，如果让域自身避免这个问题，则就不需要修改操作该域的方法。用final域，有锁保护的域和volatile域可以避免非同步的问题。
+volatile关键字为域变量的访问提供了一种免锁机制，使用volatile修饰域相当于告诉虚拟机该域可能会被其他线程更新，因此每次使用该域就要重新计算，而不是使用寄存器中的值，volatile不会提供任何原子操作，它也不能用来修饰final类型的变量。
+
+注：多线程中的非同步问题主要出现在对域的读写上，如果让域自身避免这个问题，则就不需要修改操作该域的方法。用final域，有锁保护的域和volatile域可以避免非同步的问题。
 示例如下：
+
 ```java
 /**
  * 卖票案例：volatile关键字
@@ -908,16 +932,21 @@ public class VolatileDemo {
 ```
 
 ### 使用阻塞队列LinkedBlockingQueue实现线程同步
-&emsp; 阻塞队列的特点是，当队列是空的时，从队列中获取元素的操作将会被阻塞，或者当队列是满时，往队列里添加元素的操作会被阻塞。
-&emsp; LinkedBlockingQueue<E>是一个基于已连接节点的，范围任意的blocking queue。 
-&emsp; LinkedBlockingQueue 类常用方法：
+阻塞队列的特点是，当队列是空的时，从队列中获取元素的操作将会被阻塞，或者当队列是满时，往队列里添加元素的操作会被阻塞。
+
+LinkedBlockingQueue<E>是一个基于已连接节点的，范围任意的blocking queue。 
+
+LinkedBlockingQueue 类常用方法：
+
 |名称|作用|
 |-|-|
 |LinkedBlockingQueue()|创建一个容量为Integer.MAX_VALUE的LinkedBlockingQueue|
 |put(E e)|在队尾添加一个元素，如果队列满则阻塞|
 |size()|返回队列中的元素个数|
 |take()|移除并返回队头元素，如果队列空则阻塞|
-&emsp; BlockingQueue<E>定义了阻塞队列的常用方法，尤其是三种添加元素的方法，我们要多加注意，当队列满时：add()方法会抛出异常；offer()方法返回false；put()方法会阻塞。
+
+BlockingQueue<E>定义了阻塞队列的常用方法，尤其是三种添加元素的方法，我们要多加注意，当队列满时：add()方法会抛出异常；offer()方法返回false；put()方法会阻塞。
+
 ```java
 /**
  * 用阻塞队列实现线程同步 LinkedBlockingQueue的使用
@@ -988,14 +1017,18 @@ public class BlockingSynchronizedThread {
 ```
 
 ### 使用AtometicInteger定义原子变量实现同步
-&emsp; 需要使用线程同步的根本原因在于对普通变量的操作不是原子的。那么什么是原子操作呢？原子操作就是指将读取变量值、修改变量值、保存变量值看成一个整体来操作。即-**这几种行为要么同时完成，要么都不完成。**
-&emsp; 在java的util.concurrent.atomic包中提供了创建了原子类型变量的工具类，使用该类可以简化线程同步。其中AtomicInteger可以用原子方式更新int的值，可用在应用程序中(如以原子方式增加的计数器)，但不能用于替换Integer；可扩展Number，允许那些处理机遇数字类的工具和实用工具进行统一访问。
-&emsp; AtomicInteger类常用方法：
+需要使用线程同步的根本原因在于对普通变量的操作不是原子的。那么什么是原子操作呢？原子操作就是指将读取变量值、修改变量值、保存变量值看成一个整体来操作。即-**这几种行为要么同时完成，要么都不完成。**
+
+在java的util.concurrent.atomic包中提供了创建了原子类型变量的工具类，使用该类可以简化线程同步。其中AtomicInteger可以用原子方式更新int的值，可用在应用程序中(如以原子方式增加的计数器)，但不能用于替换Integer；可扩展Number，允许那些处理机遇数字类的工具和实用工具进行统一访问。
+
+AtomicInteger类常用方法：
+
 |方法|作用|
 |-|-|
 |AtomicInteger(int initialValue)|创建具有给定初始值的新的AtomicInteger|
 |addAddGet(int dalta) |以原子方式将给定值与当前值相加|
 |get()|获取当前值|
+
 ```java
 /**
  * 卖票案例：AtomicInteger
