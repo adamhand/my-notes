@@ -66,7 +66,7 @@
 |没有设置 Timeout 参数的 Thread.join() 方法|被调用的线程执行完毕|
 |LockSupport.park() 方法|-|
 
-**注意：**
+<strong>注意：</strong>
 LockSupport.park(Object blocker) 会挂起当前线程，参数blocker是用于设置当前线程的“volatile Object parkBlocker 成员变量”
 
 parkBlocker 是用于记录线程是被谁阻塞的，可以通过LockSupport.getBlocker()获取到阻塞的对象，用于监控和分析线程用的。
@@ -98,10 +98,12 @@ parkBlocker 是用于记录线程是被谁阻塞的，可以通过LockSupport.ge
 
 ### 1.3.1 继承Tread类
 (1)步骤：
+
 > - 定义一个类(记为classA)继承Thread类。
 > - 覆盖Thread类中的run方法。
 > - 直接用classA创建对象。
 > - 使用对象调用start()方法。
+
 ```java
 /**
  * 通过继承Thread的方法创建线程
@@ -124,7 +126,9 @@ public class ExtendThreadClass {
 ```
 
 (2)注意：
-&emsp; 在main中调用run（）方法和调用其他普通的方法一样，此时只有主线程一个线程，此时cpu被主线程占据，是在主线程中执行，currentThread（）返回的是主线程main，线程名和线程id是主线程的；而调用start（）方法是开始执行一个新线程，此时cpu被该线程占据，是在该线程中执行，currentThread（）返回的是该线程，线程名和线程id就是该线程自己的了。如下：
+
+在main中调用run（）方法和调用其他普通的方法一样，此时只有主线程一个线程，此时cpu被主线程占据，是在主线程中执行，currentThread（）返回的是主线程main，线程名和线程id是主线程的；而调用start（）方法是开始执行一个新线程，此时cpu被该线程占据，是在该线程中执行，currentThread（）返回的是该线程，线程名和线程id就是该线程自己的了。如下：
+
 ```java
 class MyThread extends Thread
 {
@@ -145,10 +149,12 @@ public class ExtendThreadClass {
 
 ### 1.3.2实现Runnable接口
 (1)步骤：
+
 > - 定义类实现Runnable接口。
 > - 覆盖街扩中的run方法，将线程的任务代码封装到run方法中。
 > - 通过Thread类创建线程对象，并将Runnable接口的子类对象作为Thread类的构造函数的 参数进行传递。为什么？因为线程任务都封装在Runnable接口子类对象的run方法中。
 > - 调用线程对象的star方法开启线程。
+
 ```java
 /**
  * 实现Runnable接口创建线程
@@ -173,7 +179,9 @@ public class ImplRunnableInter {
 ```
 
 ### 1.3.3 实现Callable接口：使用ExecutorService、Callable、Future实现有返回结果的多线程
-&emsp; 可返回值的任务必须实现Callable接口，类似的，无返回值的任务必须实现Runnable接口。执行Callable任务后，可以获取一个Future的对象，在该对象上调用get就可以获取到Callable任务返回的Object了，再结合线程池接口ExecutorService就可以实现有返回结果的多线程了。
+
+可返回值的任务必须实现Callable接口，类似的，无返回值的任务必须实现Runnable接口。执行Callable任务后，可以获取一个Future的对象，在该对象上调用get就可以获取到Callable任务返回的Object了，再结合线程池接口ExecutorService就可以实现有返回结果的多线程了。
+
 ```java
 /**
  *实现callable接口创建线程
@@ -240,9 +248,12 @@ public class ImplCallableInter {
     }
 }
 ```
-&emsp; 代码说明：
-&emsp; 上述代码中Executors类，提供了一系列工厂方法用于创建线程池，返回的线程池都实现了ExecutorService接口。
-&emsp; ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，返回Future。如果Executor后台线程池还没有完成Callable的计算，调用返回Future对象的get()方法，会阻塞直到计算完成
+代码说明：
+
+上述代码中Executors类，提供了一系列工厂方法用于创建线程池，返回的线程池都实现了ExecutorService接口。
+
+ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，返回Future。如果Executor后台线程池还没有完成Callable的计算，调用返回Future对象的get()方法，会阻塞直到计算完成
+
 |方法|作用|
 |-|-|
 |public static ExecutorService newFixedThreadPool(int nThreads)|创建固定数目线程的线程池|
@@ -251,12 +262,15 @@ public class ImplCallableInter {
 |public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)|创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代Timer类|
 
 ### 1.3.4 实现接口VS继承Thread类
+
 实现接口会更好一些，因为：
+
 > - Java 不支持多重继承，因此继承了 Thread 类就无法继承其它类，但是可以实现多个接口；
 > - 类可能只要求可执行就行，继承整个 Thread 类开销过大。
 
 ## 1.4 线程常用的方法
-&emsp; 线程常用的方法有如下几个：
+线程常用的方法有如下几个：
+
 |编号|方法|功能|
 |-|-|-|
 |1|public void start()|使该线程开始执行；Java 虚拟机调用该线程的 run 方法。|
@@ -273,7 +287,8 @@ public class ImplCallableInter {
 
 ### 1.4.1 静态方法
 #### currentThread()方法
-&emsp; currentThread()方法可以返回代码段正在被哪个线程调用的信息。
+
+currentThread()方法可以返回代码段正在被哪个线程调用的信息。
 
 #### sleep()方法
 &emsp; sleep()的作用是在指定的毫秒数内让当前“正在执行的线程”休眠（暂停执行）。这个“正在执行的线程”是指this.currentThread()返回的线程。注意：sleep方法不释放锁，但是释放CPU执行权。
