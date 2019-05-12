@@ -34,11 +34,14 @@
 
 ---
 # 一. 集合综述
-&emsp; Java中的集合主要分为两种：**Collection**和**Map**。Collection存储的都是单个元素，而Map存储的都是键值对元素。比较常用的是**Map**和Collection下面的**Set**、**List**，它们可以称为集合的三大类。（**注意：List中的元素可以重复，Set中的元素不可以重复，如果有两个元素相同，那么只能放进去一个，Map中的元素键不可以重复，值可以重复，如果键相同，值会覆盖**）具体UML图如下：
+
+Java中的集合主要分为两种：**Collection**和**Map**。Collection存储的都是单个元素，而Map存储的都是键值对元素。比较常用的是**Map**和Collection下面的**Set**、**List**，它们可以称为集合的三大类。（**注意：List中的元素可以重复，Set中的元素不可以重复，如果有两个元素相同，那么只能放进去一个，Map中的元素键不可以重复，值可以重复，如果键相同，值会覆盖**）具体UML图如下：
 
 ## Collection
 
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/collection.jpg">
+</div>
 
 ### 1. Set
 - TreeSet：基于红黑树实现，支持有序性操作，例如根据一个范围查找元素的操作。但是查找效率不如 HashSet，HashSet 查找的时间复杂度为 O(1)，TreeSet 则为 O(logN)。
@@ -56,7 +59,9 @@
 
 ## Map
 
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/map.png">
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/map.jpg">
+</div>
 
 - TreeMap：基于红黑树实现。
 - HashMap：基于哈希表实现。
@@ -64,7 +69,8 @@
 - LinkedHashMap：使用双向链表来维护元素的顺序，顺序为插入顺序或者最近最少使用（LRU）顺序。
 
 # 二. Collection
-&emsp; Collection中常见的方法：
+
+Collection中常见的方法：
 
 - 添加
 ```java
@@ -88,7 +94,8 @@ boolean isEmpty()
 int size()
 Iterator iterator()
 ```
-&emsp; Iterator对象必须依赖具体的容器，因为每一个容器的数据结构都不同，所以该容器的对象时在容器内部实现的。对于使用容器者而言，具体的实现并不重要，只要通过容器获取到该实现的迭代器的对象即可，也就是iterator方法。
+
+Iterator对象必须依赖具体的容器，因为每一个容器的数据结构都不同，所以该容器的对象时在容器内部实现的。对于使用容器者而言，具体的实现并不重要，只要通过容器获取到该实现的迭代器的对象即可，也就是iterator方法。
 
 - 其他
 ```java
@@ -97,34 +104,49 @@ Object[] toArray();//将集合转化成数组
 ```
 
 ## 1. List
-&emsp; List中的元素是有序的（存入和取出的顺序一致），元素都有索引，而且可以重复。List中常用的方法有：
 
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.PNG">
+List中的元素是有序的（存入和取出的顺序一致），元素都有索引，而且可以重复。List中常用的方法有：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.jpg">
+</div>
 
 ### 1.1 LinkedList
-&emsp; 内部是链表数据结构，是不同步的，增删元素比较快。常用方法如下：
 
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.PNG">
+内部是链表数据结构，是不同步的，增删元素比较快。常用方法如下：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.jpg">
+</div>
 
 ### 1.2. ArrayList
-&emsp; 内部是数组的数据结构，是不同步的，查询速度比较快，代替了Vector。
+
+内部是数组的数据结构，是不同步的，查询速度比较快，代替了Vector。
 
 ### 1.3. Vector
-&emsp; 内部是数组数据结构，是同步的，增删、查询都很慢。
+
+内部是数组数据结构，是同步的，增删、查询都很慢。
 
 ## 2. Set
-&emsp; Set中的元素不可重复的，而且是无序的。
+
+Set中的元素不可重复的，而且是无序的。
 
 ### 2.1 HashSet
-&emsp; 内部是数据结构是哈希表，是不同步的。
-&emsp; HashSet是通过hashCode和equals方法来保证对象唯一性的。如果对象的hashCode不同，那么不用判断equals方法，就直接存储到哈希表中；如果对象的hashCode值相同，那么要再次判断对象的equals方法是否为true，若为true，视为相同元素，否则视为不同元素。
+
+内部是数据结构是哈希表，是不同步的。
+
+HashSet是通过hashCode和equals方法来保证对象唯一性的。如果对象的hashCode不同，那么不用判断equals方法，就直接存储到哈希表中；如果对象的hashCode值相同，那么要再次判断对象的equals方法是否为true，若为true，视为相同元素，否则视为不同元素。
 如果元素要存储到HashSet集合中，必须覆盖hashCode和equals方法；一般情况下，如果定义的类会产生很多对象，比如人、学生等，通常都需要覆盖hashCode和equals方法。
-&emsp; **当然，hashCode和equals方法是哈希表需要的方法，所以后面的HashMap也要覆盖这两个方法。**
+
+**当然，hashCode和equals方法是哈希表需要的方法，所以后面的HashMap也要覆盖这两个方法。**
 
 ### 2.2 TreeSet
-&emsp; TreeSet可以对Set集合中的元素进行排序，是不同步的。
-&emsp; TreeSet是通过比较方法的返回结果来判断对象是否相等的，如果比较方法返回结果为0，就是相同元素，不会被存储。
-&emsp; TreeSet对元素进行排序的方法有两种：
+
+TreeSet可以对Set集合中的元素进行排序，是不同步的。
+
+TreeSet是通过比较方法的返回结果来判断对象是否相等的，如果比较方法返回结果为0，就是相同元素，不会被存储。
+
+TreeSet对元素进行排序的方法有两种：
 > - 实现Comparable接口，覆盖compareTo方法。让元素本身具备比较功能。例子如下：
 ```java
 public class Person implements Comparable {
@@ -187,7 +209,8 @@ public class TreeSetDemoOne {
     }
 }
 ```
-&emsp; 输出结果为：
+
+输出结果为：
 ```java
 12 bob
 12 rose
@@ -261,7 +284,8 @@ public class DemoTwo {
     }
 }
 ```
-&emsp; 输出结果为：
+
+输出结果为：
 ```java
 10 bob
 12 bob
@@ -270,7 +294,8 @@ public class DemoTwo {
 10 bobboboobo
 ```
 ### 2.3 LinkedHashSet
-&emsp; LinkedHashSet里面的元素是有顺序的，读出的顺序和写入的顺序一致。例子如下：
+
+LinkedHashSet里面的元素是有顺序的，读出的顺序和写入的顺序一致。例子如下：
 ```java
 public class LinkedHashSetDemo {
     public static void main(String[] args) {
@@ -290,7 +315,8 @@ public class LinkedHashSetDemo {
     }
 }
 ```
-&emsp; 输出接结果为：
+
+输出接结果为：
 ```java
 hahahah
 hehaee
@@ -300,7 +326,8 @@ bfdhfjd
 ```
 
 # 三. Map
-&emsp; Map集合与Collection集合的区别：
+
+Map集合与Collection集合的区别：
 > - Map集合中存储的是键值对；Collection中存储的是单个元素。
 - Map中的存储使用的是put方法；Collection中存储使用的是add方法。
 - Map取出元素，是将Map转成Set，再使用迭代器取出；Collection直接使用迭代器。
@@ -383,7 +410,8 @@ public class MapDemoOne {
 ```
 ## 2 HashMap
 ### 2.1 按Value排序
-&emsp; 注意student类中要实现hashCode和equals方法。
+
+注意student类中要实现hashCode和equals方法。
 ```java
 /**
  * 按照Key排序
@@ -430,8 +458,10 @@ public class HashMapDemo {
 }
 ```
 ### 2.2 按key排序
-&emsp; (1)和按value排序差不多，唯一的区别就是在比较的时候变为key的比较。
-&emsp; (2)因为TreeMap是按照key排列的，所以可以利用TreeMap来对HashMap进行排序。
+
+(1)和按value排序差不多，唯一的区别就是在比较的时候变为key的比较。
+
+(2)因为TreeMap是按照key排列的，所以可以利用TreeMap来对HashMap进行排序。
 ```java
 /**
  * 利用TreeMap对HashMap的key进行排序
@@ -467,7 +497,8 @@ public class HashMapDemoTwo {
 ```
 
 ### 2.3 Value去重
-&emsp; 使用containsValue方法实现去重：
+
+使用containsValue方法实现去重：
 ```java
 /**
  * value去重
@@ -520,12 +551,14 @@ ConcurrentHashMap<Integer , String> hs = new ConcurrentHashMap<Integer , String>
 ##  List
 ### ArrayList
 #### 1. 概览
-&emsp; 实现了 RandomAccess 接口，因此支持随机访问。在ArrayList中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。这是理所当然的，因为 ArrayList 是基于数组实现的。
+
+实现了 RandomAccess 接口，因此支持随机访问。在ArrayList中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。这是理所当然的，因为 ArrayList 是基于数组实现的。
 ```java
 public class ArrayList<E> extends AbstractList<E>
         implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 ```
-&emsp; 关键属性。
+
+关键属性。
 ```java
 //数组的默认大小为10
 private static final int DEFAULT_CAPACITY = 10;
@@ -550,8 +583,10 @@ private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
 transient Object[] elementData; // non-private to simplify nested class access
 ```
 #### 2. 扩容
-&emsp; 添加元素时使用 ensureCapacityInternal() 方法来保证容量足够，如果不够时，需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity >> 1)，也就是旧容量的 1.5 倍。
-&emsp; 扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建 ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。
+
+添加元素时使用 ensureCapacityInternal() 方法来保证容量足够，如果不够时，需要使用 grow() 方法进行扩容，新容量的大小为 oldCapacity + (oldCapacity >> 1)，也就是旧容量的 1.5 倍。
+
+扩容操作需要调用 Arrays.copyOf() 把原数组整个复制到新数组中，这个操作代价很高，因此最好在创建 ArrayList 对象时就指定大概的容量大小，减少扩容操作的次数。
 ```java
 public boolean add(E e) {
     ensureCapacityInternal(size + 1);  // Increments modCount!!
@@ -600,9 +635,12 @@ public E remove(int index) {
 }
 ```
 #### 4. Fail-Fast
-&emsp; fail-fast 机制，即快速失败机制，是java集合(Collection)中的一种错误检测机制。当在迭代集合的过程中该集合在结构上发生改变的时候，就有可能会发生fail-fast，即抛出ConcurrentModificationException异常。fail-fast机制并不保证在不同步的修改下一定会抛出异常，它只是尽最大努力去抛出，所以这种机制一般仅用于检测bug。
-&emsp; modCount 用来记录 ArrayList 结构发生变化的次数。结构发生变化是指添加或者删除至少一个元素的所有操作，或者是调整内部数组的大小，仅仅只是设置元素的值不算结构发生变化。
-&emsp; 在进行序列化或者迭代等操作时，需要比较操作前后 modCount 是否改变，如果改变了需要抛出 ConcurrentModificationException。
+
+fail-fast 机制，即快速失败机制，是java集合(Collection)中的一种错误检测机制。当在迭代集合的过程中该集合在结构上发生改变的时候，就有可能会发生fail-fast，即抛出ConcurrentModificationException异常。fail-fast机制并不保证在不同步的修改下一定会抛出异常，它只是尽最大努力去抛出，所以这种机制一般仅用于检测bug。
+
+modCount 用来记录 ArrayList 结构发生变化的次数。结构发生变化是指添加或者删除至少一个元素的所有操作，或者是调整内部数组的大小，仅仅只是设置元素的值不算结构发生变化。
+
+在进行序列化或者迭代等操作时，需要比较操作前后 modCount 是否改变，如果改变了需要抛出 ConcurrentModificationException。
 ```java
 private void writeObject(java.io.ObjectOutputStream s)
     throws java.io.IOException{
@@ -624,13 +662,17 @@ private void writeObject(java.io.ObjectOutputStream s)
 }
 ```
 #### 5. 序列化
-&emsp; ArrayList 基于数组实现，并且具有动态扩容特性，因此保存元素的数组不一定都会被使用，那么就没必要全部进行序列化。
-&emsp; 保存元素的数组 elementData 使用 transient 修饰，该关键字声明数组默认不会被序列化。
-&emsp; 为了防止一个包含大量空对象的数组被序列化，为了优化存储，所以，ArrayList使用transient来声明elementData。 但是，作为一个集合，在序列化过程中还必须保证其中的元素可以被持久化下来，所以，通过重写writeObject 和 readObject方法的方式把其中的元素保留下来。
+
+ArrayList 基于数组实现，并且具有动态扩容特性，因此保存元素的数组不一定都会被使用，那么就没必要全部进行序列化。
+
+保存元素的数组 elementData 使用 transient 修饰，该关键字声明数组默认不会被序列化。
+
+为了防止一个包含大量空对象的数组被序列化，为了优化存储，所以，ArrayList使用transient来声明elementData。 但是，作为一个集合，在序列化过程中还必须保证其中的元素可以被持久化下来，所以，通过重写writeObject 和 readObject方法的方式把其中的元素保留下来。
 ```java
 transient Object[] elementData; // non-private to simplify nested class access
 ```
-&emsp; ArrayList 实现了 writeObject() 和 readObject() 来**控制只序列化数组中有元素填充那部分内容**。
+
+ArrayList 实现了 writeObject() 和 readObject() 来**控制只序列化数组中有元素填充那部分内容**。
 ```java
 private void readObject(java.io.ObjectInputStream s)
     throws java.io.IOException, ClassNotFoundException {
@@ -672,7 +714,8 @@ private void writeObject(java.io.ObjectOutputStream s)
     }
 }
 ```
-&emsp; 序列化时需要使用 ObjectOutputStream 的 writeObject() 将对象转换为字节流并输出。而 writeObject() 方法在传入的对象存在 writeObject() 的时候会去反射调用该对象的 writeObject() 来实现序列化。反序列化使用的是 ObjectInputStream 的 readObject() 方法，原理类似。
+
+序列化时需要使用 ObjectOutputStream 的 writeObject() 将对象转换为字节流并输出。而 writeObject() 方法在传入的对象存在 writeObject() 的时候会去反射调用该对象的 writeObject() 来实现序列化。反序列化使用的是 ObjectInputStream 的 readObject() 方法，原理类似。
 ```java
 ArrayList list = new ArrayList();
 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
@@ -681,7 +724,8 @@ oos.writeObject(list);
 
 ### Vector
 #### 1. 同步
-&emsp; 它的实现与 ArrayList 类似，但是使用了 synchronized 进行同步。
+
+它的实现与 ArrayList 类似，但是使用了 synchronized 进行同步。
 ```java
 public synchronized boolean add(E e) {
     modCount++;
@@ -702,30 +746,39 @@ public synchronized E get(int index) {
 - Vector 每次扩容请求其大小的 2 倍空间，而 ArrayList 是 1.5 倍。
 
 #### 3. 替代方案
-&emsp; 可以使用 Collections.synchronizedList(); 得到一个线程安全的 ArrayList。
+
+可以使用 Collections.synchronizedList(); 得到一个线程安全的 ArrayList。
 ```java
 List<String> list = new ArrayList<>();
 List<String> synList = Collections.synchronizedList(list);
 ```
-&emsp; 也可以使用 concurrent 并发包下的 CopyOnWriteArrayList 类。
+
+也可以使用 concurrent 并发包下的 CopyOnWriteArrayList 类。
 ```java
 List<String> list = new CopyOnWriteArrayList<>();
 ```
 
 ### CopyOnWriteArrayList
 #### 1. 概述
-&emsp; Copy-On-Write简称COW，是一种用于程序设计中的优化策略。其基本思路是，从一开始大家都在共享同一个内容，当某个人想要修改这个内容的时候，才会真正把内容Copy出去形成一个新的内容然后再改，这是一种延时懒惰策略。从JDK1.5开始Java并发包里提供了两个使用CopyOnWrite机制实现的并发容器,它们是CopyOnWriteArrayList和CopyOnWriteArraySet。CopyOnWrite容器非常有用，可以在非常多的并发场景中使用到。
+
+Copy-On-Write简称COW，是一种用于程序设计中的优化策略。其基本思路是，从一开始大家都在共享同一个内容，当某个人想要修改这个内容的时候，才会真正把内容Copy出去形成一个新的内容然后再改，这是一种延时懒惰策略。从JDK1.5开始Java并发包里提供了两个使用CopyOnWrite机制实现的并发容器,它们是CopyOnWriteArrayList和CopyOnWriteArraySet。CopyOnWrite容器非常有用，可以在非常多的并发场景中使用到。
 #### 2. 什么是CopyOnWrite容器
-&emsp; CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁(注意，写还是要加锁的)，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种**读写分离**的思想，读和写不同的容器。具体过程如下：
+
+CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁(注意，写还是要加锁的)，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种**读写分离**的思想，读和写不同的容器。具体过程如下：
 
 - 当有新元素加入的时候，如下图，创建新数组，并往新数组中加入一个新元素,这个时候，array这个引用仍然是指向原数组的。
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite1.png">
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite1.jpg">
+</div>
 
 - 当元素在新数组添加成功后，将array这个引用指向新数组。
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite2.png">
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite2.jpg">
+</div>
 
 #### 3. 写操作
-&emsp; CopyOnWriteArrayList的整个add操作都是在锁的保护下进行的。 
+
+CopyOnWriteArrayList的整个add操作都是在锁的保护下进行的。 
 这样做是为了避免在多线程并发add的时候，复制出多个副本出来,把数据搞乱了，导致最终的数组数据不是我们期望的。
 ```java
 public boolean add(T e) {
@@ -752,11 +805,16 @@ final void setArray(Object[] a) {
 ```
 
 #### 4. 读操作
-&emsp; 由于所有的写操作都是在新数组进行的，这个时候如果有线程并发的写，则通过锁来控制，如果有线程并发的读，则分几种情况： 
-&emsp; (1)如果写操作未完成，那么直接读取原数组的数据； 
-&emsp; (2)如果写操作完成，但是引用还未指向新数组，那么也是读取原数组数据； 
-&emsp; (3)如果写操作完成，并且引用已经指向了新的数组，那么直接从新数组中读取数据。
-&emsp; 可见，CopyOnWriteArrayList的读操作是可以不用加锁的。
+
+由于所有的写操作都是在新数组进行的，这个时候如果有线程并发的写，则通过锁来控制，如果有线程并发的读，则分几种情况： 
+
+(1)如果写操作未完成，那么直接读取原数组的数据； 
+
+(2)如果写操作完成，但是引用还未指向新数组，那么也是读取原数组数据； 
+
+(3)如果写操作完成，并且引用已经指向了新的数组，那么直接从新数组中读取数据。
+
+可见，CopyOnWriteArrayList的读操作是可以不用加锁的。
 ```java
 public E get(int index) {
     return get(getArray(), index);
@@ -765,13 +823,17 @@ public E get(int index) {
 
 #### 5. 使用场景
 &emsp； 通过上面的分析，CopyOnWriteArrayList 有几个缺点： 
-&emsp; (1)由于写操作的时候，需要拷贝数组，会消耗内存，如果原数组的内容比较多的情况下，可能导致young gc或者full gc
-&emsp; (2)不能用于实时读的场景，像拷贝数组、新增元素都需要时间，所以调用一个set操作后，读取到数据可能还是旧的,虽然CopyOnWriteArrayList 能做到最终一致性,但是还是没法满足实时性要求；
 
-&emsp; CopyOnWriteArrayList 合适读多写少的场景，不过这类慎用,因为谁也没法保证CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点多，每次add/set都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种操作分分钟引起故障。
+(1)由于写操作的时候，需要拷贝数组，会消耗内存，如果原数组的内容比较多的情况下，可能导致young gc或者full gc
+
+(2)不能用于实时读的场景，像拷贝数组、新增元素都需要时间，所以调用一个set操作后，读取到数据可能还是旧的,虽然CopyOnWriteArrayList 能做到最终一致性,但是还是没法满足实时性要求；
+
+
+CopyOnWriteArrayList 合适读多写少的场景，不过这类慎用,因为谁也没法保证CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点多，每次add/set都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种操作分分钟引起故障。
 
 #### 6. 自己实现CopyOnWriteMap
-&emsp; JDKCopyOnWriteMap，但是可以模仿CopyOnWriteArrayList写一个：
+
+JDKCopyOnWriteMap，但是可以模仿CopyOnWriteArrayList写一个：
 ```java
 import java.util.Collection;
 import java.util.Map;
@@ -819,13 +881,16 @@ public class CopyOnWriteMap<K, V> implements Map<K, V>, Cloneable {
 
 ## Map
 ### HashMap
-&emsp; *详见“HashMap--从jdk1.7到jdk1.8”*
+
+*详见“HashMap--从jdk1.7到jdk1.8”*
 
 ### ConcurrentHashMap
-&emsp; *详见“ConcurrentHashMap--从jdk1.7到jdk1.8”*
+
+*详见“ConcurrentHashMap--从jdk1.7到jdk1.8”*
 
 ### LinkedHashMap
-&emsp; LinkedHashMap继承自HashMap，所以很多特性和HashMap中一样，不同的是LinkedHashMap使用双链表来维护节点之间的先后关系。下面主要叙述LinkedHashMap和HashMap的不同。
+
+LinkedHashMap继承自HashMap，所以很多特性和HashMap中一样，不同的是LinkedHashMap使用双链表来维护节点之间的先后关系。下面主要叙述LinkedHashMap和HashMap的不同。
 
 #### 1. LinkedHashMap的成员变量
 ```java
@@ -842,7 +907,8 @@ transient LinkedHashMap.Entry<K,V> tail;
  */ 
 final boolean accessOrder;
 ```
-&emsp; 可以看到，LinkedHashMap支持的遍历顺序有两个：插入顺序和访问顺序。具体的区别可以看下面的例子：
+
+可以看到，LinkedHashMap支持的遍历顺序有两个：插入顺序和访问顺序。具体的区别可以看下面的例子：
 ```java
 public static void testLinkedList(){
     //非accessOrder模式，迭代顺序为插入顺序
@@ -884,7 +950,8 @@ public static void testLinkedList(){
     System.out.println(map1);
 }
 ```
-&emsp; 输入结果为：
+
+输入结果为：
 ```java
 s1:1
 s2:2
@@ -908,14 +975,16 @@ s8:8
 null:11
 {s1=1, s2=2, s3=3, s4=4, s5=5, s6=6, s7=7, s8=8, null=11}
 ```
-&emsp; **注意：**如果将上面accessOrder中的的遍历方式改为：
+
+**注意：**如果将上面accessOrder中的的遍历方式改为：
 ```java
 for(Iterator<String> iterator = map.keySet().iterator();iterator.hasNext();){
     String name = iterator.next();
     System.out.println(name+"->"+map.get(name));
 }
 ```
-&emsp; 结果会报错：
+
+结果会报错：
 ```java
 s1->1
 Exception in thread "main" java.util.ConcurrentModificationException
@@ -923,10 +992,12 @@ Exception in thread "main" java.util.ConcurrentModificationException
     at java.util.LinkedHashMap$KeyIterator.next(Unknown Source)
     at collections.map.LinkedHashMapTest.main(LinkedHashMapTest.java:33)
 ```
-&emsp; 这是因为在accessOrder模式下，get()方法会修改LinkedHashMap中的链表结构(具体见下main的get()方法解析)，以便将最近访问的元素放置到链表的末尾，因此，这个操作在集合迭代过程中修改了集合的元素，就会发生报错。所以，当LinkedHashMap工作在这个模式时，不能再迭代器中使用get()操作。Map的遍历建议使用entrySet的方式。
+
+这是因为在accessOrder模式下，get()方法会修改LinkedHashMap中的链表结构(具体见下main的get()方法解析)，以便将最近访问的元素放置到链表的末尾，因此，这个操作在集合迭代过程中修改了集合的元素，就会发生报错。所以，当LinkedHashMap工作在这个模式时，不能再迭代器中使用get()操作。Map的遍历建议使用entrySet的方式。
 
 #### 2. LinkedHashMap的构造方法
-&emsp; 跟HashMap类似的构造方法这里就不一一赘述了，里面唯一的区别就是添加了前面提到的accessOrder，默认赋值为false——按照插入顺序来排列，这里主要说明一下不同的构造方法。
+
+跟HashMap类似的构造方法这里就不一一赘述了，里面唯一的区别就是添加了前面提到的accessOrder，默认赋值为false——按照插入顺序来排列，这里主要说明一下不同的构造方法。
 ```java
 //多了一个 accessOrder的参数，用来指定按照LRU排列方式还是顺序插入的排序方式
 public LinkedHashMap(int initialCapacity,
@@ -937,18 +1008,22 @@ public LinkedHashMap(int initialCapacity,
  }
 ```
 #### 3. 三个重点实现的函数
-&emsp; 在HashMap中提到了下面的定义：
+
+在HashMap中提到了下面的定义：
 ```java
 // Callbacks to allow LinkedHashMap post-actions
 void afterNodeAccess(Node<K,V> p) { }
 void afterNodeInsertion(boolean evict) { }
 void afterNodeRemoval(Node<K,V> p) { }
 ```
-&emsp; LinkedHashMap继承于HashMap，因此也重新实现了这3个函数，顾名思义这三个函数的作用分别是：节点访问后、节点插入后、节点移除后做一些事情，即分别用于get()操作、put()操作、remove()操作之后的后序操作。
-&emsp; 下面通过分析get()、put()和remove()操作来分析这三个函数的作用。
+
+LinkedHashMap继承于HashMap，因此也重新实现了这3个函数，顾名思义这三个函数的作用分别是：节点访问后、节点插入后、节点移除后做一些事情，即分别用于get()操作、put()操作、remove()操作之后的后序操作。
+
+下面通过分析get()、put()和remove()操作来分析这三个函数的作用。
 
 **get()方法**
-&emsp; get()方法的源码如下：
+
+get()方法的源码如下：
 ```java
 public V get(Object key) {
   Node<K,V> e;
@@ -961,7 +1036,8 @@ public V get(Object key) {
   return e.value;
 }
 ```
-&emsp; 从上面的代码可以看到，LinkedHashMap的get方法，调用HashMap的getNode方法后，对accessOrder的值进行了判断，之前提到：
+
+从上面的代码可以看到，LinkedHashMap的get方法，调用HashMap的getNode方法后，对accessOrder的值进行了判断，之前提到：
 > *accessOrder为true则表示按照基于访问的顺序来排列，意思就是最近使用的entry，放在链表的最末尾*
 由此可见，afterNodeAccess(e)就是基于访问的顺序排列的关键，让我们来看一下它的代码：
 ```java
@@ -1000,18 +1076,23 @@ void afterNodeAccess(Node<K,V> e) {
   }
 }
 ```
-&emsp; 标注的情况如下图所示（特别说明一下，这里是显示链表的修改后指针的情况，实际上在桶里面的位置是不变的，只是前后的指针指向的对象变了）：
 
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/linkedhashmap.png">
+标注的情况如下图所示（特别说明一下，这里是显示链表的修改后指针的情况，实际上在桶里面的位置是不变的，只是前后的指针指向的对象变了）：
 
-&emsp; 下面来简单说明一下：
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/linkedhashmap.jpg">
+</div>
+
+
+下面来简单说明一下：
 > - 正常情况下：查询的p在链表中间，那么将p设置到末尾后，它原先的前节点b和后节点a就变成了前后节点。
 > - 情况一：p为头部，前一个节点b不存在，那么考虑到p要放到最后面，则设置p的后一个节点a为head
 > - 情况二：p为尾部，后一个节点a不存在，那么考虑到统一操作，设置last为b
 > - 情况三：p为链表里的第一个节点，head=p
 
 **put()方法**
-&emsp; 接下来看一下LinkedHashMap是怎么插入Entry的：LinkedHashMap的put方法调用的还是HashMap里的put，不同的是重写了里面的部分方法：
+
+接下来看一下LinkedHashMap是怎么插入Entry的：LinkedHashMap的put方法调用的还是HashMap里的put，不同的是重写了里面的部分方法：
 ```java
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
@@ -1029,7 +1110,8 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
       return null;
 }
 ```
-&emsp; 省略部分的代码可以参考HashMap的put方法。LinkedHashMap将其中newNode方法以及之前设置下的钩子方法afterNodeAccess和afterNodeInsertion进行了重写，从而实现了加入链表的目的：
+
+省略部分的代码可以参考HashMap的put方法。LinkedHashMap将其中newNode方法以及之前设置下的钩子方法afterNodeAccess和afterNodeInsertion进行了重写，从而实现了加入链表的目的：
 ```java
 Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
   //秘密就在于 new的是自己的Entry类，然后调用了linkedNodeLast
@@ -1077,7 +1159,8 @@ protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
 ```
 
 **remove()方法**
-&emsp; remove里面设计者也设置了一个钩子方法：
+
+remove里面设计者也设置了一个钩子方法：
 ```java
 final Node<K,V> removeNode(int hash, Object key, Object value,
                                boolean matchValue, boolean movable) {
@@ -1087,7 +1170,8 @@ final Node<K,V> removeNode(int hash, Object key, Object value,
   ...
 }
 ```
-&emsp; 这个方法的源码如下：
+
+这个方法的源码如下：
 ```java
 void afterNodeRemoval(Node<K,V> e) {
   //与afterNodeAccess一样，记录e的前后节点b，a
@@ -1108,7 +1192,8 @@ void afterNodeRemoval(Node<K,V> e) {
 ```
 
 #### 4. 迭代器
-&emsp; 迭代器LinkedHashIterator的源码及注释如下：
+
+迭代器LinkedHashIterator的源码及注释如下：
 ```java
 abstract class LinkedHashIterator {
   //记录下一个Entry
@@ -1158,8 +1243,10 @@ abstract class LinkedHashIterator {
 ```
 
 #### 5. 补充：LRU方法
-&emsp; LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”。是内存不够的场景下，淘汰旧内容的策略。
-&emsp; 以下是使用 LinkedHashMap 实现的一个 LRU 缓存：
+
+LRU（Least recently used，最近最少使用）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率也更高”。是内存不够的场景下，淘汰旧内容的策略。
+
+以下是使用 LinkedHashMap 实现的一个 LRU 缓存：
 > - 设定最大缓存空间 MAX_ENTRIES 为 3；
 > - 使用 LinkedHashMap 的构造函数将 accessOrder 设置为 true，开启 LRU 顺序；
 > - 覆盖 removeEldestEntry() 方法实现，在节点多于 MAX_ENTRIES 就会将最近最久未使用的数据移除。
@@ -1188,7 +1275,8 @@ public class LCUCache {
     }
 }
 ```
-&emsp; 输入结果为：
+
+输入结果为：
 ```java
 [3, 1, 4]
 ```
