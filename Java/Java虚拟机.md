@@ -1,9 +1,9 @@
 ﻿# Java虚拟机
 ---
 # 一、运行时数据区域
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jvm1.png" width="500">
-</center>
+</div>
 
 ## 程序计数器
 
@@ -16,9 +16,9 @@
 每个方法在运行的时候都会创建一个栈帧（Stack Frame，栈帧是方法运行时的基础数据结构）用于存储局部变量表、操作数栈、动态链接和方法出口等信息。每一个方法从调用到执行结束的过程，对应着一个栈帧在虚拟机栈中入栈到出栈 的过程。通常所说的Java栈内存，都是指的Java虚拟机栈，或者说虚拟机栈中局部变量表部分。
 
 局部变量表存放了编译时期可知的各种基本数据类型（boolean、byte、char、short、int、float、long、double）、对象引用（reference类型，它不等同与对象本身，可能是一个执行对象地址的引用指针，也可能是指向一个代表对象的句柄或者其他与此对象相关的位置）和returnAddress类型（指向了一条字节码指令的地址）。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jvm2.png" width="500">
-</center>
+</div>
 
 可以通过 -Xss 这个虚拟机参数来指定每个线程的 Java 虚拟机栈内存大小：
 > java -Xss512M HackTheJava
@@ -34,9 +34,9 @@
 本地方法栈与 Java 虚拟机栈类似，它们之间的区别只不过是本地方法栈为本地方法服务。
 
 本地方法一般是用其它语言（C、C++ 或汇编语言等）编写的，并且被编译为基于本机硬件和操作系统的程序，对待这些方法需要特别处理。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jvm3.jpg" width="500">
-</center>
+</div>
 
 
 与虚拟机栈一样，本地方法栈区域也会抛出StackOverflowError和OutOfMemoryError异常。
@@ -371,8 +371,7 @@ public class ReferenceCountingGC {
 
 更直白一点，Tracing GC就是遍历一张对象关系图：给定一个集合的引用作为根出发，通过引用关系遍历对象图，能被遍历到的（可到达的）对象就被判定为存活，其余对象（也就是没有被遍历到的）就自然被判定为死亡。
 
-*
-注意：Tracing GC的本质是通过找出所有活对象来把其余空间认定为“无用”，而不是找出所有死掉的对象并回收它们占用的空间。GC Roots这组引用是Tracing GC的起点。要实现语义正确的Tracing GC，就必须要能完整枚举出所有的GC Roots，否则就可能会漏扫描应该存活的对象，导致GC错误回收了这些被漏扫的活对象。*
+注意：Tracing GC的本质是通过找出所有活对象来把其余空间认定为“无用”，而不是找出所有死掉的对象并回收它们占用的空间。GC Roots这组引用是Tracing GC的起点。要实现语义正确的Tracing GC，就必须要能完整枚举出所有的GC Roots，否则就可能会漏扫描应该存活的对象，导致GC错误回收了这些被漏扫的活对象。
 
 
 在Java中可以作为GC Roots的对象包括以下几种：
@@ -692,9 +691,9 @@ obj = null;
 
 ## 垃圾收集算法
 ### 1. 标记-清除(Mark-Sweep)算法
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark1.jpg">
-</center>
+</div>
 
 
 基本思路是：将存活的对象进行标记，然后清理掉未被标记的对象。
@@ -705,9 +704,9 @@ obj = null;
 - 会产生大量不连续的内存碎片，导致无法给大对象分配内存。
 
 ### 2. 复制(Copying)算法
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark2.jpg">
-</center>
+</div>
 
 
 将内存划分为大小相等的两块，每次只使用其中一块，当这一块内存用完了就将还存活的对象复制到另一块上面，然后再把使用过的内存空间进行一次清理。
@@ -722,9 +721,9 @@ obj = null;
 HotSpot 虚拟机的 Eden 和 Survivor 的大小比例默认为 8:1，保证了内存的利用率达到 90%。如果每次回收有多于 10% 的对象存活，那么一块 Survivor 空间就不够用了，此时需要依赖于老年代进行分配担保，也就是借用老年代的空间存储放不下的对象。
 
 ### 3. 标记-整理(Mark-Compact)算法
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark3.jpg">
-</center>
+</div>
 
 
 复制收集算法在对象存活率较高的时候就要进行较多的复制，效率就会变低，所以不适合老年代。有人针对老年代的特点提出了一种“标记-整理”算法。
@@ -743,9 +742,9 @@ HotSpot 虚拟机的 Eden 和 Survivor 的大小比例默认为 8:1，保证了�
 - 老年代使用：标记 - 清除 或者 标记 - 整理 算法
 
 ## 垃圾收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark4.jpg">
-</center>
+</div>
 
 
 以上是 HotSpot 虚拟机中的 7 个垃圾收集器，连线表示垃圾收集器可以配合使用。
@@ -757,9 +756,9 @@ HotSpot 虚拟机的 Eden 和 Survivor 的大小比例默认为 8:1，保证了�
     - 并发(Concurrent)指的是用户线程与垃圾收集线程同时执行，用户程序在继续运行，而垃圾收集程序运行与另一个CPU上。
 
 ### 1. Serial 收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark5.jpg">
-</center>
+</div>
 
 
 Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收集工作开始时，必须停止所有其他的工作线程直到收集结束，叫做“Stop The World”。
@@ -771,9 +770,9 @@ Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收�
 它是 Client 模式下的默认新生代收集器，因为在该应用场景下，分配给虚拟机管理的内存一般来说不会很大。Serial 收集器收集几十兆甚至一两百兆的新生代停顿时间可以控制在一百多毫秒以内，只要不是太频繁，这点停顿是可以接受的。
 
 ### 2.  ParNew 收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark6.jpg">
-</center>
+</div>
 
 
 它是 Serial 收集器的多线程版本。
@@ -795,9 +794,9 @@ Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收�
 可以通过一个开关参数打开 GC 自适应的调节策略（GC Ergonomics），就不需要手工指定新生代的大小（-Xmn）、Eden 和 Survivor 区的比例、晋升老年代对象年龄等细节参数了。虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量。
 
 ### 4. Serial Old 收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark7.jpg">
-</center>
+</div>
 
 
 是 Serial 收集器的老年代版本，也是给 Client 模式下的虚拟机使用。如果用在 Server 模式下，它有两大用途：
@@ -806,9 +805,9 @@ Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收�
 - 作为 CMS 收集器的后备预案，在并发收集发生 Concurrent Mode Failure 时使用。
 
 ### 5. Parallel Old 收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark8.jpg">
-</center>
+</div>
 
 
 是 Parallel Scavenge 收集器的老年代版本。
@@ -816,9 +815,9 @@ Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收�
 在注重吞吐量以及 CPU 资源敏感的场合，都可以优先考虑 Parallel Scavenge 加 Parallel Old 收集器。
 
 ### 6. CMS 收集器
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark9.jpg">
-</center>
+</div>
 
 
 CMS（Concurrent Mark Sweep），Mark Sweep 指的是标记 - 清除算法。分为以下四个流程：
@@ -847,24 +846,24 @@ G1（Garbage-First），它是一款面向服务端应用的垃圾收集器，�
 
 
 堆被分为新生代和老年代，其它收集器进行收集的范围都是整个新生代或者老年代，而 G1 可以直接对新生代和老年代一起回收。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark10.png" width="500">
-</center>
+</div>
 
 
 G1 把堆划分成多个大小相等的独立区域（Region），新生代和老年代不再物理隔离。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark11.png" width="500">
-</center>
+</div>
 
 
 通过引入 Region 的概念，从而将原来的一整块内存空间划分成多个的小空间，使得每个小空间可以单独进行垃圾回收。这种划分方法带来了很大的灵活性，使得可预测的停顿时间模型成为可能。通过记录每个 Region 垃圾回收时间以及回收所获得的空间（这两个值是通过过去回收的经验获得），并维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的 Region。
 
 每个 Region 都有一个 Remembered Set，用来记录该 Region 对象的引用对象所在的 Region。通过使用 Remembered Set，在做可达性分析的时候就可以避免全堆扫描。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/mark12.jpg">
-</center>
+</div>
 
 
 如果不计算维护 Remembered Set 的操作，G1 收集器的运作大致可划分为以下几个步骤：
@@ -877,9 +876,9 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
 
 
 ***补充：堆中老年代和年轻代的划分：***
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/Eden%20and%20survivor.jpg" width="450">
-</center>
+</div>
 
 
 如上图所示，整个堆被分为两部分：新生代和老年代；新生代又分为1个Eden区和两个Survivor区。
@@ -1168,9 +1167,9 @@ JDK 1.8 的对 JVM 架构的改造将**类元数据放到本地内存中(Meta Sp
 > - -XX:MinMetaspaceFreeRatio，在GC之后，最小的Metaspace剩余空间容量的百分比，减少为分配空间所导致的垃圾收集
 > - -XX:MaxMetaspaceFreeRatio，在GC之后，最大的Metaspace剩余空间容量的百分比，减少为释放空间所导致的垃圾收集
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/metaspace.png" width="600">
-</center>
+</div>
 
 ## Full GC 的触发条件
 
@@ -1223,9 +1222,9 @@ JDK 1.8 的对 JVM 架构的改造将**类元数据放到本地内存中(Meta Sp
 类是在运行期间第一次使用时动态加载的，而不是编译时期一次性加载。因为如果在编译时期一次性加载，那么会占用很多的内存
 
 ## 类的生命周期
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/classloader.jpg">
-</center>
+</div>
 
 
 包括以下 7 个阶段：
@@ -1481,9 +1480,9 @@ public class NotInitialization_3 {
 
 下图展示的类加载器之间的层次关系，称为类加载器的双亲委派模型（Parents Delegation Model）。该模型要求除了顶层的启动类加载器外，其余的类加载器都应有自己的父类加载器。这里类加载器之间的父子关系一般通过组合（Composition）关系来实现，而不是通过继承（Inheritance）的关系实现。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/parentsclassloader.png">
-</center>
+</div>
 
 ### 1. 工作过程
 
