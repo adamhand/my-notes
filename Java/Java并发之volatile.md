@@ -99,7 +99,7 @@ public class NumberRange {
 
 |类别 |代码 |
 |--|--|--|
-|Java代码： | instance = new Singleton();    //instance是volatile变量| |
+|Java代码： | instance = new Singleton();    //instance是volatile变量|
 | 汇编代码：| 0x01a3de1d: movb $0x0,0x1104800(%esi);0x01a3de24: **lock** addl $0x0,(%esp);|
 
 有volatile变量修饰的共享变量进行写操作的时候会多第二行汇编代码，通过查IA-32架构软件开发者手册可知，lock前缀的指令在多核处理器下会引发了两件事情。
