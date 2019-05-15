@@ -98,7 +98,7 @@ public class NumberRange {
 在x86处理器下通过工具获取JIT编译器生成的汇编指令来看看对Volatile进行写操作CPU会做什么事情。
 
 |类别 |代码 |
-|-|-|-|
+-:|:-:|:-
 |Java代码： | instance = new Singleton();    //instance是volatile变量|
 | 汇编代码：| 0x01a3de1d: movb $0x0,0x1104800(%esi);0x01a3de24: **lock** addl $0x0,(%esp);|
 
