@@ -98,7 +98,7 @@ public class NumberRange {
 在x86处理器下通过工具获取JIT编译器生成的汇编指令来看看对Volatile进行写操作CPU会做什么事情。
 
 |类别 |代码 |
-|--|--|--|
+|-|-|-|
 |Java代码： | instance = new Singleton();    //instance是volatile变量|
 | 汇编代码：| 0x01a3de1d: movb $0x0,0x1104800(%esi);0x01a3de24: **lock** addl $0x0,(%esp);|
 
@@ -107,7 +107,7 @@ public class NumberRange {
 > - 将当前处理器缓存行的数据会写回到系统内存。
 > - 这个写回内存的操作会引起在其他CPU里缓存了该内存地址的数据无效。
 
-这就是**“缓存一致性”**。
+这就是<strong>“缓存一致性”</strong>。
 
 # 正确使用 volatile 的模式
 很多并发性专家事实上往往引导用户远离 volatile 变量，因为使用它们要比使用锁更加容易出错。然而，如果谨慎地遵循一些良好定义的模式，就能够在很多场合内安全地使用 volatile 变量。要始终牢记使用 volatile 的限制 —— 只有在状态真正独立于程序内其他内容时才能使用 volatile —— 这条规则能够避免将这些模式扩展到不安全的用例。
