@@ -2,9 +2,9 @@
 ---
 
 # 无锁
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/casssss.png" width="500">
-</center>
+</div>
 
 “无锁”即不用锁保证程序的并发。无锁采用CAS(compare and swap)算法来处理线程冲突。
 
