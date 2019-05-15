@@ -140,10 +140,12 @@ s = ABCabc
 s = 123456
 ```
 从打印结果可以看出，s的值确实改变了。那么怎么还说String对象是不可变的呢？ 其实这里存在一个误区： s只是一个String对象的引用，并不是对象本身。对象在内存中是一块内存区，成员变量越多，这块内存区占的空间越大。引用只是一个4字节的数据，里面存放了它所指向的对象的地址，通过这个地址可以访问对象。如下图所示：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/StringResistance.jpg" width="400" height="300">
-</center>
+</div>
+
 ### 1.3 String、StringBuffer和StringBuilder
+
 #### 1.3.1 可变与不可变
 String类中使用字符数组保存字符串，如下就是，因为有“final”修饰符，所以可以知道string对象是不可变的。
 ```java
@@ -153,15 +155,18 @@ StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractSt
 ```java
 char[] value;
 ```
+
 #### 1.3.2 是否多线程安全
 - String中的对象是不可变的，也就可以理解为常量，显然线程安全。
 - AbstractStringBuilder是StringBuilder与StringBuffer的公共父类，定义了一些字符串的基本操作，如expandCapacity、append、insert、indexOf等公共方法。
 - StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。
 
 ---
+
 #### ***注意：***
 对String的操作无论是sub操、concat还是replace操作都不是在原有的字符串上进行的，而是重新生成了一个新的字符串对象。也就是说进行这些操作后，最原始的字符串并没有被改变。
 所以要永远记住一点：
+
 ***“对String对象的任何改变都不影响到原对象，相关的任何change操作都会生成新的对象”。***
 
 ---
@@ -523,9 +528,9 @@ class PassByValueExample {
 
 # 四、继承
 ## 1. 继承关系图
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/JavaExtends.png" width="500">
-</center>
+</div>
 ## 2. 抽象类和接口
 ### 2.1 为什么接口中的成员变量必须是`public static final`的？
 &emsp; 首先明白一个原理，就是接口的存在意义。接口就是为了实现多继承的抽象类，是一种高度抽象的模板、标准或者说协议。规定了什么东西该是这样，如果你继承了我这接口，就必须这样。比如USB接口，就是小方口，两根电源线和两根数据线，不能多不能少。
@@ -875,9 +880,9 @@ Child show函数：num=3 staticNum=5
 &emsp; 可以将变量分为**成员变量**、**静态变量**和**局部变量**，成员变量和静态变量是在类范围内定义的变量，其中成员变量又叫实例变量，不用static关键字修饰，静态变量又叫类变量，需要用static关键字修饰。局部变量是在一个方法内定义的变量。
 &emsp; 局部变量可分为：形参（形式参数）、方法局部变量、代码块局部变量。
 &emsp; 如下图所示：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/javaviriable1.png">
-</center>
+</div>
 
 ## 区别
 ### 成员变量和局部变量的区别
@@ -1524,9 +1529,9 @@ student1 Jam
 student2 Jam
 ```
 可以看到，在student1中修改了teacher的名字后，student2中的teacher的名字也跟着改变了。可以得出结论：**student1和student2中的teacher指向的是一个teacher对象**。示意图如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/shallocopy.png">
-</center>
+</div>
 
 ## 深拷贝
 深拷贝是一个整个独立的对象拷贝，深拷贝会拷贝所有的属性,并拷贝属性指向的动态分配的内存。当对象和它所引用的对象一起拷贝时即发生深拷贝。深拷贝相比于浅拷贝速度较慢并且花销较大。
@@ -1560,9 +1565,9 @@ student1 Jam
 student2 Bob
 ```
 内存示意图如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/deepcopy.png">
-</center>
+</div>
 
 ## clone()的替代方案
 使用 clone() 方法来拷贝一个对象即复杂又有风险，它会抛出异常，并且还需要类型转换。Effective Java 书上讲到，最好不要去使用 clone()，可以使用**拷贝构造函数**、**拷贝工厂**或者**序列化**来拷贝一个对象。
