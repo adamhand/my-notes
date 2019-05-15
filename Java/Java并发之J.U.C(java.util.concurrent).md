@@ -11,40 +11,40 @@ AQS框架是J.U.C中实现锁及同步机制的基础，其底层是通过调用
 
 # J.U.C框架
 J.U.C的整个框架分为5个部分：tools、locks、collections、executor和atomic。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java.util.concurrent.png">
-</center>
+</div>
 
 ## Atomic
  该包下主要是一些原子变量类，仅依赖于Unsafe，并且被其他模块所依赖。
- <center>
+ <div align="center">
  <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/atomic.png">
-</center>
+</div>
 
 ## Locks
         该包下主要是关于锁及其相关类，仅依赖于Unsafe或内部依赖，并且被其他高级模块所依赖。由于LockSupport类底层逻辑简单且仅依赖Unsafe，同时为其他高级模块所依赖，所以需要先了解LockSupport类的运行原理，然后重点研究AbstractQueuedSynchronizer框架，理解独占锁和共享锁的实现原理，并清楚Condition如何与AbstractQueuedSynchronizer进行协作，最后很容易就能理解ReentrantLock是如何实现的。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/locks.png">
-</center>
+</div>
 
 ## Collections
 该包会依赖Unsafe和前两个基础模块，并且模块内部各个容器间相互较为独立，所以没有固定的学习顺序，理解编程中常用的集合类原理即可：ConcurrentHashMap、CopyOnWriteArrayList、CopyOnWriteArraySet、ArrayBlockingQueue、LinkedBlockingQueue（阻塞队列在线程池中有使用，所以理解常用阻塞队列的特性很重要）。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/collections.png">
-</center>
+</div>
 
 
 ## Executor
 这一部分的核心是线程池的运行原理，也是实际应用中较多的部分，会依赖于前几个模块。首先了解Callable、Future、RunnableFuture三个接口间的关系以及FutureTask的实现原理，然后研究如何创建ThreadPoolExecutor，如何运行一个任务，如何管理自身的线程，同时了解RejectedExecutionHandler的四种实现差异，最后，在实际应用中学习如何通过调整ThreadPoolExecutor的参数来优化线程池。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/executor.png">
-</center>
+</div>
 
 ## Tools
 这一部分是以前面几个模块为基础的高级特性模块，实际应用的场景相对较少，主要应用在多线程间相互依赖执行结果场景，没有具体的学习顺序，最好CountDownLatch、CyclicBarrier、Semaphore、Exchanger、Executors都了解下，对后面学习Guava的框架有帮助。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/tools1.png">
-</center>
+</div>
 
 ---
 参考:
@@ -59,42 +59,51 @@ J.U.C的整个框架分为5个部分：tools、locks、collections、executor和
 
 # J.U.C - AQS
 ## 可重入锁
-&emsp; ReentrantLock是可重入锁，可重入锁就是当前持有该锁的线程能够多次获取该锁，无需等待。可重入锁是如何实现的呢？这要从ReentrantLock的一个内部类Sync的父类说起，Sync的父类是AbstractQueuedSynchronizer（AQS，抽象队列同步器）。
+
+ReentrantLock是可重入锁，可重入锁就是当前持有该锁的线程能够多次获取该锁，无需等待。可重入锁是如何实现的呢？这要从ReentrantLock的一个内部类Sync的父类说起，Sync的父类是AbstractQueuedSynchronizer（AQS，抽象队列同步器）。
 
 ## AQS
-&emsp; AQS是JDK1.5提供的一个基于FIFO等待队列实现的一个用于实现同步器的基础框架，这个基础框架的重要性可以这么说，JCU包里面几乎所有的有关锁、多线程并发以及线程同步器等重要组件的实现都是基于AQS这个框架。AQS的核心思想是基于`volatile int state`这样的一个属性同时配合Unsafe工具对其原子性的操作来实现对当前锁的状态进行修改。当state的值为0的时候，标识该Lock不被任何线程所占有。
+
+AQS是JDK1.5提供的一个基于FIFO等待队列实现的一个用于实现同步器的基础框架，这个基础框架的重要性可以这么说，JCU包里面几乎所有的有关锁、多线程并发以及线程同步器等重要组件的实现都是基于AQS这个框架。AQS的核心思想是基于`volatile int state`这样的一个属性同时配合Unsafe工具对其原子性的操作来实现对当前锁的状态进行修改。当state的值为0的时候，标识该Lock不被任何线程所占有。
 
 ## ReentrantLock锁的架构
-&emsp; ReentrantLock的架构主要包括一个Sync的内部抽象类以及Sync抽象类的两个实现类。他们的结构示意图如下：
-<center>
-<img src="https://static.oschina.net/uploads/space/2016/0402/224539_IegA_1759553.png" width="300">
-</center>
 
-&emsp; 如上图所示，AQS的父类AOS(AbstractOwnableSynchronizer)主要提供一个exclusiveOwnerThread属性，用于关联当前持有该锁的线程。
-&emsp; 另外、Sync的两个实现类分别是NonfairSync和FairSync，一个是用于实现公平锁，一个是用于实现非公平锁。那么Sync为什么要被设计成内部类呢？Sync被设计成为安全的外部不可访问的内部类，使得ReentrantLock中所有涉及对AQS的访问都要经过Sync，其实，Sync被设计成为内部类主要是为了安全性考虑，这也是作者在AQS的comments上强调的一点。
+ReentrantLock的架构主要包括一个Sync的内部抽象类以及Sync抽象类的两个实现类。他们的结构示意图如下：
+<div align="center">
+<img src="https://static.oschina.net/uploads/space/2016/0402/224539_IegA_1759553.png" width="300">
+</div>
+
+
+如上图所示，AQS的父类AOS(AbstractOwnableSynchronizer)主要提供一个exclusiveOwnerThread属性，用于关联当前持有该锁的线程。
+
+另外、Sync的两个实现类分别是NonfairSync和FairSync，一个是用于实现公平锁，一个是用于实现非公平锁。那么Sync为什么要被设计成内部类呢？Sync被设计成为安全的外部不可访问的内部类，使得ReentrantLock中所有涉及对AQS的访问都要经过Sync，其实，Sync被设计成为内部类主要是为了安全性考虑，这也是作者在AQS的comments上强调的一点。
 
 ## AQS框架
 ### 总体框架图
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/aqs.png">
-</center>
+</div>
 
-&emsp; 如上图所示和前面所述，AQS维护了一个volatile int state域和一个FIFO线程等待队列（利用双向链表实现，多线程争用资源被阻塞时会进入此队列）。
+
+如上图所示和前面所述，AQS维护了一个volatile int state域和一个FIFO线程等待队列（利用双向链表实现，多线程争用资源被阻塞时会进入此队列）。
 
 ### 域和方法
-&emsp; 主要的域如下：
+
+主要的域如下：
 ```java
 private transient volatile Node head; //同步队列的head节点
 private transient volatile Node tail; //同步队列的tail节点
 private volatile int state; //同步状态
 ```
-&emsp; AQS提供的可以修改同步状态的3个方法：
+
+AQS提供的可以修改同步状态的3个方法：
 ```java
 protected final int getState();　　//获取同步状态
 protected final void setState(int newState);　　//设置同步状态
 protected final boolean compareAndSetState(int expect, int update);　　//CAS设置同步状态
 ```
-&emsp; 这三种叫做均是原子操作，其中compareAndSetState的实现依赖于Unsafe的compareAndSwapInt()方法。代码实现如下：
+
+这三种叫做均是原子操作，其中compareAndSetState的实现依赖于Unsafe的compareAndSwapInt()方法。代码实现如下：
 ```java
 */
 private volatile int state;
@@ -114,21 +123,27 @@ protected final boolean compareAndSetState(int expect, int update) {
 ```
 
 ## 自定义资源共享方式
-&emsp; AQS定义两种资源共享方式：Exclusive（独占，只有一个线程能执行，如ReentrantLock）和Share（共享，**多个线程可同时执行**，如Semaphore/CountDownLatch(CountDownLatch是**并发**的)）。
-&emsp; 不同的自定义同步器争用共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：
+
+AQS定义两种资源共享方式：Exclusive（独占，只有一个线程能执行，如ReentrantLock）和Share（共享，**多个线程可同时执行**，如Semaphore/CountDownLatch(CountDownLatch是**并发**的)）。
+
+不同的自定义同步器争用共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：
 > - isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。
 > - tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。
 > - tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。
 > - tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
 > - tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。
 
-&emsp; 以ReentrantLock为例，state初始化为0，表示未锁定状态。A线程lock()时，会调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
-&emsp; 再以CountDownLatch以例，任务分为N个子线程去执行，state也初始化为N（注意N要与线程个数一致）。这N个子线程是并行执行的，每个子线程执行完后countDown()一次，state会CAS减1。等到所有子线程都执行完后(即state=0)，会unpark()主调用线程，然后主调用线程就会从await()函数返回，继续后余动作。
-&emsp; 一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现tryAcquire-tryRelease、tryAcquireShared-tryReleaseShared中的一种即可。但AQS也支持自定义同步器同时实现独占和共享两种方式，如ReentrantReadWriteLock。
+
+以ReentrantLock为例，state初始化为0，表示未锁定状态。A线程lock()时，会调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
+
+再以CountDownLatch以例，任务分为N个子线程去执行，state也初始化为N（注意N要与线程个数一致）。这N个子线程是并行执行的，每个子线程执行完后countDown()一次，state会CAS减1。等到所有子线程都执行完后(即state=0)，会unpark()主调用线程，然后主调用线程就会从await()函数返回，继续后余动作。
+
+一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现tryAcquire-tryRelease、tryAcquireShared-tryReleaseShared中的一种即可。但AQS也支持自定义同步器同时实现独占和共享两种方式，如ReentrantReadWriteLock。
 
 ## 源码解析
 ### 1. acquire(int)
-&emsp; acquire是一种以独占方式获取资源，如果获取到资源，线程直接返回，否则进入等待队列，直到获取到资源为止，且整个过程忽略中断的影响。该方法是独占模式下线程获取共享资源的顶层入口。获取到资源后，线程就可以去执行其临界区代码了。下面是acquire()的源码：
+
+acquire是一种以独占方式获取资源，如果获取到资源，线程直接返回，否则进入等待队列，直到获取到资源为止，且整个过程忽略中断的影响。该方法是独占模式下线程获取共享资源的顶层入口。获取到资源后，线程就可以去执行其临界区代码了。下面是acquire()的源码：
 ```java
 public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
@@ -136,16 +151,19 @@ public final void acquire(int arg) {
             selfInterrupt();
     }
 ```
-&emsp; 函数流程如下：
+
+函数流程如下：
 
 > - tryAcquire()尝试直接去获取资源，如果成功则直接返回；
 > - addWaiter()将该线程加入等待队列的尾部，并标记为独占模式；
 > - acquireQueued()使线程在等待队列中获取资源，一直获取到资源后才返回。如果在整个等待过程中被中断过，则返回true，否则返回false。
 > - 如果线程在等待过程中被中断过，它是不响应的。只是获取资源后才再进行自我中断selfInterrupt()，将中断补上。
 
-&emsp; 接下来介绍相关方法。
+
+接下来介绍相关方法。
 #### 1.1 tryAcquire(int)
-&emsp; tryAcquire尝试以独占的方式获取资源，如果获取成功，则直接返回true，否则直接返回false。该方法可以用于实现Lock中的tryLock()方法。该方法的默认实现是抛出UnsupportedOperationException，具体实现由自定义的扩展了AQS的同步类来实现。AQS在这里只负责定义了一个公共的方法框架。这里之所以没有定义成abstract，是因为独占模式下只用实现tryAcquire-tryRelease，而共享模式下只用实现tryAcquireShared-tryReleaseShared。如果都定义成abstract，那么每个模式也要去实现另一模式下的接口。
+
+tryAcquire尝试以独占的方式获取资源，如果获取成功，则直接返回true，否则直接返回false。该方法可以用于实现Lock中的tryLock()方法。该方法的默认实现是抛出UnsupportedOperationException，具体实现由自定义的扩展了AQS的同步类来实现。AQS在这里只负责定义了一个公共的方法框架。这里之所以没有定义成abstract，是因为独占模式下只用实现tryAcquire-tryRelease，而共享模式下只用实现tryAcquireShared-tryReleaseShared。如果都定义成abstract，那么每个模式也要去实现另一模式下的接口。
 ```java
 protected boolean tryAcquire(int arg) {
     throw new UnsupportedOperationException();
@@ -153,7 +171,8 @@ protected boolean tryAcquire(int arg) {
 ```
 
 #### 1.2 addWaiter(Node)
-&emsp; 该方法用于将当前线程根据不同的模式（Node.EXCLUSIVE互斥模式、Node.SHARED共享模式）加入到等待队列的队尾，并返回当前线程所在的结点。如果队列不为空，则以通过compareAndSetTail方法以CAS(CAS (compare and swap) 比较并交换，就是将内存值与预期值进行比较，如果相等才将新值替换到内存中，并返回true表示操作成功；如果不相等，则直接返回false表示操作失败。)的方式将当前线程节点加入到等待队列的末尾。否则，通过enq(node)方法初始化一个等待队列，并返回当前节点。源码如下：
+
+该方法用于将当前线程根据不同的模式（Node.EXCLUSIVE互斥模式、Node.SHARED共享模式）加入到等待队列的队尾，并返回当前线程所在的结点。如果队列不为空，则以通过compareAndSetTail方法以CAS(CAS (compare and swap) 比较并交换，就是将内存值与预期值进行比较，如果相等才将新值替换到内存中，并返回true表示操作成功；如果不相等，则直接返回false表示操作失败。)的方式将当前线程节点加入到等待队列的末尾。否则，通过enq(node)方法初始化一个等待队列，并返回当前节点。源码如下：
 ```java
 private Node addWaiter(Node mode) {
     //以给定模式构造结点。mode有两种：EXCLUSIVE（独占）和SHARED（共享）
@@ -176,7 +195,8 @@ private Node addWaiter(Node mode) {
 ```
 
 ##### 1.2.1 enq(node)
-&emsp; enq(node)用于将当前节点插入等待队列，如果队列为空，则初始化当前队列。整个过程以CAS自旋的方式进行，直到成功加入队尾为止。源码如下：
+
+enq(node)用于将当前节点插入等待队列，如果队列为空，则初始化当前队列。整个过程以CAS自旋的方式进行，直到成功加入队尾为止。源码如下：
 ```java
 private Node enq(final Node node) {
     //CAS"自旋"，直到成功加入队尾
@@ -197,8 +217,10 @@ private Node enq(final Node node) {
 ```
 
 ### 1.3 acquireQueued(Node, int)
-&emsp; 通过tryAcquire()和addWaiter()，该线程获取资源失败，已经被放入等待队列尾部了，接下来就是等待队列前面的线程依次出队列，最后轮到自己被唤醒。acquireQueued(Node, int)函数的作用就是这个。
-&emsp; acquireQueued()用于队列中的线程自旋地以独占且不可中断的方式获取同步状态（acquire），直到拿到锁之后再返回。该方法的实现分成两部分：如果当前节点已经成为头结点，尝试获取锁（tryAcquire）成功，然后返回；否则检查当前节点是否应该被park(即进入waiting状态)，然后将该线程park并且检查当前线程是否被可以被中断。
+
+通过tryAcquire()和addWaiter()，该线程获取资源失败，已经被放入等待队列尾部了，接下来就是等待队列前面的线程依次出队列，最后轮到自己被唤醒。acquireQueued(Node, int)函数的作用就是这个。
+
+acquireQueued()用于队列中的线程自旋地以独占且不可中断的方式获取同步状态（acquire），直到拿到锁之后再返回。该方法的实现分成两部分：如果当前节点已经成为头结点，尝试获取锁（tryAcquire）成功，然后返回；否则检查当前节点是否应该被park(即进入waiting状态)，然后将该线程park并且检查当前线程是否被可以被中断。
 ```java
 final boolean acquireQueued(final Node node, int arg) {
     boolean failed = true;//标记是否成功拿到资源
@@ -228,7 +250,8 @@ final boolean acquireQueued(final Node node, int arg) {
 }
 ```
 #### 1.3.1 shouldParkAfterFailedAcquire(Node, Node)
-&emsp; shouldParkAfterFailedAcquire方法通过对当前节点的前一个节点的状态进行判断，对当前节点做出不同的操作(进入waiting状态或者继续往前找)。
+
+shouldParkAfterFailedAcquire方法通过对当前节点的前一个节点的状态进行判断，对当前节点做出不同的操作(进入waiting状态或者继续往前找)。
 ```java
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
     int ws = pred.waitStatus;//拿到前驱的状态
@@ -253,7 +276,8 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 ```
 
 #### 1.3.2 parkAndCheckInterrupt()
-&emsp; 该方法让线程去休息，真正进入等待状态。park()会让当前线程进入waiting状态。在此状态下，有两种途径可以唤醒该线程：1）被unpark()；2）被interrupt()。需要注意的是，Thread.interrupted()会清除当前线程的中断标记位。
+
+该方法让线程去休息，真正进入等待状态。park()会让当前线程进入waiting状态。在此状态下，有两种途径可以唤醒该线程：1）被unpark()；2）被interrupt()。需要注意的是，Thread.interrupted()会清除当前线程的中断标记位。
 ```java
 private final boolean parkAndCheckInterrupt() {
     LockSupport.park(this);//调用park()使线程进入waiting状态
@@ -262,13 +286,15 @@ private final boolean parkAndCheckInterrupt() {
 ```
 
 ### 1.3.3 acquireQueued()小结
-&emsp; acquireQueued()函数的具体流程：
+
+acquireQueued()函数的具体流程：
 > - 结点进入队尾后，检查状态，找到安全休息点；
 > - 调用park()进入waiting状态，等待unpark()或interrupt()唤醒自己；
 > - 被唤醒后，看自己是不是有资格能拿到号。如果拿到，head指向当前结点，并返回从入队到拿到号的整个过程中是否被中断过；如果没拿到，继续流程1。
 
 ### 1.4 acquire()小结
-&emsp; acquire()的流程：
+
+acquire()的流程：
 > - 调用自定义同步器的tryAcquire()尝试直接去获取资源，如果成功则直接返回；
 > - 没成功，则addWaiter()将该线程加入等待队列的尾部，并标记为独占模式；
 > - acquireQueued()使线程在等待队列中休息，有机会时（轮到自己，会被unpark()）会去尝试获取资源。获取到资源后才返回。如果在整个等待过程中被中断过，则返回true，否则返回false。
@@ -280,14 +306,16 @@ private final boolean parkAndCheckInterrupt() {
 
 # J.U.C - 其它组件(这部分还需要细致总结)
 ## FutureTask
-&emsp; 在介绍 Callable 时我们知道它可以有返回值，返回值通过 Future 进行封装。FutureTask 实现了 RunnableFuture 接口，该接口继承自 Runnable 和 Future 接口，这使得 FutureTask 既可以当做一个任务执行，也可以有返回值。
+
+在介绍 Callable 时我们知道它可以有返回值，返回值通过 Future 进行封装。FutureTask 实现了 RunnableFuture 接口，该接口继承自 Runnable 和 Future 接口，这使得 FutureTask 既可以当做一个任务执行，也可以有返回值。
 ```java
 public class FutureTask<V> implements RunnableFuture<V>
 ```
 ```java
 public interface RunnableFuture<V> extends Runnable, Future<V>
 ```
-&emsp; FutureTask 可用于异步获取执行结果或取消执行任务的场景。当一个计算任务需要执行很长时间，那么就可以用 FutureTask 来封装这个任务，主线程在完成自己的任务之后再去获取结果。
+
+FutureTask 可用于异步获取执行结果或取消执行任务的场景。当一个计算任务需要执行很长时间，那么就可以用 FutureTask 来封装这个任务，主线程在完成自己的任务之后再去获取结果。
 ```java
 public class FutureTaskExample {
 
@@ -320,18 +348,21 @@ public class FutureTaskExample {
     }
 }
 ```
-&emsp; 控制台输出结果为：
+
+控制台输出结果为：
 ```java
 other task is running...
 4950
 ```
 ## BlockingQueue
-&emsp; java.util.concurrent.BlockingQueue 接口有以下阻塞队列的实现：
+
+java.util.concurrent.BlockingQueue 接口有以下阻塞队列的实现：
 > - **FIFO 队列 ：** LinkedBlockingQueue、ArrayBlockingQueue（固定长度）
 > - **优先级队列 ：** PriorityBlockingQueue
 提供了阻塞的 take() 和 put() 方法：如果队列为空 take() 将阻塞，直到队列中有内容；如果队列为满 put() 将阻塞，直到队列有空闲位置。
 
-&emsp; **使用 BlockingQueue 实现生产者消费者问题**
+
+**使用 BlockingQueue 实现生产者消费者问题**
 ```java
 public class ProductorConsumer {
     private static BlockingQueue<String> quene = new ArrayBlockingQueue<>(5);
@@ -378,7 +409,8 @@ public class ProductorConsumer {
     }
 }
 ```
-&emsp; 控制台输出结果为(每次都不一样)：
+
+控制台输出结果为(每次都不一样)：
 ```java
 productor...productor...consumer...consumer...productor...productor...consumer...consumer...productor...consumer...
 ```
