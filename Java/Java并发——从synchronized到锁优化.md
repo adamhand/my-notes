@@ -40,9 +40,9 @@ public class SynchronizedTest {
 
 # synchronized实现
 javap -verbose查看上述示例:
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/synchronized_javap.PNG">
-</center>
+</div>
 
 可以看到，同步代码块是使用monitorenter和monitorexit指令实现的，同步方法（在这看不出来需要看JVM底层实现）依靠的是方法修饰符上的ACC_SYNCHRONIZED实现。具体如下：
 
@@ -62,15 +62,15 @@ synchronized用的锁是存在Java对象头里的，Hotspot虚拟机的对象头
 
 ## Monitor
 每个对象都拥有自己的监视器，当这个对象由同步块或者这个对象的同步方法调用时，执行方法的线程必须先获取该对象的监视器才能进入同步块和同步方法，如果没有获取到监视器的线程将会被阻塞在同步块和同步方法的入口处，进入到BLOCKED状态，如图:
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitorenterandexit.jpg">
-</center>
+</div>
 
 Monitor是**线程私有**的数据结构，每个线程都有一个可用**monitor record**列表，同时
 还有一个全局的可用列表。每一个被锁住的对象都会和一个monitor record关联(对象头的MarkWord中的LockWord指向monitor record的起始地址)，同时monitor record中有一个owner字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用。其结构如下:
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitorstructure.jpg">
-</center>
+</div>
 
 - **Owner：**初始时为NULL表示当前没有任何线程拥有该monitor record，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为NULL；
 - **EntryQ:**关联一个系统互斥锁（semaphore），阻塞所有试图锁住monitor record失败的线程。
