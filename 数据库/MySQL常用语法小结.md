@@ -277,12 +277,15 @@ select distinct username, password form t_user;
 这种方法是根据两列分别去重的结果来输出的，根据去重之后剩余行数较多的列来输出。如下里例子：
 
 表内容为：
+
 |user_id|username|password|
 |-|-|-|
 |1|admin|123456|
 |2|user|111111|
 |3|user|222222|
+
 如果根据username和password去重，结果为：
+
 |username|password|
 |-|-|
 |admin|123456|
