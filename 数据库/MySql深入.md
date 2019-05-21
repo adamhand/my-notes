@@ -8,9 +8,9 @@ B Tree 指的是 Balance Tree，也就是平衡树。平衡树是一颗查找树
 B+ Tree 是基于 B Tree 和叶子节点顺序访问指针进行实现，它具有 B Tree 的平衡性，并且通过顺序访问指针来提高区间查询的性能。
 
 在 B+ Tree 中，一个节点中的 key 从左到右非递减排列，如果某个指针的左右相邻 key 分别是 keyi 和 keyi+1，且不为 null，则该指针指向节点的所有 key 大于等于 keyi 且小于等于 keyi+1。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/061c88c1-572f-424f-b580-9cbce903a3fe.png">
-</center>
+</div>
 
 ### 2. 操作
 进行查找操作时，首先在根节点进行二分查找，找到一个 key 所在的指针，然后递归地在指针所指向的节点进行查找。直到查找到叶子节点，然后在叶子节点上进行二分查找，找出 key 所对应的 data。
@@ -47,14 +47,14 @@ B+ Tree 是基于 B Tree 和叶子节点顺序访问指针进行实现，它具�
 适用于全键值、键值范围和键前缀查找，其中键前缀查找只适用于最左前缀查找。如果不是按照索引列的顺序进行查找，则无法使用索引。
 
 InnoDB 的 B+Tree 索引分为主索引和辅助索引。主索引的叶子节点 data 域记录着完整的数据记录，这种索引方式被称为**聚簇索引**。因为无法把数据行存放在两个不同的地方，所以一个表只能有一个聚簇索引。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/c28c6fbc-2bc1-47d9-9b2e-cf3d4034f877.jpg">
-</center>
+</div>
 
 辅助索引的叶子节点的 data 域记录着主键的值，因此在使用辅助索引进行查找时，需要先查找到主键值，然后再到主索引中进行查找。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/7ab8ca28-2a41-4adf-9502-cc0a21e63b51.jpg">
-</center>
+</div>
 
 ---
 **聚簇索引(Clustered Index)和非聚簇索引 (Non- Clustered Index)**
@@ -294,17 +294,17 @@ Sharding策略是横向扩展的一种方案，MySql的Sharding策略包括**垂
 水平切分又称为 Sharding，它是将同一个表中的记录拆分到多个结构相同的表中。
 
 当一个表的数据不断增多时，Sharding 是必然的选择，它可以将数据分布到集群的不同节点上，从而缓存单个数据库的压力。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/63c2909f-0c5f-496f-9fe5-ee9176b31aba.jpg">
-</center>
+</div>
 
 ### **垂直切分**
 垂直切分是将一张表按列切分成多个表，通常是按照列的关系密集程度进行切分，也可以利用垂直切分将经常被使用的列和不经常被使用的列切分到不同的表中。
 
 在数据库的层面使用垂直切分将按数据库中表的密集程度部署到不同的库中，例如将原来的电商数据库垂直切分成商品数据库、用户数据库等。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/e130e5b8-b19a-4f1e-b860-223040525cf6.jpg">
-</center>
+</div>
 
 ### **Sharding 策略**
 >- 哈希取模：hash(key) % N；
@@ -349,9 +349,9 @@ Sharding策略是横向扩展的一种方案，MySql的Sharding策略包括**垂
 >- I/O 线程 ：负责从主服务器上读取二进制日志，并写入从服务器的重放日志（Replay log）中。
 >- SQL 线程 ：负责读取重放日志并重放其中的 SQL 语句。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/master-slave.png">
-</center>
+</div>
 
 ## 读写分离
 主服务器处理写操作以及实时性要求比较高的读操作，而从服务器处理读操作。
@@ -363,9 +363,9 @@ Sharding策略是横向扩展的一种方案，MySql的Sharding策略包括**垂
 >- 增加冗余，提高可用性。
 
 读写分离常用代理方式来实现，代理服务器接收应用层传来的读写请求，然后决定转发到哪个服务器。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/master-slave-proxy.png">
-</center>
+</div>
 
 # 参考
 [MySQL.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/MySQL.md)
