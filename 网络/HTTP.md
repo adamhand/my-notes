@@ -20,9 +20,9 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 >- URL（Uniform Resource Locator，统一资源定位符）
 >- URN（Uniform Resource Name，统一资源名称）
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/urlnuri.jpg">
-</center>
+</div>
 
 ### 三者的区别
 >- URI用来唯一的标识一个资源。Web上可用的每种资源如HTML文档、图像、视频片段、程序等都是一个来URI来标识的。URI一般由三部组成：
@@ -57,9 +57,9 @@ URI 包含 URL 和 URN，目前 WEB 只有 URL 比较流行，所以见到的基
 
 ## 请求和响应报文
 ### 1. 请求报文
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/HTTP_RequestMessageExample.png">
-</center>
+</div>
 
 请求报文由**请求行（request line）、请求头部（header）、空行和请求数据**四个部分组成。
 
@@ -78,9 +78,9 @@ GET说明请求类型为GET,[/562f25980001b1b106000338.jpg]为要访问的资源
 **第四部分：请求数据也叫主体，可以添加任意的其他数据**
 
 ### 2. 响应报文
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/HTTP_ResponseMessageExample.png">
-</center>
+</div>
 
 HTTP响应也由四个部分组成，分别是：**状态行、消息报头、空行和响应正文**。
 
@@ -124,9 +124,9 @@ POST 主要用来传输数据，而 GET 主要用来获取资源。POST请求可
 
 > CONNECT www.example.com:443 HTTP/1.1
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/dc00f70e-c5c8-4d20-baf1-2d70014a97e3.jpg">
-</center>
+</div>
 
 ## OPTIONS
 查询支持的方法
@@ -256,9 +256,9 @@ PUT 也可以用于修改资源，但是只能完全替代原始资源，PATCH �
 
 # 七、具体应用
 ## 连接管理
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/HTTP1_x_Connections.png" width="600">
-</center>
+</div>
 
 ### 1. 短连接与长连接
 当浏览器访问一个包含多张图片的 HTML 页面时，除了请求访问 HTML 页面资源，还会请求图片资源。如果每进行一次 HTTP 通信就要新建一个 TCP 连接，那么开销会很大。
@@ -530,14 +530,14 @@ HTTP/1.1 使用虚拟主机技术，使得一台服务器拥有多个域名，�
 
 >- 用户察觉得到正向代理的存在。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/a314bb79-5b18-4e63-a976-3448bffa6f1b.png">
-</center>
+</div>
 >- 而反向代理一般位于内部网络中，用户察觉不到。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/notes/pics/2d09a847-b854-439c-9198-b29c65810944.png">
-</center>
+</div>
 
 ### 2. 网关
 与代理服务器不同的是，网关服务器会将 HTTP 转化为其它协议进行通信，从而请求其它非 HTTP 服务器的服务。
@@ -556,9 +556,9 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 
 通过使用 SSL，HTTPs 具有了加密（防窃听）、认证（防伪装）和完整性保护（防篡改）。
 
-<center>    
+<div align="center">    
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/ssl-offloading.jpg" width="600">
-</center>
+</div>
 
 ## 加密
 ### 1. 对称密钥加密
@@ -567,9 +567,9 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 >- 优点：运算速度快；
 >- 缺点：无法安全地将密钥传输给通信方。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/7fffa4b8-b36d-471f-ad0c-a88ee763bb76.png" width="500">
-</center>
+</div>
 
 ### 2.非对称密钥加密
 非对称密钥加密，又称公开密钥加密（Public-Key Encryption），加密和解密使用不同的密钥。
@@ -581,16 +581,16 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 >- 优点：可以更安全地将公开密钥传输给通信发送方；
 >- 缺点：运算速度慢。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/39ccb299-ee99-4dd1-b8b4-2f9ec9495cb4.png" width="500">
-</center>
+</div>
 
 ### 3. HTTPs 采用的加密方式
 **HTTPs 采用混合的加密机制，使用非对称密钥加密用于传输对称密钥来保证传输过程的安全性，之后使用对称密钥加密进行通信来保证通信过程的效率。**（下图中的 Session Key 就是对称密钥）
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/How-HTTPS-Works.png" width="500">
-</center>
+</div>
 
 ## 认证
 通过使用 证书 来对通信方进行认证。
@@ -602,9 +602,9 @@ HTTPs 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 进行 HTTPs 通信时，服务器会把证书发送给客户端。客户端取得其中的公开密钥之后，先使用数字签名进行验证，如果验证通过，就可以开始通信了。
 
 通信开始时，客户端需要使用服务器的公开密钥将自己的私有密钥传输给服务器，之后再进行对称密钥加密。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/2017-06-11-ca.png" width="600">
-</center>
+</div>
 
 ## 完整性保护
 SSL 提供报文摘要功能来进行完整性保护。
@@ -627,9 +627,9 @@ HTTP/1.x 实现简单是以牺牲性能为代价的：
 
 ## 二进制分帧层
 HTTP/2.0 将报文分成 HEADERS 帧和 DATA 帧，它们都是二进制格式的。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/86e6a91d-a285-447a-9345-c5484b8d0c47.png" width="400">
-</center>
+</div>
 
 在通信过程中，只会有一个 TCP 连接存在，它承载了任意数量的双向数据流（Stream）。
 
@@ -637,15 +637,15 @@ HTTP/2.0 将报文分成 HEADERS 帧和 DATA 帧，它们都是二进制格式�
 >- 消息（Message）是与逻辑请求或响应对应的完整的一系列帧。
 >- 帧（Frame）是最小的通信单位，来自不同数据流的帧可以交错发送，然后再根据每个帧头的数据流标识符重新组装。
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/af198da1-2480-4043-b07f-a3b91a88b815.png" width="450">
-</center>
+</div>
 
 ##服务端推送
 HTTP/2.0 在客户端请求一个资源时，会把相关的资源一起发送给客户端，客户端就不需要再次发起请求了。例如客户端请求 page.html 页面，服务端就把 script.js 和 style.css 等与之相关的资源一起发给客户端。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/e3f1657c-80fc-4dfa-9643-bf51abd201c6.png" width="600">
-</center>
+</div>
 
 ## 首部压缩
 HTTP/1.1 的首部带有大量信息，而且每次都要重复发送。
@@ -653,9 +653,9 @@ HTTP/1.1 的首部带有大量信息，而且每次都要重复发送。
 HTTP/2.0 要求客户端和服务器同时维护和更新一个包含之前见过的首部字段表，从而避免了重复传输。
 
 不仅如此，HTTP/2.0 也使用 Huffman 编码对首部字段进行压缩。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/_u4E0B_u8F7D.png" width="500">
-</center>
+</div>
 
 # 十、HTTP/1.1 新特性
 >- 详细内容请见上文
