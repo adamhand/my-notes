@@ -578,7 +578,9 @@ public class ExitThread {
 
 使用interrupt()方法来中断线程有两种情况：
 
-**(1)线程处于阻塞状态**：如使用了sleep,同步锁的wait,socket中的receiver,accept等方法时，会使线程处于阻塞状态。当调用线程的interrupt()方法时，会抛出InterruptException异常。阻塞中的那个方法抛出这个异常，通过代码捕获该异常，然后break跳出循环状态或者修改标志位，从而让我们有机会结束这个线程的执行。**也就是说，interrupt()方法其实是将线程强制唤醒，让它们具有执行资格，然后再将其停止。但强制动作发生时会产生InterruptedException，所以要处理一下。**通常很多人认为只要调用interrupt方法线程就会结束，实际上是错的， 一定要先捕获InterruptedException异常之后通过break来跳出循环，才能正常结束run方法。例子如下：
+**(1)线程处于阻塞状态**：如使用了sleep,同步锁的wait,socket中的receiver,accept等方法时，会使线程处于阻塞状态。当调用线程的interrupt()方法时，会抛出InterruptException异常。阻塞中的那个方法抛出这个异常，通过代码捕获该异常，然后break跳出循环状态或者修改标志位，从而让我们有机会结束这个线程的执行。<strong>也就是说，interrupt()方法其实是将线程强制唤醒，让它们具有执行资格，然后再将其停止。但强制动作发生时会产生InterruptedException，所以要处理一下。</strong>
+
+通常很多人认为只要调用interrupt方法线程就会结束，实际上是错的， 一定要先捕获InterruptedException异常之后通过break来跳出循环，才能正常结束run方法。例子如下：
 
 ```java
 /**
