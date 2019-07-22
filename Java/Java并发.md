@@ -301,7 +301,7 @@ currentThread()方法可以返回代码段正在被哪个线程调用的信息�
 
 #### sleep()方法
 
-sleep()的作用是在指定的毫秒数内让当前“正在执行的线程”休眠（暂停执行）。这个“正在执行的线程”是指this.currentThread()返回的线程。注意：sleep方法不释放锁，但是释放CPU执行权。
+sleep()的作用是在指定的毫秒数内让当前“正在执行的线程”休眠（暂停执行）。这个“正在执行的线程”是指this.currentThread()返回的线程。<strong>注意：sleep方法不释放锁，但是释放CPU执行权。</strong>
 
 #### yield()方法
 
