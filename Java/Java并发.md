@@ -665,6 +665,9 @@ public class ThreadSafe extends Thread {
     }
 }
 ```
+
+<strong>需要注意的是，`isInterrupted()`是`Thread`类中的方法，使用`isInterrupted()`方法的线程类必须继承`Thread`，实现`Runnable`的类是用不了这个方法的。</strong>
+
 # 2. 多线程基础
 ## 2.1 同步
 
