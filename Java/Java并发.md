@@ -1282,11 +1282,6 @@ class Test implements Runnable
     }
 }
 
-class MyLock{
-    public static final Object locka = new Object();
-    public static final Object lockb = new Object();
-}
-
 public class DeadLock {
     public static void main(String[] args) {
         Test a = new Test(true);
