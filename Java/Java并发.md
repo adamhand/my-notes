@@ -374,7 +374,7 @@ public class IsAliveTest {
     }
 }
 ```
-打印结果为：
+打印结果如下所示。`end: false`的原因是，主线程进行休眠的这段时间，线程`MyThread`已经执行完毕了。
 
 ```java
 begin: false
