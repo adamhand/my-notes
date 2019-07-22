@@ -592,13 +592,13 @@ class MyThread extends Thread
     public void run() {
         while (true)
         {
+            System.out.println("子线程还没退出");
             try {
-                sleep(2000);
+                sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 break;
             }
-            System.out.println("子线程还没退出");
         }
     }
 }
@@ -619,7 +619,21 @@ public class InterruptExitThread {
     }
 }
 ```
-本例中，在主线程中调用myThread0线程的interrupt()并且在run方法中用break跳出循环，最终结果是打印InterruptedException信息，并且程序能够终止。
+本例中，在主线程中调用myThread0线程的interrupt()并且在run方法中用break跳出循环，最终结果是打印InterruptedException信息，并且程序能够终止。如下：
+
+```java
+子线程还没退出
+子线程还没退出
+子线程还没退出
+子线程还没退出
+子线程还没退出
+子线程还没退出
+主线程退出
+//以下是打印的InterruptedException信息，并不是报错。
+java.lang.InterruptedException: sleep interrupted
+	at java.lang.Thread.sleep(Native Method)
+	at thread.MyThread.run(ExitThreadInterrupt.java:45)
+```
 
 **（2）线程未处于阻塞状态**：使用isInterrupted()判断线程的中断标志来退出循环。当使用interrupt()方法时，中断标志就会置true，和使用自定义的标志来控制循环是一样的道理。如下例：
 
