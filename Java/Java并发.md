@@ -2021,7 +2021,47 @@ Java 内存模型定义了 8 个操作来完成主内存和工作内存的交互
 
 Java 内存模型保证了 read、load、use、assign、store、write、lock 和 unlock 操作具有原子性，例如对一个 int 类型的变量执行 assign 赋值操作，这个操作就是原子性的。但是 Java 内存模型允许虚拟机将没有被 volatile 修饰的 64 位数据（long，double）的读写操作划分为两次 32 位的操作来进行，即 load、store、read 和 write 操作可以不具备原子性。
 
-有一个错误认识就是，int 等原子性的类型在多线程环境中不会出现线程安全问题。
+有一个错误认识就是，int 等原子性的类型在多线程环境中不会出现线程安全问题。例如下面这种情况，
+
+```java
+class MyExample {
+    private int cnt = 0;
+
+    public void addCnt() {
+        cnt++;
+    }
+
+    public int getCnt() {
+        return cnt;
+    }
+}
+
+public class ThreadUnsafeExample {
+    public static void main(String[] args) throws InterruptedException {
+        final int threadCount = 10000;
+        MyExample example = new MyExample();
+        final CountDownLatch latch = new CountDownLatch(threadCount);
+        ExecutorService service = Executors.newCachedThreadPool();
+
+        for (int i = 0; i < threadCount; i++) {
+            service.execute(new Runnable() {
+                @Override
+                public void run() {
+                    example.addCnt();
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        service.shutdown();
+        System.out.println(">>> cnt is " + example.getCnt());
+    }
+}
+```
+某次执行得到的结果为：
+```java
+>>> cnt is 9989
+```
 
 为了方便讨论，将内存间的交互操作简化为 3 个：load、assign、store。
 
