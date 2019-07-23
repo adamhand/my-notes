@@ -1946,7 +1946,6 @@ class Customer implements Runnable
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ;
         }
     }
 }
@@ -1990,7 +1989,7 @@ Java 内存模型试图屏蔽各种硬件和操作系统的内存访问差异，
 
 加入高速缓存带来了一个新的问题：缓存一致性。如果多个缓存共享同一块主内存区域，那么多个缓存的数据可能会不一致，需要一些协议来解决这个问题。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/68778c1b-15ab-4826-99c0-3b4fd38cb9e9.png" width="600">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/68778c1b-15ab-4826-99c0-3b4fd38cb9e9.png" width="600">
 </center>
 
 
@@ -1998,14 +1997,14 @@ Java 内存模型试图屏蔽各种硬件和操作系统的内存访问差异，
 
 线程只能直接操作工作内存中的变量，不同线程之间的变量值传递需要通过主内存来完成。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/47358f87-bc4c-496f-9a90-8d696de94cee.png" width="600">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/47358f87-bc4c-496f-9a90-8d696de94cee.png" width="600">
 </center>
 
 ## 内存间交互操作
 
 Java 内存模型定义了 8 个操作来完成主内存和工作内存的交互操作。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/536c6dfd-305a-4b95-b12c-28ca5e8aa043.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/536c6dfd-305a-4b95-b12c-28ca5e8aa043.png">
 </center>
 
   - read(读取)：把一个变量的值从主内存传输到工作内存中
@@ -2028,13 +2027,13 @@ Java 内存模型保证了 read、load、use、assign、store、write、lock 和
 
 下图演示了两个线程同时对 cnt 进行操作，load、assign、store 这一系列操作整体上看不具备原子性，那么在 T1 修改 cnt 并且还没有将修改后的值写入主内存，T2 依然可以读入旧值。可以看出，这两个线程虽然执行了两次自增运算，但是主内存中 cnt 的值最后为 1 而不是 2。因此对 int 类型读写操作满足原子性只是说明 load、assign、store 这些单个操作具备原子性。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/ef8eab00-1d5e-4d99-a7c2-d6d68ea7fe92.png" width="400">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/ef8eab00-1d5e-4d99-a7c2-d6d68ea7fe92.png" width="400">
 </center>
 
 
 AtomicInteger 能保证多个线程修改的原子性。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/952afa9a-458b-44ce-bba9-463e60162945.png" width="400">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/952afa9a-458b-44ce-bba9-463e60162945.png" width="400">
 </center>
 
 
@@ -2140,35 +2139,35 @@ public static void main(String[] args) throws InterruptedException {
 
 在一个线程内，在程序前面的操作先行发生于后面的操作。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/single-thread-rule.png" >
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/single-thread-rule.png" >
 </center>
 
 ### 2. 管程锁定规则(Monitor Lock Rule)
 
 一个 unlock 操作先行发生于后面对同一个锁的 lock 操作。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/monitor-lock-rule.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitor-lock-rule.png" width="500">
 </center>
 
 ### 3. volatile 变量规则(Volatile Variable Rule)
 
 对一个 volatile 变量的写操作先行发生于后面对这个变量的读操作。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/volatile-variable-rule.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/volatile-variable-rule.png" width="500">
 </center>
 
 ### 4. 线程启动规则(Thread Start Rule)
 
 Thread 对象的 start() 方法调用先行发生于此线程的每一个动作。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/thread-start-rule.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/thread-start-rule.png" width="500">
 </center>
 
 ### 5. 线程加入规则(Thread Join Rule)
 
 Thread 对象的结束先行发生于 join() 方法返回。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/thread-join-rule.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/thread-join-rule.png" width="500">
 </center>
 
 ### 6. 线程中断规则(Thread Interruption Rule)
@@ -2383,7 +2382,7 @@ public class ThreadLocalExample1 {
 
 它所对应的底层结构图为：
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/3646544a-cb57-451d-9e03-d3c4f5e4434a.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/3646544a-cb57-451d-9e03-d3c4f5e4434a.png">
 </center>
 
 
@@ -2517,13 +2516,13 @@ JDK 1.6 引入了偏向锁和轻量级锁，从而让锁拥有了四个状态：
 
 以下是 HotSpot 虚拟机对象头的内存布局，这些数据被称为 Mark Word。其中 tag bits 对应了五个状态，这些状态在右侧的 state 表格中给出。除了 marked for gc 状态，其它四个状态已经在前面介绍过了。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/bb6a49be-00f2-4f27-a0ce-4ed764bc605c.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/bb6a49be-00f2-4f27-a0ce-4ed764bc605c.png" width="500">
 </center>
 
 
 下图左侧是一个线程的虚拟机栈，其中有一部分称为 Lock Record 的区域，这是在轻量级锁运行过程创建的，用于存放锁对象的 Mark Word。而右侧就是一个锁对象，包含了 Mark Word 和其它信息。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/051e436c-0e46-4c59-8f67-52d89d656182.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/051e436c-0e46-4c59-8f67-52d89d656182.png" width="500">
 </center>
 
 
@@ -2531,7 +2530,7 @@ JDK 1.6 引入了偏向锁和轻量级锁，从而让锁拥有了四个状态：
 
 当尝试获取一个锁对象时，如果锁对象标记为 0 01，说明锁对象的锁未锁定（unlocked）状态。此时虚拟机在当前线程的虚拟机栈中创建 Lock Record，然后使用 CAS 操作将对象的 Mark Word 更新为 Lock Record 指针。如果 CAS 操作成功了，那么线程就获取了该对象上的锁，并且对象的 Mark Word 的锁标记变为 00，表示该对象处于轻量级锁状态。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/baaa681f-7c52-4198-a5ae-303b9386cf47.png" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/baaa681f-7c52-4198-a5ae-303b9386cf47.png" width="500">
 </center>
 
 ## 偏向锁
@@ -2542,7 +2541,7 @@ JDK 1.6 引入了偏向锁和轻量级锁，从而让锁拥有了四个状态：
 
 当有另外一个线程去尝试获取这个锁对象时，偏向状态就宣告结束，此时撤销偏向（Revoke Bias）后恢复到未锁定状态或者轻量级锁状态。
 <center>
-<img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/pics/390c913b-5f31-444f-bbdb-2b88b688e7ce.jpg" width="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/390c913b-5f31-444f-bbdb-2b88b688e7ce.jpg" width="500">
 </center>
 
 # 6. 多线程开发良好的实践
