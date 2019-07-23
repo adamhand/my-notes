@@ -1777,7 +1777,7 @@ public class ProducerAndCustomer {
 
 java.util.concurrent 类库中提供了 Condition 类来实现线程之间的协调，可以在 Condition 上调用 await() 方法使线程等待，其它线程调用 signal() 或 signalAll() 方法唤醒等待的线程。
 
-相比于 wait() 这种等待方式，await() 可以指定等待的条件，因此更加灵活。
+相比于 wait() 这种等待方式，await() 可以指定等待的条件，因此更加灵活。另外，`wait`是`Object`的方法，而`await`是`Condition`的方法。
 ```java
 /**
  * 多生产者和消费者问题:lock
