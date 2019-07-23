@@ -5,9 +5,9 @@
 ## 1. int和Integer的区别
 ### 1.1 int和Integer的基本使用对比
 （1）Integer是int的包装类；int是基本数据类型；</br> 
-（2）Integer变量必须实例化后才能使用；int变量不需要； 
-（3）Integer实际是对象的引用，指向此new的Integer对象；int是直接存储数据值 ； 
-（4）Integer的默认值是null；int的默认值是0。
+（2）Integer变量必须实例化后才能使用；int变量不需要；</br>  
+（3）Integer实际是对象的引用，指向此new的Integer对象；int是直接存储数据值 ； </br> 
+（4）Integer的默认值是null；int的默认值是0。</br> 
 ### 1.2 int和Integer的深入比较
 （1）由于Integer变量实际上是对一个Integer对象的引用，所以两个通过new生成的Integer变量永远是不相等的（因为new生成的是两个对象，其内存地址不同）。
 ```java
