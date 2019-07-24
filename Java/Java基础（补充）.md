@@ -638,8 +638,14 @@ son class (son)
 son class ()
 ```
 
-经过上面的例子可以看出，进行子类构造函数初始化之前需要先调用父类的构造函数，但是如果在调用子类构造函数的时候执行了一条语句，那么这条语句是先于父类构造函数调用之前执行呢还是在父类构造函数调用之后执行？**答案是会先执行这条语句，然后再调用父类的构造函数**。例子如下，是根据《Java编程思想》上的一个例子扩展的。
+经过上面的例子可以看出，进行子类构造函数初始化之前需要先调用父类的构造函数，但是如果在调用子类构造函数的时候执行了一条语句，那么这条语句是先于父类构造函数调用之前执行呢还是在父类构造函数调用之后执行？**答案是会先执行这条语句，然后再调用父类的构造函数**。例子如下，是根据《Java编程思想》(第四版`p86`)上的一个例子扩展的。
 ```java
+public class SuperFlower {
+    public SuperFlower(){
+        System.out.println("i am super flower");
+    }
+}
+
 public class Flower extends SuperFlower {
     int petalCount = 0;
     String s = "init value";
@@ -685,7 +691,7 @@ public class Flower extends SuperFlower {
     }
 }
 ```
-这个例子中，main函数执行时首先会调用无参构造函数1,1会调用2,2会调用3,3会调用5。3调用5的时候需要执行一条new语句示例一个soutClass的对象，所以会调用soutClass的构造函数，输出一个i am sout class语句。
+这个例子中，main函数执行时首先会调用无参构造函数1,1会调用2,2会调用3,3会调用5。3调用5的时候需要执行一条new语句实例一个soutClass的对象，所以会调用soutClass的构造函数，输出一个i am sout class语句。
 
 这个例子的执行结果如下，可以看到，i am sout class语句先于i am super flower执行，也就是说，如果子类在调用构造函数的时候执行了一条语句，这条语句会先于父类的构造函数执行。
 
