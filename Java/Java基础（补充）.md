@@ -567,10 +567,11 @@ class PassByValueExample {
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/JavaExtends.png" width="500">
 </div>
-## 2. 抽象类和接口
+## 2. 抽象类和接口</br>
 ### 2.1 为什么接口中的成员变量必须是`public static final`的？
 
 首先明白一个原理，就是接口的存在意义。接口就是为了实现多继承的抽象类，是一种高度抽象的模板、标准或者说协议。规定了什么东西该是这样，如果你继承了我这接口，就必须这样。比如USB接口，就是小方口，两根电源线和两根数据线，不能多不能少。
+
 （1）public
 
 既然是公共的模板或者协议，那么如果定义成private就没有意义了，因为所有继承了你这接口的类都不能用，并且接口中的方法是不能够被具体实现的，因此，接口内部中也没有任何方法可使用。为了让所有实现了该接口的类能够使用，就必须是public的。接口中定义的所有东西就应该是对所有用户开放的东西。
