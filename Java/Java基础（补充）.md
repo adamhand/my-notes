@@ -793,6 +793,58 @@ private final Constructor<? extends T> construcor;
 constructor.newInstance();
 ```
 
+例子如下：
+```java
+class Person {
+    private String name;
+    private String gender;
+    private int age;
+
+    public Person() {}
+
+    // 如果age的类型写为int的话，在main中根据Ingeger.class得不到这个方法，回报错
+    public Person(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public Person(String name, String gender, Integer age) {
+        this.name = name;
+        this.gender = gender;
+        this.age = age;
+    }
+}
+
+public class ReflectConstructorTest {
+    public static void main(String[] args) throws NoSuchMethodException {
+        Person p = new Person();
+
+        Class cls = p.getClass();
+
+        // 获取默认构造函数
+        Constructor constructor = cls.getConstructor(new Class[]{});
+        // 获取构造函数的信息
+        System.out.println(">>> 修饰符 " + Modifier.toString(constructor.getModifiers()));
+        System.out.println(">>> 构造函数名 " + constructor.getName());
+        System.out.println(">>> 参数列表 " + constructor.getParameterTypes());
+
+        // 获取带参数构造函数
+        Constructor constructor1 = cls.getConstructor(new Class[]{String.class, Integer.class});
+        // 获取构造函数信息
+        System.out.println(">>> 修饰符 " + Modifier.toString(constructor1.getModifiers()));
+        System.out.println(">>> 构造函数名 " + constructor1.getName());
+        System.out.println(">>> 参数列表 " + constructor1.getParameterCount());
+
+        // 获取带参数构造函数
+        Constructor constructor2 = cls.getConstructor(new Class[]{String.class, String.class, Integer.class});
+        // 获取构造函数信息
+        System.out.println(">>> 修饰符 " + Modifier.toString(constructor2.getModifiers()));
+        System.out.println(">>> 构造函数名 " + constructor2.getName());
+        System.out.println(">>> 参数列表 " + constructor2.getParameterTypes());
+    }
+}
+```
+
 参考：
 [Java反射详解](https://cloud.tencent.com/developer/article/1163271)
 [Java 反射机制详解](https://blog.csdn.net/gdutxiaoxu/article/details/68947735)
@@ -1258,6 +1310,8 @@ sList.add(new Integer(1));  //语句3，正确
 
 **总结：下界类型通配符get方法受限，但可以往列表中添加各种数据类型的对象。因此如果你想把对象写入一个数据结构里，使用 ? super 通配符。限定通配符总是包括自己。**
 
+**JAVA泛型通配符的使用规则就是“PECS”原则（生产者使用“? extends T”通配符，消费者使用“? super T”通配符）。**
+
 ---
 参考：
 [Java泛型三：通配符详解extends super](https://blog.csdn.net/claram/article/details/51943742)
@@ -1355,7 +1409,13 @@ public class ToolTest {
         ls.add(23);
 //      ls.add("text");
         try {
-            //getDeclaredMethods(),该方法是获取本类中的所有方法
+            /**
+            * getDeclaredMethods(),该方法是获取本类中的所有方法
+            * 函数声明为：getDeclaredMethod(String name, Class... parameterTypes) 
+            * name-- 方法的名称
+            * parameterTypes -- 参数数组
+            * 匹配指定名称和参数的类的方法，此方法返回的Method对象
+            */
             Method method = ls.getClass().getDeclaredMethod("add",Object.class);
 
             method.invoke(ls,"test");
