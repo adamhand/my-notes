@@ -365,7 +365,10 @@ public static void main(String[] args) {
 - jdk7下`false false`
 
 #### ***jdk6中的解释***
+
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jdk6.png">
+</div>
 
 ***注：图中绿色线条代表 string 对象的内容指向。 黑色线条代表地址指向。***
 
@@ -374,15 +377,20 @@ public static void main(String[] args) {
 #### ***jdk7中的解释***
 
 在 Jdk6 以及以前的版本中，字符串的常量池是放在堆的 Perm 区的，Perm 区是一个类静态的区域，主要存储一些加载类的信息，常量池，方法片段等内容，默认大小只有4m，一旦常量池中大量使用 intern 是会直接产生`java.lang.OutOfMemoryError: PermGen space`错误的。 所以在 jdk7 的版本中，字符串常量池已经从 Perm 区移到正常的 Java Heap 区域了。为什么要移动，Perm 区域太小是一个主要原因，当然据消息称 jdk8 已经直接取消了 Perm 区域，而新建立了一个元区域。应该是 jdk 开发者认为 Perm 区域已经不适合现在 JAVA 的发展了。
+
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jdk7_1.png">
+</div>
 
 - 在第一段代码中，先看 s3和s4字符串。`String s3 = new String("1") + new String("1");`，这句代码中现在生成了2最终个对象，是字符串常量池中的“1” 和 JAVA Heap 中的 s3引用指向的对象。中间还有2个匿名的`new String("1")`我们不去讨论它们。此时s3引用对象内容是"11"，但此时常量池中是没有 “11”对象的。
-- 接下来`s3.intern();`这一句代码，是将 s3中的“11”字符串放入 String 常量池中，因为此时常量池中不存在“11”字符串，因此常规做法是跟 jdk6 图中表示的那样，在常量池中生成一个 "11" 的对象，关键点是 jdk7 中常量池不在 Perm 区域了，这块做了调整。常量池中不需要再存储一份对象了，可以直接存储堆中的引用。这份引用指向 s3 引用的对象。 也就是说引用地址是相同的。
+- 接下来`s3.intern();`这一句代码，是将 s3中的“11”字符串放入 String 常量池中，因为此时常量池中不存在“11”字符串，因此常规做法是跟 jdk6 图中表示的那样，在常量池中生成一个 "11" 的对象，关键点是 jdk7 中常量池不在 Perm 区域了，这块做了调整。<strong>常量池中不需要再存储一份对象了，可以直接存储堆中的引用。这份引用指向 s3 引用的对象。 也就是说引用地址是相同的。</strong>
 - 最后`String s4 = "11";` 这句代码中"11"是显示声明的，因此会直接去常量池中创建，创建的时候发现已经有这个对象了，此时也就是指向 s3 引用对象的一个引用。所以 s4 引用就指向和 s3 一样了。因此最后的比较 `s3 == s4` 是 true。
 - 再看 s 和 s2 对象。 `String s = new String("1");` 第一句代码，生成了2个对象。常量池中的“1” 和 JAVA Heap 中的字符串对象。`s.intern();` 这一句是 s 对象去常量池中寻找后发现 “1” 已经在常量池里了。
 - 接下来`String s2 = "1";` 这句代码是生成一个 s2的引用指向常量池中的“1”对象。 结果就是 s 和 s2 的引用地址明显不同。图中画的很清晰。
 
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jdk7_2.png">
+</div>
 
 - 来看第二段代码，从上边第二幅图中观察。第一段代码和第二段代码的改变就是 `s3.intern();` 的顺序是放在`String s4 = "11";`后了。这样，首先执行`String s4 = "11";`声明 s4 的时候常量池中是不存在“11”对象的，执行完毕后，“11“对象是 s4 声明产生的新对象。然后再执行`s3.intern();`时，常量池中“11”对象已经存在了，因此 s3 和 s4 的引用是不同的。
 - 第二段代码中的 s 和 s2 代码中，`s.intern();`，这一句往后放也不会有什么影响了，因为对象池中在执行第一句代码`String s = new String("1");`的时候已经生成“1”对象了。下边的s2声明都是直接从常量池中取地址引用的。 s 和 s2 的引用地址是不会相等的。
@@ -408,7 +416,10 @@ System.out.println("str1.equals(str2)： " + str1.equals(str2));  \\2
 `true`
 原因：
 String类中，`==`比较的是两个元素的地址，代码中一个在堆中，一个在常量池中，显然不同；equals()方法首先比较两个字符串的长度，长度不同则返回`false`，否则再比较字符串的每一位，不同返回`false`，若每一位都相同，则返回`true`。“比较每一位”的操作是通过一个`char`类型的数组完成的，如下图所示：
+
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/String%23equals.jpg">
+</div>
 
 说完了`String`，再看一下通用的`==`和`equals`的区别。
 java中的数据类型，可分为两类： 
