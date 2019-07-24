@@ -567,6 +567,7 @@ class PassByValueExample {
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/JavaExtends.png" width="500">
 </div>
+
 ## 2. 抽象类和接口</br>
 ### 2.1 为什么接口中的成员变量必须是`public static final`的？
 
