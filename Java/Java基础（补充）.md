@@ -366,6 +366,7 @@ public static void main(String[] args) {
 
 #### ***jdk6中的解释***
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jdk6.png">
+
 ***注：图中绿色线条代表 string 对象的内容指向。 黑色线条代表地址指向。***
 
 
