@@ -40,15 +40,16 @@ public class SynchronizedTest {
 ```
 
 # synchronized实现
-javap -verbose查看上述示例:
+使用`javac`命令编译上述代码，然后使`javap -verbose`查看得到的`.class`文件:
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/synchronized_javap.PNG">
 </div>
 
-可以看到，同步代码块是使用monitorenter和monitorexit指令实现的，同步方法（在这看不出来需要看JVM底层实现）依靠的是方法修饰符上的ACC_SYNCHRONIZED实现。具体如下：
+可以看到，同步代码块是使用monitorenter和monitorexit指令实现的，同步方法依靠的是方法修饰符上的ACC_SYNCHRONIZED实现。具体如下：
 
-**同步方法：**方法级同步没有通过字节码指令来控制，它实现在方法调用和返回操作之中。当方法调用时，调用指令会检查方法ACC_SYNCHRONIZED访问标志是否被设置，若设置了则执行线程需要持有管程(Monitor)才能运行方法，当方法完成(无论是否出现异常)时释放管程。
-**同步代码块**：synchronized关键字经过编译后，会在同步块的前后分别形成monitorenter和monitorexit两个字节码指令，每条monitorenter指令都必须执行其对应的monitorexit指令，为了保证方法异常完成时这两条指令依然能正确执行，编译器会**自动产生一个异常处理器**，其目的就是用来执行monitorexit指令(图中14-18、24-30为异常流程)。
+**同步方法：** 方法级同步没有通过字节码指令来控制，它实现在方法调用和返回操作之中。当方法调用时，调用指令会检查方法ACC_SYNCHRONIZED访问标志是否被设置，若设置了则执行线程需要持有管程(Monitor)才能运行方法，当方法完成(无论是否出现异常)时释放管程。
+
+**同步代码块:** synchronized关键字经过编译后，会在同步块的前后分别形成monitorenter和monitorexit两个字节码指令，每条monitorenter指令都必须执行其对应的monitorexit指令，为了保证方法异常完成时这两条指令依然能正确执行，编译器会**自动产生一个异常处理器**，其目的就是用来执行monitorexit指令(图中14-18、24-30为异常流程)。
 
 # java对象头和monitor
 Java对象头和monitor是实现synchronized的基础。
