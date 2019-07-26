@@ -1,6 +1,6 @@
 ﻿# Java并发——从synchronized到锁优化
 ---
-# synchronized用法
+# synchronized(读音[ˈsɪŋkrənaɪzd])用法
 synchronized关键字同步的三种用法:
 
 - 同步实例方法，锁是当前实例对象
@@ -63,7 +63,7 @@ synchronized用的锁是存在Java对象头里的，Hotspot虚拟机的对象头
 对象指向它的类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。
 
 ## Monitor
-每个对象都拥有自己的监视器，当这个对象由同步块或者这个对象的同步方法调用时，执行方法的线程必须先获取该对象的监视器才能进入同步块和同步方法，如果没有获取到监视器的线程将会被阻塞在同步块和同步方法的入口处，进入到BLOCKED状态，如图:
+每个对象都拥有自己的监视器(Monitor)，相当于操作系统中的互斥量（mutex）,它内置与每一个Object对象中。当这个对象由同步块或者这个对象的同步方法调用时，执行方法的线程必须先获取该对象的监视器才能进入同步块和同步方法，如果没有获取到监视器的线程将会被阻塞在同步块和同步方法的入口处，进入到BLOCKED状态，如图:
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitorenterandexit.jpg">
 </div>

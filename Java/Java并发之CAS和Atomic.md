@@ -119,7 +119,7 @@ public final native boolean compareAndSwapLong(Object paramObject, long paramLon
 ```
 Unsafe只提供了3种CAS方法：compareAndSwapObject、compareAndSwapInt和compareAndSwapLong。都是native方法。
 
-native方法中使用了CPU原子指令：cmpxchg。它的作用是“比较并交换”。
+native方法中使用了CPU原子指令：**cmpxchg**。它的作用是“比较并交换”。
 
 如：CMPXCHG r/m,r 将累加器AL/AX/EAX/RAX中的值与首操作数（目的操作数）比较，如果相等，第2操作数（源操作数）的值装载到首操作数，zf置1。如果不等， 首操作数的值装载到AL/AX/EAX/RAX并将zf清0
 该指令只能用于486及其后继机型。第2操作数（源操作数）只能用8位、16位或32位寄存器。第1操作数（目地操作数）则可用寄存器或任一种存储器寻址方式。
