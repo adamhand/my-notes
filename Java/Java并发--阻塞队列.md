@@ -25,7 +25,7 @@
 JDK7提供了7个阻塞队列。分别是:
 
 |队列|有界性|锁|数据结构|
-|-|-|-|
+|-|-|-|-|
 |ArrayBlockingQueue |有界|加锁|数组|
 |LinkedBlockingQueue|有界|加锁|单链表|
 |PriorityBlockingQueue|无界|加锁|堆|
