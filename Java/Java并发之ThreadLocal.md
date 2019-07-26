@@ -36,6 +36,12 @@ ThreadLocalMap其内部利用Entry来实现key-value的存储，如下：
 ```
 从上面代码中可以看出Entry的key就是ThreadLocal，而value就是值。同时，Entry也继承WeakReference，所以说Entry所对应key（ThreadLocal实例）的引用为一个弱引用。
 
+`ThreadLocal`的内部结构如下图所示：
+
+<div align="center">
+<img src="https://github.com/adamhand/LeetCode-images/blob/master/threadlocal.jpg?raw=true">
+</div>
+
 ### set方法
 ```java
  private void set(ThreadLocal<?> key, Object value) {
