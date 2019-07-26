@@ -17,62 +17,62 @@ Executor接口是Executor框架中最基础的部分，定义了一个用于执�
 # ExecutorService接口
 ```java
 //继承自Executor接口
-  public interface ExecutorService extends Executor {
-      /**
-       * 关闭方法，调用后执行之前提交的任务，不再接受新的任务
-       */
-      void shutdown();
-      /**
-       * 从语义上可以看出是立即停止的意思，将暂停所有等待处理的任务并返回这些任务的列表
-       */
-     List<Runnable> shutdownNow();
-     /**
-      * 判断执行器是否已经关闭
-      */
-     boolean isShutdown();
-     /**
-      * 关闭后所有任务是否都已完成
-      */
-     boolean isTerminated();
-     /**
-      * 中断
-      */
+public interface ExecutorService extends Executor {
+    /**
+    * 关闭方法，调用后执行之前提交的任务，不再接受新的任务
+    */
+    void shutdown();
+    /**
+    * 从语义上可以看出是立即停止的意思，将暂停所有等待处理的任务并返回这些任务的列表
+    */
+    List<Runnable> shutdownNow();
+    /**
+    * 判断执行器是否已经关闭
+    */
+    boolean isShutdown();
+    /**
+    * 关闭后所有任务是否都已完成
+    */
+    boolean isTerminated();
+    /**
+    * 中断
+    */
     boolean awaitTermination(long timeout, TimeUnit unit)
-         throws InterruptedException;
-     /**
-      * 提交一个Callable任务
-      */
-     <T> Future<T> submit(Callable<T> task);
-     /**
-      * 提交一个Runable任务，result要返回的结果
-      */
-     <T> Future<T> submit(Runnable task, T result);
-     /**
-      * 提交一个任务
-      */
-     Future<?> submit(Runnable task);
-     /**
-      * 执行所有给定的任务，当所有任务完成，返回保持任务状态和结果的Future列表
-      */
-     <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-         throws InterruptedException;
-     /**
-      * 执行给定的任务，当所有任务完成或超时期满时（无论哪个首先发生），返回保持任务状态和结果的 Future 列表。
-      */
-     <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks,
-                                   long timeout, TimeUnit unit)
-         throws InterruptedException;
-     /**
-      * 执行给定的任务，如果某个任务已成功完成（也就是未抛出异常），则返回其结果。
-      */
-     <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-         throws InterruptedException, ExecutionException;
-     /**
-      * 执行给定的任务，如果在给定的超时期满前某个任务已成功完成（也就是未抛出异常），则返回其结果。
-      */
-     <T> T invokeAny(Collection<? extends Callable<T>> tasks,
-                     long timeout, TimeUnit unit)
-         throws InterruptedException, ExecutionException, TimeoutException;
+        throws InterruptedException;
+    /**
+    * 提交一个Callable任务
+    */
+    <T> Future<T> submit(Callable<T> task);
+    /**
+    * 提交一个Runable任务，result要返回的结果
+    */
+    <T> Future<T> submit(Runnable task, T result);
+    /**
+    * 提交一个任务
+    */
+    Future<?> submit(Runnable task);
+    /**
+    * 执行所有给定的任务，当所有任务完成，返回保持任务状态和结果的Future列表
+    */
+    <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException;
+    /**
+    * 执行给定的任务，当所有任务完成或超时期满时（无论哪个首先发生），返回保持任务状态和结果的 Future 列表。
+    */
+    <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks,
+                                long timeout, TimeUnit unit)
+        throws InterruptedException;
+    /**
+    * 执行给定的任务，如果某个任务已成功完成（也就是未抛出异常），则返回其结果。
+    */
+    <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException, ExecutionException;
+    /**
+    * 执行给定的任务，如果在给定的超时期满前某个任务已成功完成（也就是未抛出异常），则返回其结果。
+    */
+    <T> T invokeAny(Collection<? extends Callable<T>> tasks,
+                    long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException;
  }
 ```
 ExecutorService接口继承自Executor接口，定义了终止、提交、执行任务、跟踪任务返回结果等方法。
@@ -126,36 +126,36 @@ public static Callable<Object> callable(Runnbale task);
 ## Future接口
 ```java
 // Future代表异步任务的执行结果
-  public interface Future<V> {
-  
-      /**
-       * 尝试取消一个任务，如果这个任务不能被取消（通常是因为已经执行完了），返回false，否则返回true。
-       */
-      boolean cancel(boolean mayInterruptIfRunning);
-  
-      /**
-      * 返回代表的任务是否在完成之前被取消了
-      */
-     boolean isCancelled();
- 
-     /**
-      * 如果任务已经完成，返回true
-      */
+public interface Future<V> {
+
+    /**
+    * 尝试取消一个任务，如果这个任务不能被取消（通常是因为已经执行完了），返回false，否则返回true。
+    */
+    boolean cancel(boolean mayInterruptIfRunning);
+
+    /**
+    * 返回代表的任务是否在完成之前被取消了
+    */
+    boolean isCancelled();
+
+    /**
+    * 如果任务已经完成，返回true
+    */
     boolean isDone();
- 
-     /**
-      * 获取异步任务的执行结果（如果任务没执行完将等待）
-      */
+
+    /**
+    * 获取异步任务的执行结果（如果任务没执行完将等待）
+    */
     V get() throws InterruptedException, ExecutionException;
- 
-     /**
-      * 获取异步任务的执行结果（有最常等待时间的限制）
-      *
-      *  timeout表示等待的时间，unit是它时间单位
-      */
-     V get(long timeout, TimeUnit unit)
-         throws InterruptedException, ExecutionException, TimeoutException;
- }
+
+    /**
+    * 获取异步任务的执行结果（有最常等待时间的限制）
+    *
+    *  timeout表示等待的时间，unit是它时间单位
+    */
+    V get(long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException;
+}
 ```
 Future就是对于具体的Runnable或者Callable任务的执行结果进行取消、查询是否完成、获取结果。必要时可以通过get方法获取执行结果，该方法会阻塞直到任务返回结果
 

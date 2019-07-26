@@ -203,7 +203,7 @@ protected T initialValue() {
         m.remove(this);
 }
 ```
-该方法的目的是减少内存的占用。当然，我们不需要显示调用该方法，因为一个线程结束后，它所对应的局部变量就会被垃圾回收。
+该方法的目的是减少内存的占用。为了避免内存泄露，使用完`ThreadLocal`变量之后都要调用`remove`方法。
 
 # ThreadLocal使用示例
 ```java
