@@ -79,9 +79,9 @@ private static final int ASYNC = 1; // for offer, put, add
 private static final int SYNC  = 2; // for transfer, take
 private static final int TIMED = 3; // for timed poll, tryTransfer
 ```
-① NOW ：在取数据的时候，如果没有数据，则直接返回，无需阻塞等待。
-② ASYNC：入队的操作都不会阻塞，也就是说，入队后线程会立即返回，不需要等到消费者线程来取数据。
-③ SYNC ：取数据的时候，如果没有数据，则会进行阻塞等待。
+① NOW ：在取数据的时候，如果没有数据，则直接返回，无需阻塞等待。</br>
+② ASYNC：入队的操作都不会阻塞，也就是说，入队后线程会立即返回，不需要等到消费者线程来取数据。</br>
+③ SYNC ：取数据的时候，如果没有数据，则会进行阻塞等待。</br>
 ④ TIMED : 取数据的时候，如果没有数据，则会进行超时阻塞等待。
 
 - **LinkedBlockingDeque**：LinkedBlockingDeque是基于双向链表的双端有界阻塞队列，默认使用非公平ReentrantLock实现线程安全，默认队列最大长度都为Integer.MAX_VALUE；不允许null元素添加；双端队列可以用来实现 **“窃取算法”**（关于窃取算法，参考另一篇笔记——《Java并发之J.U.C》） ,两头都可以操作队列，相对于单端队列可以减少一半的竞争。 
