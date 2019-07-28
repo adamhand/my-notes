@@ -213,8 +213,8 @@ void os::PlatformEvent::park() {
 ```
 pthread_cond_wait是一个多线程的条件变量函数，cond是condition的缩写，字面意思可以理解为线程在等待一个条件发生，这个条件是一个全局变量。这个方法接收两个参数，一个共享变量_cond，一个互斥量_mutex。而unpark方法在linux下是使用pthread_cond_signal实现的。park 在windows下则是使用WaitForSingleObject实现的。
 
-# 补充：使用DelayQueue实现本地的延迟队列
-## DelayQueue能做什么？
+# 补充：各种阻塞队列使用举例
+## 使用DelayQueue实现本地的延迟队列
 在我们的业务中通常会有一些需求是这样的： 
 
 - 淘宝订单业务:**下单之后如果三十分钟之内没有付款就自动取消订单**。 
@@ -222,8 +222,7 @@ pthread_cond_wait是一个多线程的条件变量函数，cond是condition的�
 
 那么这类业务我们可以总结出一个特点:需要延迟工作。由此的情况，就是我们的DelayQueue应用需求的产生。
 
-## 应用举例
-我们在网咖或者网吧上网时会用到一个网吧综合系统，其中有一个主要功能就是给每一位网民计时，用户充值一定金额会有相应的上网时常，这里我们用DelayQueue模拟实现一下：用DelayQueue存储网民（Wangmin类），每一个考生都有自己的名字和完成试卷的时间，Wangba线程对DelayQueue进行监控，从队列中取出到时间的网民执行下机操作。
+比如，在网咖或者网吧上网时会用到一个网吧综合系统，其中有一个主要功能就是给每一位网民计时，用户充值一定金额会有相应的上网时常，这里我们用DelayQueue模拟实现一下：用DelayQueue存储网民（Wangmin类），每一个考生都有自己的名字和完成试卷的时间，Wangba线程对DelayQueue进行监控，从队列中取出到时间的网民执行下机操作。
 
 ### 实现了Delayed接口的网民类，并实现CompareTo()方法
 ```java
@@ -324,10 +323,374 @@ public class WangBa implements Runnable {
 }
 ```
 
+## 使用ArrayBlockingQueue和LinkedBlockingQueue实现生产者消费者
+使用ArrayBlockingQueue实现生产者消费者的代码如下：
+
+```java
+class Cookie {
+
+}
+
+class Productor implements Runnable {
+    private ArrayBlockingQueue abq;
+
+    Productor(ArrayBlockingQueue abq) {
+        this.abq = abq;
+    }
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            produce();
+        }
+    }
+
+    private void produce() {
+        Cookie cookie = new Cookie();
+        try {
+            abq.put(cookie);
+            System.out.println(">>> produce " + cookie +" , count is " + abq.size());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Consumer implements Runnable {
+    private ArrayBlockingQueue abq;
+
+    Consumer(ArrayBlockingQueue abq) {
+        this.abq = abq;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            consume();
+        }
+    }
+
+    private void consume() {
+        Cookie cookie = null;
+        try {
+            cookie = (Cookie) abq.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("<<< consume " + cookie + " , count is " + abq.size());
+    }
+}
+
+public class ArrayBlockingQueueTest {
+    public static void main(String[] args) {
+        ArrayBlockingQueue abq = new ArrayBlockingQueue(10);
+        new Thread(new Productor(abq)).start();
+        new Thread(new Consumer(abq)).start();
+    }
+}
+```
+
+使用LinkedBlockingQueue差不多，将上述程序中的ArrayBlockingQueue换成LinkedBlockingQueue就行。
+
+## 使用PriorityBlockingQueue模拟银行的VIP通道
+在银行排队办理业务,通常会有一个VIP通道,让一些有VIP贵宾卡的优先办理业务,而不需要排队。假设在这么一个场景下,银行开始办理业务之前,已经来了20个客户,而且银行认为谁钱多,谁就优先办理业务。
+
+代码如下：
+
+```java
+class Person {
+    private String name;
+    private int money;
+
+    Person(String name, int money) {
+        this.name = name;
+        this.money = money;
+    }
+
+    private String getName() {
+        return this.name;
+    }
+
+    public int getMoney() {
+        return this.money;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + "[" + "存款" + getMoney() + "]";
+    }
+}
+
+class MoneyComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person o1, Person o2) {
+        return o2.getMoney() - o1.getMoney();
+    }
+}
+
+class ProducerRunnable implements Runnable {
+    private static final String name = "明刚红李刘吕赵黄王孙朱曾游丽吴昊周郑秦丘";
+    private Random random = new Random();
+    private PriorityBlockingQueue<Person> queue;
+
+    ProducerRunnable(PriorityBlockingQueue<Person> queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 20; i++) {
+            Person person = new Person("小" + name.charAt(i), random.nextInt(1000));
+            queue.put(person);
+            System.out.println(person + "开始排队");
+        }
+    }
+}
+
+class ConsumerRunnable implements Runnable {
+    private PriorityBlockingQueue<Person> queue;
+
+    ConsumerRunnable(PriorityBlockingQueue<Person> queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            Person person = queue.poll();
+            if (person == null) {
+                break;
+            }
+            System.out.println(person + "办理业务");
+        }
+    }
+}
+
+public class PriorityBlockingQueueTest {
+    public static void main(String[] args) throws InterruptedException {
+        PriorityBlockingQueue<Person> queue = new PriorityBlockingQueue<>(100, new MoneyComparator());
+        Thread thread = new Thread(new ProducerRunnable(queue));
+        thread.start();
+        thread.join();
+        new Thread(new ConsumerRunnable(queue)).start();
+    }
+}
+```
+结果如下：
+
+```java
+小明[存款804]开始排队
+小刚[存款372]开始排队
+小红[存款933]开始排队
+小李[存款904]开始排队
+小刘[存款322]开始排队
+小吕[存款92]开始排队
+小赵[存款160]开始排队
+小黄[存款508]开始排队
+小王[存款608]开始排队
+小孙[存款76]开始排队
+小朱[存款772]开始排队
+小曾[存款506]开始排队
+小游[存款214]开始排队
+小丽[存款70]开始排队
+小吴[存款853]开始排队
+小昊[存款960]开始排队
+小周[存款970]开始排队
+小郑[存款642]开始排队
+小秦[存款955]开始排队
+小丘[存款960]开始排队
+小周[存款970]办理业务
+小昊[存款960]办理业务
+小丘[存款960]办理业务
+小秦[存款955]办理业务
+小红[存款933]办理业务
+小李[存款904]办理业务
+小吴[存款853]办理业务
+小明[存款804]办理业务
+小朱[存款772]办理业务
+小郑[存款642]办理业务
+小王[存款608]办理业务
+小黄[存款508]办理业务
+小曾[存款506]办理业务
+小刚[存款372]办理业务
+小刘[存款322]办理业务
+小游[存款214]办理业务
+小赵[存款160]办理业务
+小吕[存款92]办理业务
+小孙[存款76]办理业务
+小丽[存款70]办理业务
+```
+
+## 使用SynchronizedBlockingQueue模拟玩具生产流水线
+在玩具生产流水线上，一个工人安装好自己负责的配件后，会将玩具传递给下一个工人安装其他配件，中间不需要存储，这比较适合使用SynchronizedBlockingQueue来做。代码如下：
+
+```java
+class Toy {
+    private int num;
+
+    Toy(int num) {
+        this.num = num;
+    }
+
+    @Override
+    public String toString() {
+        return "toy number is " + num;
+    }
+}
+
+class ToyProductor implements Runnable{
+    private BlockingQueue<Toy> queue;
+    private Random random = new Random();
+
+    ToyProductor(BlockingQueue<Toy> queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            Toy toy = new Toy(random.nextInt(1000));
+            try {
+                System.out.println(">>> productor : " + toy.toString());
+                queue.put(toy);
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+class ToyConsumer implements Runnable {
+    private BlockingQueue<Toy> queue;
+
+    ToyConsumer(BlockingQueue<Toy> queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        while (true)    {
+            try {
+                Toy toy = queue.take();
+                System.out.println("<<<<<< consumer : " + toy.toString());
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+public class SynchronizedBlockingQueueTest {
+    public static void main(String[] args) {
+        BlockingQueue<Toy> queue = new SynchronousQueue<>();
+
+        ToyProductor productor = new ToyProductor(queue);
+        ToyConsumer consumer = new ToyConsumer(queue);
+
+        new Thread(productor).start();
+        new Thread(consumer).start();
+    }
+}
+```
+结果如下：
+
+```java
+>>> productor : toy number is 90
+<<<<<< consumer : toy number is 90
+>>> productor : toy number is 707
+<<<<<< consumer : toy number is 707
+>>> productor : toy number is 875
+<<<<<< consumer : toy number is 875
+>>> productor : toy number is 737
+<<<<<< consumer : toy number is 737
+>>> productor : toy number is 435
+<<<<<< consumer : toy number is 435
+>>> productor : toy number is 128
+<<<<<< consumer : toy number is 128
+>>> productor : toy number is 806
+<<<<<< consumer : toy number is 806
+>>> productor : toy number is 636
+<<<<<< consumer : toy number is 636
+...
+```
+
+## 使用LinkedTransferQueue模拟生产者消费者
+LinkedTransferQueue和SynchronizedBlockingQueue作用很相似，下面是使用LinkedBlockingQueue模拟生产者-消费者的代码。
+
+```java
+public class LinkedTransferQueueDemo {
+    private static LinkedTransferQueue<String> queue = new LinkedTransferQueue<>();
+
+    private class Productor implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 3; i++) {
+                try {
+                    System.out.println("Producer is waiting to transfer...");
+                    System.out.println("producer transfered element: A "+i);
+                    queue.transfer("A " + i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class Consumer implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < 3; i++) {
+                try {
+                    System.out.println("Consumer is waiting to take element...");
+                    String s= queue.take();
+                    System.out.println("Consumer received Element: "+s);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Thread(new LinkedTransferQueueDemo().new Productor()).start();
+        new Thread(new LinkedTransferQueueDemo().new Consumer()).start();
+    }
+}
+```
+结果如下：
+
+```java
+Producer is waiting to transfer...
+producer transfered element: A 0
+Consumer is waiting to take element...
+Producer is waiting to transfer...
+producer transfered element: A 1
+Consumer received Element: A 0
+Consumer is waiting to take element...
+Consumer received Element: A 1
+Consumer is waiting to take element...
+Producer is waiting to transfer...
+producer transfered element: A 2
+Consumer received Element: A 2
+```
+
 # 参考
-[聊聊并发（七）——Java中的阻塞队列](http://ifeve.com/java-blocking-queue/)
-[Java 并发 --- 阻塞队列总结](https://blog.csdn.net/u014634338/article/details/78915965)
-[Java并发编程-阻塞队列(BlockingQueue)的实现原理](https://blog.csdn.net/chenchaofuck1/article/details/51660119)
-[java并发之SynchronousQueue实现原理](https://blog.csdn.net/yanyan19880509/article/details/52562039)
-[使用delayedQueue实现你本地的延迟队列](https://blog.csdn.net/u011001723/article/details/51882887)
-[DelayedQueue学习笔记](https://www.jianshu.com/p/5b48180bafce)
+[聊聊并发（七）——Java中的阻塞队列](http://ifeve.com/java-blocking-queue/)</br>
+[Java 并发 --- 阻塞队列总结](https://blog.csdn.net/u014634338/article/details/78915965)</br>
+[Java并发编程-阻塞队列(BlockingQueue)的实现原理](https://blog.csdn.net/chenchaofuck1/article/details/51660119)</br>
+[java并发之SynchronousQueue实现原理](https://blog.csdn.net/yanyan19880509/article/details/52562039)</br>
+[使用delayedQueue实现你本地的延迟队列](https://blog.csdn.net/u011001723/article/details/51882887)</br>
+[DelayedQueue学习笔记](https://www.jianshu.com/p/5b48180bafce)</br>
+[(十六)java多线程之优先队列PriorityBlockingQueue](https://segmentfault.com/a/1190000009111757)</br>
+[线程池工作窃取实例](https://segmentfault.com/a/1190000011120556)</br>
