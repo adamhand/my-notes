@@ -70,8 +70,11 @@ SynchronousQueue有两种模式：
 所谓公平就是遵循先来先服务的原则，因此其内部使用了一个FIFO队列 来实现其功能。 
     - 非公平模式 
 SynchronousQueue 中的非公平模式是默认的模式，其内部使用栈来实现其功能，也就是 后来的先服务。
-- **LinkedTransferQueue**:LinkedTransferQueue 和SynchronousQueue 其实基本是差不多的，两者都是无锁带阻塞功能的队列，SynchronousQueue 通过内部类Transferer 来实现公平和非公平队列 
+- **LinkedTransferQueue**:LinkedTransferQueue 和SynchronousQueue 其实基本是差不多的，两者都是无锁带阻塞功能的队列，SynchronousQueue 通过内部类Transferer 来实现公平和非公平队列。
 在LinkedTransferQueue 中没有公平与非公平的区分，LinkedTransferQueue 实现了TransferQueue接口，该接口定义的是带阻塞操作的操作，相比SynchronousQueue 中的Transferer 功能更丰富。 
+
+LinkedTransferQueue是 SynchronousQueue 和 LinkedBlockingQueue 的合体，性能比 LinkedBlockingQueue 更高（没有锁操作），比 SynchronousQueue能存储更多的元素。
+
 LinkedTransferQueue是基于链表的FIFO无界阻塞队列，它是JDK1.7才添加的阻塞队列，有4种操作模式：
 ```java
 private static final int NOW   = 0; // for untimed poll, tryTransfer
@@ -91,7 +94,7 @@ private static final int TIMED = 3; // for timed poll, tryTransfer
 
 **加锁的队列**是使用ReentrantLock的Condition的await()和signal()方法来实现生产者和消费者之间通信的，当生产者往满的队列里添加元素时会阻塞住生产者，当消费者消费了一个队列中的元素后，会通知生产者当前队列可用。而await()方法调用的是LockSupport.park()方法，这个park方法调用的又是调用的unsafe.park()方法实现队列的阻塞的。
 
-**不加锁的队列**使用的是**CAS算法**+**LockSupport.park()/unpark()**方法来实现的。
+**不加锁的队列**使用的是**CAS算法** + **LockSupport.park()/unpark()** 方法来实现的。
 
 下面以ArrayBlockingQueue为例看一下。通过查看JDK源码发现ArrayBlockingQueue使用了Condition来实现，代码如下：
 ```java
