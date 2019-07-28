@@ -381,7 +381,7 @@ public class Solution {
 # 7. 用两个栈实现队列
 用两个栈来实现一个队列，完成队列的 Push 和 Pop 操作。
 
-思路：stack1完成push操作，stack2完成pop操作。每次pop时，都要将stack1中的元素放入stack2中。
+思路：stack1完成push操作，stack2完成pop操作。每次pop时，如果stack2不为空，都要将stack1中的元素放入stack2中。
 ```java
 public class Solution {
     Stack<Integer> stack1 = new Stack<Integer>();
@@ -401,6 +401,66 @@ public class Solution {
     }
 }
 ```
+
+## 相似：使用两个队列实现一个栈
+思路：因为队列是先进先出，所以要拿到队列中最后压入的数据，只能每次将队列中数据pop到只剩一个，此时这个数据为最后压入队列的数据，在每次pop时，将数据压入到另一个队列中。每次执行delete操作时，循环往复。
+
+代码如下：
+
+```java
+public class QueueToStack {
+    private LinkedList<Integer> queue1 = new LinkedList<>();
+    private LinkedList<Integer> queue2 = new LinkedList<>();
+
+    public void add(int elem) {
+        if (!queue1.isEmpty()) {
+            queue1.add(elem);
+        } else {
+            queue2.add(elem);
+        }
+    }
+
+    public int poll() {
+        if (!queue1.isEmpty()) {
+            int size = queue1.size();
+            while (size > 1) {
+                queue2.addFirst(queue1.pollFirst());
+                size--;
+            }
+            return queue1.pollFirst();
+        } else if (!queue2.isEmpty()) {
+            int size = queue2.size();
+            while (size > 1) {
+                queue1.addFirst(queue2.pollFirst());
+                size--;
+            }
+            return queue2.pollFirst();
+        } else {
+            return -1;
+        }
+    }
+
+    public int size() {
+        return queue1.isEmpty() ? queue2.size() : queue1.size();
+    }
+
+    public static void main(String[] args) {
+        QueueToStack qts = new QueueToStack();
+
+        qts.add(1);
+        qts.add(2);
+        qts.add(3);
+
+        System.out.println(qts.poll());
+
+        qts.add(4);
+        qts.add(5);
+
+        System.out.println(qts.poll());
+    }
+}
+```
+
 # 8.斐波那契数列
 ![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/Fibonacci.PNG)
 
