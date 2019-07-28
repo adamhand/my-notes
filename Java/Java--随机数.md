@@ -194,7 +194,7 @@ public class UUIDDemo {
 ```
 
 ## 参考
-[并发包中ThreadLocalRandom类原理剖析](https://www.jianshu.com/p/9c2198586f9b)
-[Java Random、ThreadLocalRandom、UUID类中的方法应用（随机数）](https://www.cnblogs.com/jiangxifanzhouyudu/p/6659670.html?utm_source=itdadao&utm_medium=referral)
-[多线程下ThreadLocalRandom用法](https://www.jianshu.com/p/89dfe990295c)
-[java类uuid源码分析](https://blog.csdn.net/wobushixiaobailian/article/details/86065041#_94)
+[并发包中ThreadLocalRandom类原理剖析](https://www.jianshu.com/p/9c2198586f9b)</br>
+[Java Random、ThreadLocalRandom、UUID类中的方法应用（随机数）](https://www.cnblogs.com/jiangxifanzhouyudu/p/6659670.html?utm_source=itdadao&utm_medium=referral)</br>
+[多线程下ThreadLocalRandom用法](https://www.jianshu.com/p/89dfe990295c)</br>
+[java类uuid源码分析](https://blog.csdn.net/wobushixiaobailian/article/details/86065041#_94)</br>
