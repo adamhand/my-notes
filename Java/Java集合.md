@@ -60,7 +60,7 @@ Java中的集合主要分为两种：**Collection**和**Map**。Collection存储
 ## Map
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/map.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/map.png">
 </div>
 
 - TreeMap：基于红黑树实现。
@@ -108,7 +108,7 @@ Object[] toArray();//将集合转化成数组
 List中的元素是有序的（存入和取出的顺序一致），元素都有索引，而且可以重复。List中常用的方法有：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.png">
 </div>
 
 ### 1.1 LinkedList
@@ -116,7 +116,7 @@ List中的元素是有序的（存入和取出的顺序一致），元素都有�
 内部是链表数据结构，是不同步的，增删元素比较快。常用方法如下：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.png">
 </div>
 
 ### 1.2. ArrayList
@@ -768,12 +768,12 @@ CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个
 
 - 当有新元素加入的时候，如下图，创建新数组，并往新数组中加入一个新元素,这个时候，array这个引用仍然是指向原数组的。
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite1.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite1.png">
 </div>
 
 - 当元素在新数组添加成功后，将array这个引用指向新数组。
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite2.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/copyonwrite2.png">
 </div>
 
 #### 3. 写操作
@@ -1080,7 +1080,7 @@ void afterNodeAccess(Node<K,V> e) {
 标注的情况如下图所示（特别说明一下，这里是显示链表的修改后指针的情况，实际上在桶里面的位置是不变的，只是前后的指针指向的对象变了）：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/linkedhashmap.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/linkedhashmap.png">
 </div>
 
 
