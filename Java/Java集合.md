@@ -108,7 +108,7 @@ Object[] toArray();//将集合转化成数组
 List中的元素是有序的（存入和取出的顺序一致），元素都有索引，而且可以重复。List中常用的方法有：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/List.PNG">
 </div>
 
 ### 1.1 LinkedList
@@ -116,7 +116,7 @@ List中的元素是有序的（存入和取出的顺序一致），元素都有�
 内部是链表数据结构，是不同步的，增删元素比较快。常用方法如下：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/LinkedList.PNG">
 </div>
 
 ### 1.2. ArrayList
@@ -1281,10 +1281,11 @@ public class LCUCache {
 [3, 1, 4]
 ```
 #### 6. 参考
-> 1. https://www.cnblogs.com/joemsu/p/7787043.html
-2. https://www.jianshu.com/p/e406d405e18d
-3. http://www.importnew.com/16695.html
-4. http://www.importnew.com/23178.html
-5. http://www.importnew.com/17561.html
-6. http://www.importnew.com/18706.html
-7. http://www.importnew.com/18726.html
+
+- https://www.cnblogs.com/joemsu/p/7787043.html
+- https://www.jianshu.com/p/e406d405e18d
+- http://www.importnew.com/16695.html
+- http://www.importnew.com/23178.html
+- http://www.importnew.com/17561.html
+- http://www.importnew.com/18706.html
+- http://www.importnew.com/18726.html
