@@ -822,7 +822,7 @@ public E get(int index) {
 ```
 
 #### 5. 使用场景
-&emsp； 通过上面的分析，CopyOnWriteArrayList 有几个缺点： 
+通过上面的分析，CopyOnWriteArrayList 有几个缺点： 
 
 (1)由于写操作的时候，需要拷贝数组，会消耗内存，如果原数组的内容比较多的情况下，可能导致young gc或者full gc
 
