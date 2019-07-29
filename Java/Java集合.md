@@ -829,7 +829,7 @@ public E get(int index) {
 (2)不能用于实时读的场景，像拷贝数组、新增元素都需要时间，所以调用一个set操作后，读取到数据可能还是旧的,虽然CopyOnWriteArrayList 能做到最终一致性,但是还是没法满足实时性要求；
 
 
-CopyOnWriteArrayList 合适读多写少的场景，不过这类慎用,因为谁也没法保证CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点多，每次add/set都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种操作分分钟引起故障。
+CopyOnWriteArrayList 合适 **读多写少** 的场景，不过这类慎用,因为谁也没法保证CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点多，每次add/set都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种操作分分钟引起故障。
 
 #### 6. 自己实现CopyOnWriteMap
 
@@ -869,7 +869,8 @@ public class CopyOnWriteMap<K, V> implements Map<K, V>, Cloneable {
 }
 ```
 #### 7. 透露的思想
-> - 读写分离，读和写分开 
+
+- 读写分离，读和写分开 
 - 最终一致性 
 - 使用另外开辟空间的思路，来解决并发冲突
 
@@ -976,7 +977,7 @@ null:11
 {s1=1, s2=2, s3=3, s4=4, s5=5, s6=6, s7=7, s8=8, null=11}
 ```
 
-**注意：**如果将上面accessOrder中的的遍历方式改为：
+**注意：** 如果将上面accessOrder中的的遍历方式改为：
 ```java
 for(Iterator<String> iterator = map.keySet().iterator();iterator.hasNext();){
     String name = iterator.next();
@@ -1214,7 +1215,7 @@ abstract class LinkedHashIterator {
     return next != null;
   }
 
-  //这里采用的是链表方式的遍历方式，有兴趣的园友可以去上一章看看HashMap的遍历方式
+  //这里采用的是链表方式的遍历方式
   final LinkedHashMap.Entry<K,V> nextNode() {
     LinkedHashMap.Entry<K,V> e = next;
     if (modCount != expectedModCount)
