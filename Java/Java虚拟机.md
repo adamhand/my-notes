@@ -88,18 +88,15 @@ Java虚拟机对Class文件的每一部分(包括常量池)的格式都有严格
 
 
 ***补充：符号引用和直接引用***
-> 
 
 在JVM中，类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载、验证、准备、解析、初始化、使用和卸载7个阶段。而解析阶段即是虚拟机将常量池内的符号引用替换为直接引用的过程。
->
+
 - 符号引用（Symbolic References）：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能够无歧义的定位到目标即可。例如，在Class文件中它以CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info等类型的常量出现。符号引用与虚拟机的内存布局无关，引用的目标并不一定加载到内存中。在Java中，一个java类将会编译成一个class文件。在编译时，java类并不知道所引用的类的实际地址，因此只能使用符号引用来代替。比如org.simple.People类引用了org.simple.Language类，在编译时People类并不知道Language类的实际内存地址，因此只能使用符号org.simple.Language（假设是这个，当然实际中是由类似于CONSTANT_Class_info的常量来表示的）来表示Language类的地址。各种虚拟机实现的内存布局可能有所不同，但是它们能接受的符号引用都是一致的，因为符号引用的字面量形式明确定义在Java虚拟机规范的Class文件格式中。
->
 - 直接引用：
 直接引用可以是
     - 直接指向目标的指针（比如，指向“类型”【Class对象】、类变量、类方法的直接引用可能是指向方法区的指针）
     - 相对偏移量（比如，指向实例变量、实例方法的直接引用都是偏移量）
     - 一个能间接定位到目标的句柄
->
 
 直接引用是和虚拟机的布局相关的，同一个符号引用在不同的虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经被加载入内存中了。
 
@@ -123,12 +120,12 @@ Java虚拟机对Class文件的每一部分(包括常量池)的格式都有严格
 到了JDK1.8版本，永久代已经被完全移除，取而代之的是**元空间**。**此时，原先存放在方法区的class文件信息被放到元空间，而原先存放在方法区的运行时常量池被放到了堆中**。
 
 ### 参考
-[java jdk1.7常量池移到哪去了？](https://blog.csdn.net/u014039577/article/details/50377805/)
-[字符串常量池、class常量池和运行时常量池](https://blog.csdn.net/qq_26222859/article/details/73135660)
-[JVM-String常量池与运行时常量池](https://blog.csdn.net/Sugar_Rainbow/article/details/68150249)
-[Java中的常量池(字符串常量池、class常量池和运行时常量池)](https://blog.csdn.net/zm13007310400/article/details/77534349)
-[JVM的方法区和永久带是什么关系？](https://blog.csdn.net/goldenfish1919/article/details/81216560)
-[jdk1.6 1.7 1.8 运行时常量池位置的变化](https://blog.csdn.net/ychenfeng/article/details/77413206)
+[java jdk1.7常量池移到哪去了？](https://blog.csdn.net/u014039577/article/details/50377805/)</br>
+[字符串常量池、class常量池和运行时常量池](https://blog.csdn.net/qq_26222859/article/details/73135660)</br>
+[JVM-String常量池与运行时常量池](https://blog.csdn.net/Sugar_Rainbow/article/details/68150249)</br>
+[Java中的常量池(字符串常量池、class常量池和运行时常量池)](https://blog.csdn.net/zm13007310400/article/details/77534349)</br>
+[JVM的方法区和永久带是什么关系？](https://blog.csdn.net/goldenfish1919/article/details/81216560)</br>
+[jdk1.6 1.7 1.8 运行时常量池位置的变化](https://blog.csdn.net/ychenfeng/article/details/77413206)</br>
 
 ---
 
@@ -137,16 +134,16 @@ Java虚拟机对Class文件的每一部分(包括常量池)的格式都有严格
 ### **stackoverflow：**
 每当java程序启动一个新的线程时，java虚拟机会为他分配一个栈，java栈以帧为单位保持线程运行状态；当线程调用一个方法是，jvm压入一个新的栈帧到这个线程的栈中，只要这个方法还没返回，这个栈帧就存在。 
 
-如果方法的嵌套调用层次太多(如递归调用),随着java栈中的帧的增多，最终导致这个线程的栈中的所有栈帧的大小的总和大于-Xss设置的值，而产生生StackOverflowError溢出异常。
+如果方法的嵌套调用层次太多(如递归调用),随着java栈中的帧的增多，最终导致这个线程的栈中的所有栈帧的大小的总和大于-Xss设置的值，而产生StackOverflowError溢出异常。
 
 ### **outofmemory：**
 #### **栈内存溢出**
 
-java程序启动一个新线程时，没有足够的空间为改线程分配java栈，一个线程java栈的大小由-Xss设置决定；JVM则抛出OutOfMemoryError异常。
+java程序启动一个新线程时，没有足够的空间为该线程分配java栈，一个线程java栈的大小由-Xss设置决定；JVM则抛出OutOfMemoryError异常。
 
 #### **堆内存溢出**
 
-java堆用于存放对象的实例，当需要为对象的实例分配内存时，而堆的占用已经达到了设置的最大值(通过-Xmx)设置最大值，则抛出OutOfMemoryError异常。
+java堆用于存放对象的实例，当需要为对象的实例分配内存时，而堆的占用已经达到了设置的最大值(通过-Xmx设置最大值)，则抛出OutOfMemoryError异常。
 
 #### **方法区内存溢出**
 
