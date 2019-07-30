@@ -778,7 +778,7 @@ Serial 翻译为串行，也就是说它以串行的方式执行。在垃圾收�
 
 默认开启的线程数量与 CPU 数量相同，可以使用 -XX:ParallelGCThreads 参数来设置线程数。
 
-### 3.  Parallel Scavenge 收集器
+### 3.  Parallel Scavenge[ˈskævɪndʒ] 收集器
 
 与 ParNew 一样是多线程收集器。
 
@@ -871,8 +871,18 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
 
 **只有第二步不需要停顿。**
 
+### 补充：如何查看JVM当前使用的垃圾回收算法
+使用`java -XX:+PrintCommandLineFlags -version`命令，比如在`jdk1.8`中使用该命令打印的结果如下：
 
-***补充：堆中老年代和年轻代的划分：***
+```
+-XX:InitialHeapSize=132165184 -XX:MaxHeapSize=2114642944 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+java version "1.8.0_181"
+Java(TM) SE Runtime Environment (build 1.8.0_181-b13)
+Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
+```
+之后再根据《深入理解Java虚拟机：JVM高级特性与最佳实践》第二版第`90`页表`3-2`的介绍，可以看到，`jdk1.8`使用的默认垃圾收集器为`新生代（Parallel Scavenge）+ 老年代（Serial Old）`。
+
+### 补充：堆中老年代和年轻代的划分：
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/Eden%20and%20survivor.jpg" width="450">
 </div>
