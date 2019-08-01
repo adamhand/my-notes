@@ -670,6 +670,8 @@ SoftReference<Object> sf = new SoftReference<Object>(obj);
 obj = null;  // 使对象只被软引用关联
 ```
 
+例子：Mybatis中的本地缓存SoftCache就是使用 softReference模式，本地内存不足时会回收cache中的对象。
+
 ### 3. 弱引用
 
 弱引用也是用来描述非必须对象的，但是它的强度比软引用更弱一些。被弱引用关联的对象一定会被回收，也就是说它只能存活到下一次垃圾回收发生之前。使用 WeakReference 类来实现弱引用。
@@ -678,6 +680,8 @@ Object obj = new Object();
 WeakReference<Object> wf = new WeakReference<Object>(obj);
 obj = null;
 ```
+
+例子：JDK中ThreadLocal就是使用的W eakReference。
 
 ### 4. 虚引用
 
@@ -693,6 +697,8 @@ Object obj = new Object();
 PhantomReference<Object> pf = new PhantomReference<Object>(obj);
 obj = null;
 ```
+
+例子： DirectByteBuffer对象在创建的时候关联了一个PhantomReference（Cleaner），在这个子类中调用Unsafe的free接口来释放DirectByteBuffer对应的堆外内存块 。
 
 ## 垃圾收集算法
 ### 1. 标记-清除(Mark-Sweep)算法
@@ -938,7 +944,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
 
 ### 4. 动态对象年龄判定
 
-虚拟机并不是永远地要求对象的年龄必须达到 MaxTenuringThreshold 才能晋升老年代，如果在 Survivor 中相同年龄所有对象大小的总和大于 Survivor 空间的一半(注意这里的“Survivor 空间的一半”指的是一块servivor空间，比如from空间为1M，则这里的“一般是指”0.5M)，则年龄大于或等于该年龄的对象可以直接进入老年代，无需等到 MaxTenuringThreshold 中要求的年龄。
+虚拟机并不是永远地要求对象的年龄必须达到 MaxTenuringThreshold 才能晋升老年代，**如果在 Survivor 中相同年龄所有对象大小的总和大于 Survivor 空间的一半(注意这里的“Survivor 空间的一半”指的是一块servivor空间，比如from空间为1M，则这里的“一般是指”0.5M)，则年龄大于或等于该年龄的对象可以直接进入老年代**，无需等到 MaxTenuringThreshold 中要求的年龄。
 
 ### 5. 空间分配担保
 
@@ -948,7 +954,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
 如果不成立的话虚拟机会查看 HandlePromotionFailure 设置值是否允许担保失败，如果允许那么就会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试着进行一次 Minor GC；如果小于，或者 HandlePromotionFailure 设置不允许冒险，那么就要进行一次 Full GC。
 
 
- 需要注意的是，在jdk6 uptate 24之后，HandlePromotionFailure已经不起作用了，规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则将进行Full GC。
+ 需要注意的是，在jdk6 uptate 24之后，HandlePromotionFailure已经不起作用了，规则变为**只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则将进行Full GC。**
 
 ## 测试
 ### 1. 对象优先在 Eden 分配测试
