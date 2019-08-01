@@ -86,7 +86,7 @@ Java虚拟机对Class文件的每一部分(包括常量池)的格式都有严格
 常量池中可以存储的信息具体如下图所示：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/constant_pool.jpg" width="500" height="500">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/constant_pool.jpg" width="500">
 </div>
 
 更加详细的可以看[这里](https://blog.csdn.net/wangtaomtk/article/details/52267548)。需要注意的是，静态变量在方法区中，但是不是在运行时常量池中。
