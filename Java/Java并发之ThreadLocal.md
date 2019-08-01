@@ -376,12 +376,12 @@ public static Session getSession() throws InfrastructureException {
 
 
 # 参考
-[【死磕Java并发】—–深入分析ThreadLocal](http://cmsblogs.com/?p=2442)
-[深入分析 ThreadLocal内存泄漏问题](http://blog.xiaohansong.com/2016/08/06/ThreadLocal-memory-leak/)
-[Java并发编程：深入剖析ThreadLocal](https://www.cnblogs.com/dolphin0520/p/3920407.html)
-[Java多线程编程-（8）-多图深入分析ThreadLocal原理](https://blog.csdn.net/xlgen157387/article/details/78297568)
-[ThreadLocal类详解与源码分析](https://blog.csdn.net/shenlei19911210/article/details/50060223)
-[ThreadLocal解决什么问题](https://www.cnblogs.com/jasongj/p/8079718.html)
-[对ThreadLocal实现原理的一点思考](https://www.jianshu.com/p/ee8c9dccc953)
-[ThreadLocalMap的enrty的key为什么要设置成弱引用](https://blog.csdn.net/qq646040754/article/details/82493409)
+[【死磕Java并发】—–深入分析ThreadLocal](http://cmsblogs.com/?p=2442)</br>
+[深入分析 ThreadLocal内存泄漏问题](http://blog.xiaohansong.com/2016/08/06/ThreadLocal-memory-leak/)</br>
+[Java并发编程：深入剖析ThreadLocal](https://www.cnblogs.com/dolphin0520/p/3920407.html)</br>
+[Java多线程编程-（8）-多图深入分析ThreadLocal原理](https://blog.csdn.net/xlgen157387/article/details/78297568)</br>
+[ThreadLocal类详解与源码分析](https://blog.csdn.net/shenlei19911210/article/details/50060223)</br>
+[ThreadLocal解决什么问题](https://www.cnblogs.com/jasongj/p/8079718.html)</br>
+[对ThreadLocal实现原理的一点思考](https://www.jianshu.com/p/ee8c9dccc953)</br>
+[ThreadLocalMap的enrty的key为什么要设置成弱引用](https://blog.csdn.net/qq646040754/article/details/82493409)</br>
 《码出高效 Java开发手册》

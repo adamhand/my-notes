@@ -63,6 +63,15 @@ Java对是垃圾收集器管理的主要区域，现代的垃圾收集器基本�
 可以通过 -Xms 和 -Xmx 两个虚拟机参数来指定一个程序的堆内存大小，第一个参数设置初始值，第二个参数设置最大值。
 > java -Xms1M -Xmx2M HackTheJava
 
+### 补充：JIT编译技术
+JIT即(Just in Time)。HotSpot 虚拟机执行 Java 程序时，先通过解释器对代码解释执行，发现某个方法或代码块执行比较频繁后，对热点代码进行编译，编译后生成与本地平台相关的机器码，再去执行机器码获得较高的运行效率。必要时，也会通过逆优化从即时编译回到解释执行，如编译器遇到罕见陷阱的情况。
+
+具体可以参见[浅析 JIT 即时编译技术](https://www.cnblogs.com/caiguoqing/p/6684296.html)和[深入浅出 JIT 编译器](https://blog.csdn.net/boomlei/article/details/81289518)
+
+### 补充：逃逸分析技术
+具体可以参考[对象并不一定都是在堆上分配内存的。](https://blog.csdn.net/w372426096/article/details/80333657)、[JVM成神之路-Java中的逃逸分析](https://blog.csdn.net/w372426096/article/details/80938788)、[一个例子理解逃逸分析。](https://www.jianshu.com/p/d5a645fbfda9)和[
+Java之JVM逃逸分析](https://blog.csdn.net/blueheart20/article/details/76167489)。
+
 ## 方法区
 
 用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。虽然Java虚拟机规范把方法区描述为堆的一个逻辑部分，但是它却又一个别名叫做Non-Heap（非堆），目的应该是与Java堆分开。
