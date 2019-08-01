@@ -1296,7 +1296,7 @@ JDK 1.8 的对 JVM 架构的改造将**类元数据放到本地内存中(Meta Sp
 
 对于类的加载，可以分为数组类型和非数组类型，对于非数组类型可以通过系统的引导类加载器进行加载，也可以通过自定义的类加载器进行加载(只要重写一个类加载器的loadClass()方法)。
 
-数组类本身不通过类加载器进行加载，而是通过Java虚拟机直接进行加载的，但数组去除所有维度之后的类型(数组元素类型)最终还是要依靠类加载器进行加载的，所以数组类型的类与类加载器的关系还是很密切的。通常一个数组类型的类进行加载需要遵循以下的原则：
+**数组类本身不通过类加载器进行加载，而是通过Java虚拟机直接进行加载的**，但数组去除所有维度之后的类型(数组元素类型)最终还是要依靠类加载器进行加载的，所以数组类型的类与类加载器的关系还是很密切的。通常一个数组类型的类进行加载需要遵循以下的原则：
 
 - 如果数组的组件类型（Component Type，也就是数组类去除一个维度之后的类型，比如对于二维数组，去除一个维度之后是一个一维数组）是引用类型，那么递归采用上面的过程加载这个组件类型
 - 如果数组类的组件类型不是引用类型，比如是基本数据类型(比如int[] 数组)，Java虚拟机将把数组类标记为与引导类加载器关联
@@ -1472,6 +1472,7 @@ public class NotInitialization_2 {
     }
 }
 ```
+上述程序不会有输出。
 
 - 常量在编译阶段会存入调用类的常量池中，本质上并没有直接引用到定义常量的类，因此不会触发定义常量的类的初始化。
 ```java
@@ -1491,6 +1492,10 @@ public class NotInitialization_3 {
         System.out.println(constClass.HELLOWORLD);
     }
 }
+```
+上述程序输出结果为：
+```java
+hello world
 ```
 
 ## 类与类加载器
@@ -1520,7 +1525,7 @@ public class NotInitialization_3 {
 下图展示的类加载器之间的层次关系，称为类加载器的双亲委派模型（Parents Delegation Model）。该模型要求除了顶层的启动类加载器外，其余的类加载器都应有自己的父类加载器。这里类加载器之间的父子关系一般通过组合（Composition）关系来实现，而不是通过继承（Inheritance）的关系实现。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/parentsclassloader.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/classloader_extend.jpg">
 </div>
 
 ### 1. 工作过程
