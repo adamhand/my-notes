@@ -27,7 +27,7 @@
 该区域可能抛出以下异常：
 
 - 当线程请求的栈深度超过设置的最大值，会抛出 StackOverflowError 异常；
-- 如果虚拟机栈可以动态扩展（当前大部分的 Java 虚拟机都可动态扩展，只不过 Java 虚拟机规范中也允许固定长度的虚拟机栈，栈进行动态扩展时如果无法申请到足够内存，会抛出 OutOfMemoryError 异常。
+- 如果虚拟机栈可以动态扩展（当前大部分的 Java 虚拟机都可动态扩展，只不过 Java 虚拟机规范中也允许固定长度的虚拟机栈），栈进行动态扩展时如果无法申请到足够内存，会抛出 OutOfMemoryError 异常。
 
 ## 本地方法栈
 
@@ -82,6 +82,14 @@ Java虚拟机对Class文件的每一部分(包括常量池)的格式都有严格
 运行时常量池相对于Class文件常量池的另外一个重要特性是具备动态性，除了在编译期生成的常量，还允许动态生成，例如 String 类的 intern()。
 
 当常量池无法再申请到内存时会抛出OutOfMemoryError异常。
+
+常量池中可以存储的信息具体如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/constant_pool.jpg">
+</div>
+
+更加详细的可以看[这里](https://blog.csdn.net/wangtaomtk/article/details/52267548)。需要注意的是，静态变量在方法区中，但是不是在运行时常量池中。
 
 
 ***补充：[关于class文件](https://www.cnblogs.com/yaoyinglong/p/JavaClass.html)***
