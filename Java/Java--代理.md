@@ -80,20 +80,20 @@ JDKProxy使用反射机制实现，CGLib使用ASM实现。
 
 ## JDKProxy
 使用JDKProxy实现的动态代理主要包含以下三个元素：
->- 业务接口（Interface）
+- 业务接口（Interface）
 业务的抽象表示
->- 业务具体实现类（concreteManager）
+- 业务具体实现类（concreteManager）
 实现业务接口，执行具体的业务操作
->- 业务代理类（proxyHandler，实现了InvocationHandler接口的类）
+- 业务代理类（proxyHandler，实现了InvocationHandler接口的类）
 代理方法的直接调用者，通过InvocationHandler中的invoke方法直接发起代理
->- 客户端调用对象（client）
+- 客户端调用对象（client）
 发起业务
 
 实现步骤如下：
->- 创建被代理的接口和类；
->- 创建一个类实现InvocationHandler接口，实现其中的invoke()方法；
->- 调用Proxy的静态方法，创建一个代理类：newProxyInstance(ClassLoader loader, Class[] interfaces, InvocationHander h)；
->- 通过代理调用方法；
+- 创建被代理的接口和类；
+- 创建一个类实现InvocationHandler接口，实现其中的invoke()方法；
+- 调用Proxy的静态方法，创建一个代理类：newProxyInstance(ClassLoader loader, Class[] interfaces, InvocationHander h)；
+- 通过代理调用方法；
 
 还是基于上面的Hello接口和HelloImp类。下面创建一个实现InvocationHandler接口的方法DynamicProxy，在 DynamicProxy 类中，定义了一个 Object 类型的 target 变量，它就是被代理的目标对象，通过构造函数来初始化。
 
@@ -173,10 +173,10 @@ Cglib是一个优秀的动态代理框架，它的底层使用ASM在内存中动
 cglib有两种可选方式，**继承**和**引用**。第一种是基于继承实现的动态代理，所以可以直接通过super调用target方法，但是这种方式在spring中是不支持的，因为这样的话，这个target对象就不能被spring所管理，所以cglib还是才用类似jdk的方式，通过持有target对象来达到拦截方法的效果。
 
 使用CGLib实现代理的步骤如下：
->- 创建被代理的接口和类；
->- 实现 CGLib 提供的 MethodInterceptor 实现类，并填充 intercept() 方法；
->- 通过Enhancer类产生一个代理类；
->- 通过代理调用方法；
+- 创建被代理的接口和类；
+- 实现 CGLib 提供的 MethodInterceptor 实现类，并填充 intercept() 方法；
+- 通过Enhancer类产生一个代理类；
+- 通过代理调用方法；
 
 ```java
 public class CGLibProxy implements MethodInterceptor {
@@ -233,16 +233,16 @@ After
 ```
 
 # 参考
-[Proxy那点事](https://my.oschina.net/huangyong/blog/159788)
-[Java动态代理实现及原理分析](https://www.jianshu.com/p/23d3f1a2b3c7)
-[CGLIB介绍与原理](https://blog.csdn.net/zghwaicsdn/article/details/50957474)
-[静态代理和动态代理的理解](https://blog.csdn.net/wangqyoho/article/details/77584832)
-[java动态代理原理及解析](https://blog.csdn.net/Scplove/article/details/52451899)
-[详解java动态代理机制以及使用场景(一)](https://blog.csdn.net/u011784767/article/details/78281384)
-[Java动态代理的两种实现方法](https://blog.csdn.net/heyutao007/article/details/49738887)
-[Java设计模式之动态代理](https://www.cnblogs.com/lfdingye/p/7717063.html)
-[CGLib之Enhancer](https://blog.csdn.net/jiaotuwoaini/article/details/51675684)
-[代理8 cglib demo以及Enhancer源码解析](https://www.jianshu.com/p/20203286ccd9)
-[基于 JDK 的动态代理-佟刚老师《Spring4视频教程》学习笔记（16）](https://blog.csdn.net/lw_power/article/details/44278419)
-[java的动态代理机制详解](http://www.importnew.com/20732.html)
-[JAVA动态代理](http://www.importnew.com/26166.html)
+[Proxy那点事](https://my.oschina.net/huangyong/blog/159788)</br>
+[Java动态代理实现及原理分析](https://www.jianshu.com/p/23d3f1a2b3c7)</br>
+[CGLIB介绍与原理](https://blog.csdn.net/zghwaicsdn/article/details/50957474)</br>
+[静态代理和动态代理的理解](https://blog.csdn.net/wangqyoho/article/details/77584832)</br>
+[java动态代理原理及解析](https://blog.csdn.net/Scplove/article/details/52451899)</br>
+[详解java动态代理机制以及使用场景(一)](https://blog.csdn.net/u011784767/article/details/78281384)</br>
+[Java动态代理的两种实现方法](https://blog.csdn.net/heyutao007/article/details/49738887)</br>
+[Java设计模式之动态代理](https://www.cnblogs.com/lfdingye/p/7717063.html)</br>
+[CGLib之Enhancer](https://blog.csdn.net/jiaotuwoaini/article/details/51675684)</br>
+[代理8 cglib demo以及Enhancer源码解析](https://www.jianshu.com/p/20203286ccd9)</br>
+[基于 JDK 的动态代理-佟刚老师《Spring4视频教程》学习笔记（16）](https://blog.csdn.net/lw_power/article/details/44278419)</br>
+[java的动态代理机制详解](http://www.importnew.com/20732.html)</br>
+[JAVA动态代理](http://www.importnew.com/26166.html)</br>
