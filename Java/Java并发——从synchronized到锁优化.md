@@ -84,8 +84,13 @@ synchronized用的锁是存在Java对象头里的，Hotspot虚拟机的对象头
 这样，当某个线程获得对象锁时，它们之间的状态如下图所示：
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/lock record.jpg">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/lock record.jpg" width="500">
 </div>
+
+所以，当线程进入同步块的时候，获得锁的过程应该包括如下过程(**此处还有待考究**)：
+
+- 尝试通过`monitorenter`获得对象的`monitor`
+- 成功获得之后会在栈帧中建立`lock record`字段，并与锁对象进行关联
 
 # 锁优化
 阻塞或唤醒一个Java线程需要操作系统切换CPU状态来完成，这种状态转换需要耗费处理器时间。如果同步代码块中的内容过于简单，状态转换消耗的时间有可能比用户代码执行的时间还要长。这种方式就是synchronized最初实现同步的方式，这就是JDK 6之前synchronized效率低的原因。这种依赖于操作系统Mutex Lock所实现的锁我们称之为“重量级锁”，JDK 6中为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”。
