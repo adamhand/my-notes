@@ -1371,9 +1371,48 @@ public class Erasure <T extends String>{
        6: putfield      #2                  // Field object:Ljava/lang/String;
        9: return
 ```
-可以看到，`T`没有被替换成Object而是被替换成String。于是可以得到结论：
+可以看到，`T`没有被替换成Object而是被替换成String。那么，一个具体的类型比如`String`类型在擦除之后是什么类型呢？例子如下：
 
-**在泛型类被类型擦除的时候，之前泛型类中的类型参数部分如果没有指定上限，如 `<T>` 则会被转译成普通的 Object 类型，如果指定了上限如 `<T extends String>` 则类型参数就被替换成类型上限。**
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+class GenTest {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        list.add("111");
+    }
+}
+```
+反编译之后结果如下：
+
+```java
+class GenTest {
+  GenTest();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: new           #2                  // class java/util/ArrayList
+       3: dup
+       4: invokespecial #3                  // Method java/util/ArrayList."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc           #4                  // String 111
+      11: invokeinterface #5,  2            // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      16: pop
+      17: return
+}
+```
+可以看到，擦除之后也是`Object`类型。
+
+
+于是可以得到结论：
+
+**在泛型类被类型擦除的时候，之前泛型类中的类型参数部分如果没有指定上限，如 `<T>` 则会被转译成普通的 Object 类型，如果指定了上限如 `<T extends String>` 则类型参数就被替换成类型上限。如果是一个具体的类型比如`String`也会被拆除称为`Object`类型**
 
 ## 类型擦除带来的局限性
 类型擦除，是泛型能够与之前的 java 版本代码兼容共存的原因。但也因为类型擦除，它会抹掉很多继承相关的特性，这是它带来的局限性。
