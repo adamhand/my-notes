@@ -68,18 +68,24 @@ synchronized用的锁是存在Java对象头里的，Hotspot虚拟机的对象头
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitorenterandexit.jpg">
 </div>
 
-Monitor是**线程私有**的数据结构，每个线程都有一个可用**monitor record**列表，同时
-还有一个全局的可用列表。每一个被锁住的对象都会和一个monitor record关联(对象头的MarkWord中的LockWord指向monitor record的起始地址)，同时monitor record中有一个owner字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用。其结构如下:
+在线程进入同步块的时候，如果同步对象锁状态为无锁状态，虚拟机首先将在当前线程的栈帧中建立一个**lock record**字段。每一个被锁住的对象都会和一个lock record关联(对象头的MarkWord中的LockWord指向lock record的起始地址)，同时lock record中有一个owner字段存放拥有该锁的线程的唯一标识，表示该锁被这个线程占用。其结构如下:
+
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/monitorstructure.jpg">
 </div>
 
-- **Owner：** 初始时为NULL表示当前没有任何线程拥有该monitor record，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为NULL；
-- **EntryQ:** 关联一个系统互斥锁（semaphore），阻塞所有试图锁住monitor record失败的线程。
-- **RcThis:** 表示blocked或waiting在该monitor record上的所有线程的个数。
+- **Owner：** 初始时为NULL表示当前没有任何线程拥有该lock record，当线程成功拥有该锁后保存线程唯一标识，当锁被释放时又设置为NULL；
+- **EntryQ:** 关联一个系统互斥锁（semaphore），阻塞所有试图锁住lock record失败的线程。
+- **RcThis:** 表示blocked或waiting在该lock record上的所有线程的个数。
 - **Nest:** 用来实现重入锁的计数。
 - **HashCode:** 保存从对象头拷贝过来的HashCode值（可能还包含GC age）。
 - **Candidate:** 用来避免不必要的阻塞或等待线程唤醒，因为每一次只有一个线程能够成功拥有锁，如果每次前一个释放锁的线程唤醒所有正在阻塞或等待的线程，会引起不必要的上下文切换（从阻塞到就绪然后因为竞争锁失败又被阻塞）从而导致性能严重下降。Candidate只有两种可能的值0表示没有需要唤醒的线程1表示要唤醒一个继任线程来竞争锁。
+
+这样，当某个线程获得对象锁时，它们之间的状态如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/lock record.jpg">
+</div>
 
 # 锁优化
 阻塞或唤醒一个Java线程需要操作系统切换CPU状态来完成，这种状态转换需要耗费处理器时间。如果同步代码块中的内容过于简单，状态转换消耗的时间有可能比用户代码执行的时间还要长。这种方式就是synchronized最初实现同步的方式，这就是JDK 6之前synchronized效率低的原因。这种依赖于操作系统Mutex Lock所实现的锁我们称之为“重量级锁”，JDK 6中为了减少获得锁和释放锁带来的性能消耗，引入了“偏向锁”和“轻量级锁”。
