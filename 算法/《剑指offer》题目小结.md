@@ -118,7 +118,7 @@ System.out.println(sb.toString());
 ```java
 public String replaceSpace(StringBuffer str) {
     for(int i = 0; i < str.length(); i++){
-        if(str.charAt(i) == ' '){
+        if(str.charAt(i) == ' '){ // 注意这里，因为是char，所以空格用' '来表示。如果是字符串，则空格用" "来表示
             str.replace(i, i+1, "%20");
         }
     }
