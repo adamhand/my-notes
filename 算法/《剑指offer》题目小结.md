@@ -235,6 +235,38 @@ public class Solution {
 }
 ```
 
+更清楚的写法：
+
+```java
+public class Solution {
+    Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
+    public TreeNode reConstructBinaryTree(int [] pre,int [] in) {
+        for (int i = 0; i < in.length; i++) {
+            indexMap.put(in[i], i);
+        }
+        
+        return coreConstructor(pre, in, 0, pre.length - 1, 0, in.length - 1);
+    }
+    
+    private TreeNode coreConstructor(int[] pre, int[] in, int preStart, int preEnd, int inStart, int inEnd) {        
+        if (preStart > preEnd) {
+            return null;
+        }
+        
+        TreeNode root = new TreeNode(pre[preStart]);
+        root.left = null;
+        root.right = null;
+        
+        int index = indexMap.get(pre[preStart]);
+        int leftLen = index - inStart;
+        root.left = coreConstructor(pre, in, preStart + 1, preStart + leftLen, inStart, index - 1);
+        root.right = coreConstructor(pre, in, preStart + leftLen + 1, preEnd, index + 1, inEnd);
+        
+        return root;
+    }
+}
+```
+
 - 解法2：和解法一的思想一样，只是更清楚一些。
 
 ```java

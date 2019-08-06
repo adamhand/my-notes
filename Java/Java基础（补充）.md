@@ -2017,3 +2017,10 @@ public class GetEnvTest {
 [System.getProperty()方法获取系统变量(转 阿进的写字台)](https://blog.csdn.net/qq_42875051/article/details/85990870)
 [System.getProperty()方法获取系统变量](https://blog.csdn.net/weixin_37139197/article/details/78877766)
 [JAVA System.getProperty() System.getenv()区别及示例](https://yiranwuqing.iteye.com/blog/720180)
+
+# 十六、小的需要注意的点
+## `length`、`length()`和`size()`的区别
+
+- `length`属性是针对数组说的,`length`这个属性表示数组的长度
+- `length()`方法是针对字符串`String`说的,`length()`表示字符串的长度
+- `size()`方法是针对泛型集合说的,`size()`表示泛型有多少个元素
