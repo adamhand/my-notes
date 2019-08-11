@@ -1871,7 +1871,7 @@ public static void mirrorBiTreeRecursively(BiTreeNode root){
 }
 ```
 
-> 思路二：非递归，使用栈。层次遍历，根节点不为 null 将根节点入队，判断队不为空时，节点出队，交换该节点的左右孩子，如果左右孩子不为空，将左右孩子入队。
+> 思路二：非递归，使用栈。层次遍历，根节点不为 null 将根节点入栈，判断队不为空时，节点出栈，交换该节点的左右孩子，如果左右孩子不为空，将左右孩子入栈。
 
 ```java
 //迭代。层次遍历
@@ -1897,6 +1897,33 @@ public static void swapSonNode(BiTreeNode root){
     root.setLeft(root.getRight());
     root.setRight(node);
 }
+
+这个题用栈和用队列的结果是相同的，比如用队列的代码如下：
+
+```java
+public void Mirror(TreeNode root) {
+    if (root == null)
+        return;
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        swapSonNode(node);
+        if (node.right != null) {
+            queue.add(node.right);
+        }
+        if (node.left != null) {
+            queue.add(node.left);
+        }
+    }
+}
+private void swapSonNode(TreeNode node) {
+    TreeNode memo = node.left;
+    node.left = node.right;
+    node.right = memo;
+}
+```
+
 ```
 
  树的节点结构如下：
