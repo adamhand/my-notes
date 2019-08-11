@@ -118,7 +118,7 @@ System.out.println(sb.toString());
 ```java
 public String replaceSpace(StringBuffer str) {
     for(int i = 0; i < str.length(); i++){
-        if(str.charAt(i) == ' '){
+        if(str.charAt(i) == ' '){ // 注意这里，因为是char，所以空格用' '来表示。如果是字符串，则空格用" "来表示
             str.replace(i, i+1, "%20");
         }
     }
@@ -230,6 +230,38 @@ public class Solution {
         int leftTreeSize = rootIndex - inStartIndex;
         root.left = reBuildBinaryTreeCore(preorder, preStartIndex+1, preStartIndex+leftTreeSize, inStartIndex, inStartIndex+leftTreeSize-1);
         root.right = reBuildBinaryTreeCore(preorder, preStartIndex+leftTreeSize+1, preEndIndex, inStartIndex+leftTreeSize+1, inEndIndex);
+        return root;
+    }
+}
+```
+
+更清楚的写法：
+
+```java
+public class Solution {
+    Map<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
+    public TreeNode reConstructBinaryTree(int [] pre,int [] in) {
+        for (int i = 0; i < in.length; i++) {
+            indexMap.put(in[i], i);
+        }
+        
+        return coreConstructor(pre, in, 0, pre.length - 1, 0, in.length - 1);
+    }
+    
+    private TreeNode coreConstructor(int[] pre, int[] in, int preStart, int preEnd, int inStart, int inEnd) {        
+        if (preStart > preEnd) {
+            return null;
+        }
+        
+        TreeNode root = new TreeNode(pre[preStart]);
+        root.left = null;
+        root.right = null;
+        
+        int index = indexMap.get(pre[preStart]);
+        int leftLen = index - inStart;
+        root.left = coreConstructor(pre, in, preStart + 1, preStart + leftLen, inStart, index - 1);
+        root.right = coreConstructor(pre, in, preStart + leftLen + 1, preEnd, index + 1, inEnd);
+        
         return root;
     }
 }
@@ -2031,13 +2063,12 @@ public ArrayList<Integer> printMatrix(int[][] matrix) {
 
  定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的min函数。在该栈中，调用min、push、pop的时间复杂度都是o（1）。
 
----
-> 思路：题目要求复杂度为O(1)，所以遍历的话肯定满足不了需求，一个想法就是用空间来换取时间。定义一个辅助栈来存放最小值。
-栈  3，4，2，5，1
-辅助栈 3，3，2，2，1
-每入栈一次，就与辅助栈顶比较大小，如果小就入栈，如果大就入栈当前的辅助栈顶
-当出栈时，辅助栈也要出栈
-这种做法可以保证辅助栈顶一定都当前栈的最小值
+> 思路：题目要求复杂度为O(1)，所以遍历的话肯定满足不了需求，一个想法就是用空间来换取时间。定义一个辅助栈来存放最小值。</br>
+数据栈  3，4，2，5，1</br>
+辅助栈 3，3，2，2，1</br>
+每入栈一次，就与辅助栈顶比较大小，如果小就将数据入辅助栈和数据栈，如果大就将数据入数据栈，同时将辅助栈栈顶元素再入一次辅助栈</br>
+当出栈时，辅助栈也要出栈</br>
+这种做法可以保证辅助栈顶一定都当前栈的最小值</br>
 ```java
 private Stack<Integer> dataStack = new Stack<>();
 private Stack<Integer> minStack = new Stack<>();
@@ -2105,8 +2136,7 @@ public int min(){
 
  例如序列 1,2,3,4,5 是某栈的压入顺序，序列 4,5,3,2,1 是该压栈序列对应的一个弹出序列，但 4,3,5,1,2 就不可能是该压栈序列的弹出序列。
 
----
-> 思路：使用一个栈来模拟压入弹出操作。按照入栈的顺序将元素压入模拟栈中，每压入一个元素，都要将当前栈顶元素和下一个出栈数字比较，如果相等，直接弹出；如果不相等，把压栈顺序中还没有入栈的数字压入模拟栈，知道把下一个需要弹出的数字压入栈顶位置。如果所有的数字都压入栈了仍然没有找到下一个弹出数字，那么该序列不可能是一个弹栈序列。
+> 思路：使用一个栈来模拟压入弹出操作。按照入栈的顺序将元素压入模拟栈中，每压入一个元素，都要将当前栈顶元素和下一个出栈数字比较，如果相等，直接弹出；如果不相等，把压栈顺序中还没有入栈的数字压入模拟栈，直到把下一个需要弹出的数字压入栈顶位置。如果所有的数字都压入栈了仍然没有找到下一个弹出数字，那么该序列不可能是一个弹栈序列。
 ```java
 public static boolean isAPopOrder(int[] pushSequence, int[] popSequence){
     if(pushSequence == null || popSequence == null)
