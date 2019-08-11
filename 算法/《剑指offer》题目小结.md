@@ -1929,6 +1929,7 @@ public static void swapSonNode(BiTreeNode root){
     root.setLeft(root.getRight());
     root.setRight(node);
 }
+```
 
 这个题用栈和用队列的结果是相同的，比如用队列的代码如下：
 
@@ -1954,8 +1955,6 @@ private void swapSonNode(TreeNode node) {
     node.left = node.right;
     node.right = memo;
 }
-```
-
 ```
 
  树的节点结构如下：
