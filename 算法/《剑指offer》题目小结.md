@@ -2744,6 +2744,12 @@ private void backtracking(char[] chars, boolean[] hasUsed, StringBuilder s) {
 - 第一步求所有可能出现在第一个位置的字符（即把第一个字符和后面的所有字符交换[相同字符不交换]）；
 - 第二步固定第一个字符，求后面所有字符的排列。这时候又可以把后面的所有字符拆成两部分（第一个字符以及剩下的所有字符），依此类推。这样，就可以用递归的方法来解决。
 
+这整个过程就好像一个循环里面嵌套着递归，示意图如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/backtracking.jpg">
+</div>
+
 ```java
 public class Solution {
     ArrayList<String> res = new ArrayList<String>();
