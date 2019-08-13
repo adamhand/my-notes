@@ -2740,6 +2740,46 @@ private void backtracking(char[] chars, boolean[] hasUsed, StringBuilder s) {
 }
 ```
 
+> 更清晰一点的思路
+- 第一步求所有可能出现在第一个位置的字符（即把第一个字符和后面的所有字符交换[相同字符不交换]）；
+- 第二步固定第一个字符，求后面所有字符的排列。这时候又可以把后面的所有字符拆成两部分（第一个字符以及剩下的所有字符），依此类推。这样，就可以用递归的方法来解决。
+
+```java
+public class Solution {
+    ArrayList<String> res = new ArrayList<String>();
+    public ArrayList<String> Permutation(String str) {
+       if (str == null || str.length() == 0)
+           return new ArrayList();
+        backtracking(str.toCharArray(), 0);
+        Collections.sort(res);
+        
+        return res;
+    }
+    
+    private void backtracking(char[] str, int begin) {
+        if (begin == str.length - 1) {
+            res.add(String.valueOf(str));
+        } else {
+            for (int i = begin; i < str.length; i++) {
+                if (begin != i && str[begin] == str[i])  //如果出现这种情况，说明给的字符串中有相同的元素，比如aa，那么就不需要交换
+                    continue;
+                swap(str, i, begin);
+                backtracking(str, begin + 1);
+                swap(str, i, begin);
+            }
+        }
+    }
+    
+    private void swap(char[] str, int i, int j) {
+        char c = str[i];
+        str[i] = str[j];
+        str[j] = c;
+    }
+}
+```
+
+参考[[剑指offer] 字符串的排列](https://cloud.tencent.com/developer/article/1327426)
+
 # 44. 数组中超过一半的数
 题目描述：
 
