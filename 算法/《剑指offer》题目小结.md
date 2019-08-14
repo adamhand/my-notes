@@ -3073,8 +3073,7 @@ public static double getMidian(){
 
 ---
 > 思路一：累加法。首先，我们需要定义一个变量curSum，用for循环来记录前i项的和，curSum每次都会更改，如果curSum的值小于0，我们再往后加只有减小最大和，所以我们需要将array[i+1]项的值重新赋值给curSum。  
-
- 另外，我们需要定义一个最大值greatestSum，每次改变curSum的值时，我们都需要将greatestSum和curSum进行比较，如果curSum大于greatestSum，我们则将curSum的值赋值给greatestSum。
+> 另外，我们需要定义一个最大值greatestSum，每次改变curSum的值时，我们都需要将greatestSum和curSum进行比较，如果curSum大于greatestSum，我们则将curSum的值赋值给greatestSum。
 ```java
 public static int greatestSumOfSubArray(int[] nums){
     if(nums == null || nums.length <= 0){
@@ -3145,7 +3144,7 @@ private static int maxOfThree(int a, int b, int c){
 # 48. 从 1 到 n 整数中 1 出现的次数
 题目描述：
 
- 输入一个整数n，求1到n这n个整数的十进制表示中1出现的次数。例如输入12,从1到12这些整数中包含1的数字有1,10,11,12,1一共出现了5次。
+ 输入一个整数n，求1到n这n个整数的十进制表示中1出现的次数。例如输入12,从1到12这些整数中包含1的数字有[1,10,11,12],1一共出现了5次。
 
 ---
 > 思路一：不考虑时间效率的做法。循环查找1~n中每一个数的每一位。如果输入数字为n，n有O(logn)位，该算法的时间复杂度为O(n*logn)。
@@ -3307,7 +3306,52 @@ private static int beginNumberFor(int digits) {
  输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
 
 ---
-> 思路一：最容易想到的方法就是求出数组中所有数的全排列，然后将每个排列拼接起来(需要注意的是，两个整数拼接的结果可能超过整数的范围，所以这里隐藏着一个大数问题)，最后比较拼接后的数字大小。这显然不是最简单的方法，这里不再介绍。
+> 思路一：最容易想到的方法就是求出数组中所有数的全排列，然后将每个排列拼接起来(需要注意的是，两个整数拼接的结果可能超过整数的范围，所以这里隐藏着一个大数问题)，最后比较拼接后的数字大小。这显然不是最简单的方法，代码如下。
+
+```java
+public class Solution {
+    ArrayList<String> result = new ArrayList<String>();
+    public String PrintMinNumber(int [] numbers) {
+        if (numbers == null || numbers.length == 0)
+            return "";
+        
+        String[] strs = new String[numbers.length];
+        for (int i = 0; i < numbers.length; i++) {
+            strs[i] = String.valueOf(numbers[i]);
+        }
+        helper(strs, 0);
+        Collections.sort(result);
+        return result.get(0);
+    }
+    private void helper(String[] strs, int begin) {
+        if (begin == strs.length - 1) {
+            result.add(strsToString(strs));
+        } else {
+            for (int i = begin; i < strs.length; i++) {
+                if (i != begin && strs[i] == strs[begin])
+                    continue;
+                swap(strs, begin, i);
+                helper(strs, begin + 1);
+                swap(strs, begin, i);
+            }
+        }
+    }
+    
+    private String strsToString(String[] strs) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            sb.append(strs[i]);
+        }
+        return sb.toString();
+    }
+    
+    private void swap(String[] strs, int i, int j) {
+        String s = strs[i];
+        strs[i] = strs[j];
+        strs[j] = s;
+    }
+}
+```
 
 > 思路二：可以联想到字符串的字典排，将数字问题转化成字符串问题，也是解决大数问题的一个好方法。
 ```java
