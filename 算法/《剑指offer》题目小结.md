@@ -371,12 +371,15 @@ public class Solution {
 要找到中序遍历下的下一个节点。这个节点可以分为两种情况:
 
 - 该节点有右子树。这种情况比较简单，直接将其右节点进行中序遍历即可，并将一个遍历到的最右节点返回。简单点说，该节点的下一个节点是右子树的最左节点。
+
 <center>
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/have%20a%20right%20node.PNG">
 </center>
+
 - 该节点没有右子树。这种情况又可以分为两种情况：
     - 该节点是父节点的左子节点。直接将父节点返回即可。
     - 该节点是父节点的右子节点。需要不断寻找当前节点父亲节点，直到当前节点是父亲节点的左子节点。这是因为中序遍历是**是直先遍历节点的左子树，然后是节点本身，然后是节点的右子树**，所以，如果一个节点是父节点的右子节点且该节点没有右子树，说明该节点是“当前树”的一个“最右节点”，所以我们就需要找到“当前树”的父节点。
+
 <center>
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/have%20not%20a%20right%20node.PNG">
 </center>
@@ -1299,6 +1302,33 @@ public static void deleteDuplication(Node head){
 }
 ```
 
+- 思路四。这种方法也是讲重复的节点一个不留。
+
+```java
+public ListNode deleteDuplication(ListNode pHead)
+{
+    if (pHead==null || pHead.next==null){return pHead;}
+    ListNode Head = new ListNode(0);
+    Head.next = pHead;
+    ListNode pre  = Head;
+    ListNode last = Head.next;
+    while (last!=null){
+        if(last.next!=null && last.val == last.next.val){
+            // 找到最后的一个相同节点
+            while (last.next!=null && last.val == last.next.val){
+                last = last.next;
+            }
+            pre.next = last.next;
+            last = last.next;
+        }else{
+            pre = pre.next;
+            last = last.next;
+        }
+    }
+    return Head.next;
+}
+```
+
 测试函数和Node结构。
 ```java
 public static void test(){
@@ -1780,7 +1810,7 @@ public static ListNode findEntryNode(ListNode head){
     <div align="center">
     <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop2.png">
     </div>
-    
+
     由于m1逆时针到t的距离为n-b，即要达到相遇需要追赶n-b的距离，由于两者速度差为1，因此需要n-b的时间才能相遇，此时slow再次向后n-b距离，即到达m2位置与fast相遇，因为一周长度为n，因此到t的距离为 n-(n-b) = b。
     - 为何令slow重新从pHead以速度1开始走，令fast从m2以速度1走？要想在入口t相遇，则需要从m2处再走b+xn的距离，刚好pHead处符合（由1)可知），所以令slow从pHead开始走。在相遇后就是入口t的位置。
 
