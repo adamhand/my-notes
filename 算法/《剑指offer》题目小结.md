@@ -1715,7 +1715,10 @@ public static boolean hasCycleOrNot(ListNode head){
 ---
 > 思路2：看下图，如果链表中存在环，且环的长度为k，那么环的入口就是倒数第k个节点。现在，只要求得环的长度，就能够根据前面的**链表中倒数第k个节点**的思路进行求解，定义两个指针指向头结点，先让第一个指针在链表上移动n步，然后两个指针以相同的速度向前移动，当第二个指针指向环的入口结点时，第一个指针已经围绕着环走了一圈又回到了入口结点。
 在前面的题目中判断链表中是否有环的时候，用到一快一慢两个指针，如果两个指针相遇，说明有环，且相遇的结点一定在环内。可以从这个结点出发，一边继续向前移动一边计数，当再次回到这个结点时，就可以得到环中的结点数了。
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryoflooplist.png)
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryoflooplist.png">
+</div>
 
 ```java
 //找到相遇点
@@ -1762,17 +1765,24 @@ public static ListNode findEntryNode(ListNode head){
 }
 ```
 
-> 思路三：不用求得环的长度，只需在相遇时，让一个指针在相遇点出发，另一个指针在链表首部出发，然后两个指针一次走一步，当它们相遇时，就是环的入口处。
+- 思路三：不用求得环的长度，只需在相遇时，让一个指针在相遇点出发，另一个指针在链表首部出发，然后两个指针一次走一步，当它们相遇时，就是环的入口处。
 证明如下：
->
-- 假设存在环，fast以速度2运行，slow以速度1运行，在slow走到入口t时，如图（m1为在slow首次到t时fast的位置，a为h到t的距离，b为t到m1的距离，n为环的周长）： 
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop1.png)
-由图知fast走的距离为a+b+xn，slow走的距离为a，又v(fast) = 2*v(slow)，所以x(fast) = 2*x(slow)，即2a = a+b+xn，因此a = b+xn。 
-m1逆时针到t的距离为n-b。
-- 在首次相遇时，如图（m2为相遇点）： 
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop2.png)
-由于m1逆时针到t的距离为n-b，即要达到相遇需要追赶n-b的距离，由于两者速度差为1，因此需要n-b的时间才能相遇，此时slow再次向后n-b距离，即到达m2位置与fast相遇，因为一周长度为n，因此到t的距离为 n-(n-b) = b。
-- 为何令slow重新从pHead以速度1开始走，令fast从m2以速度1走？要想在入口t相遇，则需要从m2处再走b+xn的距离，刚好pHead处符合（由1)可知），所以令slow从pHead开始走。在相遇后就是入口t的位置。
+
+    - 假设存在环，fast以速度2运行，slow以速度1运行，在slow走到入口t时，如图（m1为在slow首次到t时fast的位置，a为h到t的距离，b为t到m1的距离，n为环的周长）：
+
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop1.png">
+    </div>
+
+    由图知fast走的距离为a+b+xn，slow走的距离为a，又v(fast) = 2*v(slow)，所以x(fast) = 2*x(slow)，即2a = a+b+xn，因此a = b+xn。 m1逆时针到t的距离为n-b。
+    - 在首次相遇时，如图（m2为相遇点）： 
+    
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop2.png">
+    </div>
+    
+    由于m1逆时针到t的距离为n-b，即要达到相遇需要追赶n-b的距离，由于两者速度差为1，因此需要n-b的时间才能相遇，此时slow再次向后n-b距离，即到达m2位置与fast相遇，因为一周长度为n，因此到t的距离为 n-(n-b) = b。
+    - 为何令slow重新从pHead以速度1开始走，令fast从m2以速度1走？要想在入口t相遇，则需要从m2处再走b+xn的距离，刚好pHead处符合（由1)可知），所以令slow从pHead开始走。在相遇后就是入口t的位置。
 
 ```java
 public static ListNode findEntryNode_1(ListNode head){
