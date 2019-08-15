@@ -29,7 +29,29 @@ class Solution {
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/find%20all%20duplicates%20in%20an%20array_2.PNG">
 </center>
 
-- 解法：这个题目就不能按照上面的解法来了，因为数组中的最小元素为0，最大元素为n-1，按照上述方法会产生越界问题。可以使用HashMap。
+- 解法：和上面的解法类似。利用现有数组设置标志，当一个数字被访问过后，可以设置对应位上的数为相反数，之后再遇到相同的数时，会发现对应位上的数已经小于0了，那么直接返回这个数即可。
+
+```java
+public boolean duplicate(int numbers[],int length,int [] duplication) {
+    if (numbers == null || numbers.length == 0)
+        return false;
+    for (int i = 0; i < numbers.length; i++) {
+        int index = numbers[i];
+        //防止数组越界
+        if (index < 0)
+            index = -index;
+        
+        if (numbers[index] < 0){
+            duplication[0] = index;
+            return true;
+        }
+        numbers[index] = -numbers[index];
+    }
+    return false;
+}
+```    
+
+- 解法：可以使用HashMap。
 
 ```java
 public boolean duplicate(int numbers[],int length,int [] duplication) {
@@ -47,6 +69,22 @@ public boolean duplicate(int numbers[],int length,int [] duplication) {
         map.put(num, 0);
     }
     return flag;
+}
+```
+
+- 解法：不使用`HashMap`，使用`boolean`数组。
+
+```java
+public boolean duplicate(int numbers[], int length, int[] duplication) {
+    boolean[] k = new boolean[length];
+    for (int i = 0; i < k.length; i++) {
+        if (k[numbers[i]] == true) {
+            duplication[0] = numbers[i];
+            return true;
+        }
+        k[numbers[i]] = true;
+    }
+    return false;
 }
 ```
 
@@ -4498,6 +4536,25 @@ public static void lastRemaining(int n, int m){
 }
 ```
 
+更清晰的写法：
+
+```java
+public int LastRemaining_Solution(int n, int m) {
+    if (n == 0 || m == 0)
+        return -1;
+    ArrayList<Integer> data = new ArrayList<Integer>();
+    for (int i = 0; i < n; i++)
+        data.add(i);
+    int index = -1;
+    while (data.size() > 1) {
+        index = (index + m) % data.size();
+        data.remove(index);
+        index--;
+    }
+    return data.get(0);
+}
+```
+
 > 思路二：分析法
 ```java
 //https://blog.csdn.net/abc7845129630/article/details/52823135
@@ -4510,6 +4567,17 @@ public static int lastRemaining_Solution(int n, int m) {
 //            System.out.print(res + " ");
     }
     return res;
+}
+```
+
+> 递归。如果设`f(n)`表示有`n`个小朋友时求解的方程，那么当一个小朋友出队之后，就变成了`n-1`个小朋友，也就是`f(n-1)`的问题，可以考虑使用递归来做。如下所示。
+
+```java
+public int LastRemaining_Solution(int n, int m) {
+    if (n == 0)
+        return -1;
+    
+    return (LastRemaining_Solution(n - 1, m) + m) % n;
 }
 ```
 
