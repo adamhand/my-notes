@@ -14,8 +14,8 @@ Zero-copy, 就是在操作数据时, 不需要将数据 从一个内存区域拷
 
 举一个例子，假如要将一个磁盘中的文件通过Socket发送，使用的伪代码如下：
 ```java
-`File.read(bytes)`
-`Socket.send(bytes)`
+File.read(bytes)
+Socket.send(bytes)
 ```
 
 如果不适用零拷贝，需要四次数据拷贝和四次上下文切换：
@@ -79,10 +79,10 @@ public CompositeByteBuf addComponents(boolean increaseWriterIndex, ByteBuf... bu
 待续......
 
 # 参考
-[对于 Netty ByteBuf 的零拷贝(Zero Copy)的理解](https://segmentfault.com/a/1190000007560884)
-[Netty中的零拷贝](https://www.jianshu.com/p/a199ca28e80d)
-[理解Netty中的零拷贝（Zero-Copy）机制](https://my.oschina.net/plucury/blog/192577)
-[netty学习十三:零拷贝底层实现原理](https://blog.csdn.net/linsongbin1/article/details/77650105)
-[Java-NIO（三）：直接缓冲区与非直接缓冲区](https://www.cnblogs.com/yy3b2007com/archive/2017/07/31/7262453.html)
-[Netty 系列之 Netty 高性能之道](https://www.infoq.cn/article/netty-high-performance?utm_source=infoq&utm_medium=popular_links...)
-[Netty in action—Netty中的ByteBuf](https://blog.csdn.net/yjw123456/article/details/77843931)
+[对于 Netty ByteBuf 的零拷贝(Zero Copy)的理解](https://segmentfault.com/a/1190000007560884)</br>
+[Netty中的零拷贝](https://www.jianshu.com/p/a199ca28e80d)</br>
+[理解Netty中的零拷贝（Zero-Copy）机制](https://my.oschina.net/plucury/blog/192577)</br>
+[netty学习十三:零拷贝底层实现原理](https://blog.csdn.net/linsongbin1/article/details/77650105)</br>
+[Java-NIO（三）：直接缓冲区与非直接缓冲区](https://www.cnblogs.com/yy3b2007com/archive/2017/07/31/7262453.html)</br>
+[Netty 系列之 Netty 高性能之道](https://www.infoq.cn/article/netty-high-performance?utm_source=infoq&utm_medium=popular_links...)</br>
+[Netty in action—Netty中的ByteBuf](https://blog.csdn.net/yjw123456/article/details/77843931)</br>
