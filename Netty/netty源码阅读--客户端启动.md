@@ -615,7 +615,13 @@ protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddr
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/netty_1111111.png">
 </div>
 
+上述分析过程可以进化为以下：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/%E5%AE%A2%E6%88%B7%E7%AB%AF.png">
+</div>
+
 ## 参考
-[netty](https://github.com/netty/netty)
-[Netty 源码分析之 一 揭开 Bootstrap 神秘的红盖头 (客户端)](https://segmentfault.com/a/1190000007282789)
-慕课网闪电侠netty源码分析
+[netty](https://github.com/netty/netty)</br>
+[Netty 源码分析之 一 揭开 Bootstrap 神秘的红盖头 (客户端)](https://segmentfault.com/a/1190000007282789)</br>
+慕课网闪电侠netty源码分析</br>
