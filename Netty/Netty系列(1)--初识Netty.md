@@ -82,6 +82,16 @@ Netty的基本架构如下图所示:
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/netty.jpg">
 </center>
 
+# 补充
+## netty是对nio的封装，nio是同步非阻塞，那么为什么netty又是异步的呢？
+确实，netty是对nio的封装，如果按照nio的做法来，线程发起读数据请求之后不会立刻返回，而是通过selector不但询问cpu数据是否准备好。但是netty实现了一个mpsc(多生产者单消费者)队列，所有外部线程的任务都给扔到这个队列里，同时把回调，也就是future绑定在这个任务上，reactor线程会挨个执行这些任务，执行完之后callback。
+
+## 为什么netty使用nio而不是aio
+
+- Netty不看重Windows上的使用，在Linux系统上，AIO的底层实现仍使用EPOLL，没有很好实现AIO，因此在性能上没有明显的优势，而且被JDK封装了一层不容易深度优化。
+- AIO还有个缺点是接收数据需要预先分配缓存, 而不是NIO那种需要接收时才需要分配缓存, 所以对连接数量非常大但流量小的情况, 内存浪费很多。
+
+
 ---
 参考：
 
@@ -95,5 +105,8 @@ Netty的基本架构如下图所示:
 [Netty学习笔记之三——认识Netty架构](https://blog.csdn.net/u012525096/article/details/79832927)</br>
 [Netty4详解三：Netty架构设计](https://www.cnblogs.com/DaTouDaddy/p/6801906.html)</br>
 [Netty整体架构](https://blog.csdn.net/u013857458/article/details/82527722)</br>
-
+[netty为什么是异步的](https://coding.m.imooc.com/questiondetail.html?qid=100186)</br>
+[Java NIO浅析](https://tech.meituan.com/2016/11/04/nio.html)</br>
+[为什么Netty使用NIO而不是AIO？](https://www.jianshu.com/p/df1d6d8c3f9d)
+[为什么Netty使用NIO而不是AIO？](https://www.jianshu.com/p/df1d6d8c3f9d)
 ---
