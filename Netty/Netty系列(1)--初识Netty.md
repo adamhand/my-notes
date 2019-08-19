@@ -18,7 +18,7 @@ Netty 是一款**异步**的**事件驱动**的**网络应用程序框架**，�
 ## 事件驱动
 一个典型的事件驱动的程序，就是一个死循环，并以一个线程的形式存在，这个死循环包括两个部分，第一个部分是按照一定的条件接收并选择一个要处理的事件，第二个部分就是事件的处理过程。程序的执行过程就是选择事件和处理事件，而当没有任何事件触发时，程序会因查询事件队列失败而进入睡眠状态，从而释放cpu。
 
-也就是说，事件驱动就是有事件就处理，没时间就等待。
+也就是说，事件驱动就是有事件就处理，没事件就等待。
 
 # BIO、NIO和AIO的区别
 ## 事件分离器
@@ -85,15 +85,15 @@ Netty的基本架构如下图所示:
 ---
 参考：
 
-[【面试题】Netty相关](https://blog.csdn.net/baiye_xing/article/details/76735113)
-[为什么Netty受欢迎？](https://www.jianshu.com/p/b9f3f6a16911)
-[Netty入门教程2——动手搭建HttpServer](https://www.jianshu.com/p/ed0177a9b2e3)
-[BIO、NIO和AIO的区别（简明版）](https://www.cnblogs.com/ygj0930/p/6543960.html)
-[reactor和proactor模式](https://blog.csdn.net/caiwenfeng_for_23/article/details/8458299)
-[基本概念_同步、异步有什么区别](https://www.cnblogs.com/weiyi1314/p/6723913.html)
-[事件驱动机制跟消息驱动机制相比](http://www.cnblogs.com/welen/articles/5115213.html)
-[Netty学习笔记之三——认识Netty架构](https://blog.csdn.net/u012525096/article/details/79832927)
-[Netty4详解三：Netty架构设计](https://www.cnblogs.com/DaTouDaddy/p/6801906.html)
-[Netty整体架构](https://blog.csdn.net/u013857458/article/details/82527722)
+[【面试题】Netty相关](https://blog.csdn.net/baiye_xing/article/details/76735113)</br>
+[为什么Netty受欢迎？](https://www.jianshu.com/p/b9f3f6a16911)</br>
+[Netty入门教程2——动手搭建HttpServer](https://www.jianshu.com/p/ed0177a9b2e3)</br>
+[BIO、NIO和AIO的区别（简明版）](https://www.cnblogs.com/ygj0930/p/6543960.html)</br>
+[reactor和proactor模式](https://blog.csdn.net/caiwenfeng_for_23/article/details/8458299)</br>
+[基本概念_同步、异步有什么区别](https://www.cnblogs.com/weiyi1314/p/6723913.html)</br>
+[事件驱动机制跟消息驱动机制相比](http://www.cnblogs.com/welen/articles/5115213.html)</br>
+[Netty学习笔记之三——认识Netty架构](https://blog.csdn.net/u012525096/article/details/79832927)</br>
+[Netty4详解三：Netty架构设计](https://www.cnblogs.com/DaTouDaddy/p/6801906.html)</br>
+[Netty整体架构](https://blog.csdn.net/u013857458/article/details/82527722)</br>
 
 ---
