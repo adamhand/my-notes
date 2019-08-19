@@ -197,9 +197,9 @@ protected AbstractNioUnsafe newUnsafe() {
 }
 ```
 NioSocketChannelUnsafe的继承关系如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/niosocketchannelunsafe.PNG">
-</center>
+</div>
 
 ## pipeline的初始化
 每初始化一个Channel，都会伴随着初始化一个pipeline。在AbstractChannel中对pipeline进行了初始化：
@@ -224,21 +224,21 @@ protected DefaultChannelPipeline(Channel channel) {
 
 TailContext 的继承层次结构如下所示:
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/tailcontext.PNG">
-</center>
+</div>
 
 HeadContext 的继承层次结构如下所示:
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/headcontext.PNG">
-</center>
+</div>
 
 ## NioEventLoopGroup的初始化
 NioEventLoopGroup的继承关系图如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/NioEventLoopGroup.PNG">
-</center>
+</div>
 
 NioEventLoopGroup一共有几个构造函数：
 ```
@@ -482,19 +482,19 @@ public final void channelRegistered(ChannelHandlerContext ctx) throws Exception 
 从上面的源码中可以看到, 在 channelRegistered 方法中, 会调用 initChannel 方法, 将自定义的 handler 添加到 ChannelPipeline 中, 然后调用 ctx.pipeline().remove(this) 将自己从 ChannelPipeline 中删除。 上面的分析过程, 可以用如下图片展示:
 
 一开始, ChannelPipeline 中只有三个 handler, head, tail 和自定义添加的 ChannelInitializer。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_1.png">
-</center>
+</div>
 
 接着 initChannel 方法调用后, 添加了自定义的 handler：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_2.png">
-</center>
+</div>
 
 最后将 ChannelInitializer 删除：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_3.png">
-</center>
+</div>
 
 ## 客户端连接分析
 下面看看一下客户端是怎么发起TCP连接的。
@@ -611,9 +611,9 @@ protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddr
 上面的代码首先是获取 Java NIO SocketChannel, 即从 NioSocketChannel.newSocket 返回的 SocketChannel 对象; 然后是调用 SocketChannel.connect 方法完成 Java NIO 层面上的 Socket 的连接。
 
 最后, 上面的代码流程可以用如下时序图直观地展示:
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/netty_1111111.png">
-</center>
+</div>
 
 ## 参考
 [netty](https://github.com/netty/netty)
