@@ -205,7 +205,7 @@ PUT 也可以用于修改资源，但是只能完全替代原始资源，PATCH �
 |Via	|代理服务器的相关信息|
 |Warning	|错误通知|
 
-##请求首部字段
+## 请求首部字段
 
 |首部字段名	|说明|
 |-|-|
@@ -319,7 +319,7 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 ```
 
-###4. 作用域
+### 4. 作用域
 Domain 标识指定了哪些主机可以接受 Cookie。如果不指定，默认为当前文档的主机（不包含子域名）。如果指定了 Domain，则一般包含子域名。例如，如果设置 Domain=mozilla.org，则 Cookie 也包含在子域名中（如 developer.mozilla.org）。
 
 Path 标识指定了主机下的哪些路径可以接受 Cookie（该 URL 路径必须存在于请求 URL 中）。以字符 %x2F ("/") 作为路径分隔符，子路径也会被匹配。例如，设置 Path=/docs，则以下地址都会匹配：
@@ -535,6 +535,7 @@ HTTP/1.1 使用虚拟主机技术，使得一台服务器拥有多个域名，�
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/a314bb79-5b18-4e63-a976-3448bffa6f1b.png">
 </div>
+
 >- 而反向代理一般位于内部网络中，用户察觉不到。
 
 <div align="center">
@@ -615,7 +616,7 @@ HTTP 也提供了 MD5 报文摘要功能，但不是安全的。例如报文内�
 
 HTTPs 的报文摘要功能之所以安全，是因为它结合了加密和认证这两个操作。试想一下，加密之后的报文，遭到篡改之后，也很难重新计算报文摘要，因为无法轻易获取明文。
 
-##HTTPs 的缺点
+## HTTPs 的缺点
 >- 因为需要进行加密解密等过程，因此速度会更慢；
 >- 需要支付证书授权的高额费用。
 
