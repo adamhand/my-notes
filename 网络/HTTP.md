@@ -644,7 +644,7 @@ HTTP/2.0 将报文分成 HEADERS 帧和 DATA 帧，它们都是二进制格式�
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/af198da1-2480-4043-b07f-a3b91a88b815.png" width="450">
 </div>
 
-##服务端推送
+## 服务端推送
 HTTP/2.0 在客户端请求一个资源时，会把相关的资源一起发送给客户端，客户端就不需要再次发起请求了。例如客户端请求 page.html 页面，服务端就把 script.js 和 style.css 等与之相关的资源一起发给客户端。
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/docs/pics/e3f1657c-80fc-4dfa-9643-bf51abd201c6.png" width="600">
