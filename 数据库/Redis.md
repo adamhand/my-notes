@@ -80,9 +80,9 @@ Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，�
 |ZSET|	有序集合|	添加、获取、删除元素；根据分值范围或者成员来获取元素；计算一个键的排名|
 
 ## STRING
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/6019b2db-bc3e-4408-b6d8-96025f4481d6.png" width="450">
-</center>
+</div >
 
 ```redis
 > set hello world
@@ -96,9 +96,9 @@ OK
 ```
 
 ## LIST
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/fb327611-7e2b-4f2f-9f5b-38592d408f07.png" width="450">
-</center>
+</div >
 
 ```redis
 > rpush list-key item
@@ -125,9 +125,9 @@ OK
 ```
 
 ## SET
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/cd5fbcff-3f35-43a6-8ffa-082a93ce0f0e.png" width="450">
-</center>
+</div >
 
 ```redis
 > sadd set-key item
@@ -160,9 +160,9 @@ OK
 ```
 
 ## HASH
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/7bd202a7-93d4-4f3a-a878-af68ae25539a.png" width="450">
-</center>
+</div >
 
 ```redis
 > hset hash-key sub-key1 value1
@@ -192,9 +192,9 @@ OK
 ```
 
 ## ZSET
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/1202b2d6-9469-4251-bd47-ca6034fb6116.png" width="450">
-</center>
+</div >
 
 ```redis
 > zadd zset-key 728 member1
@@ -242,9 +242,9 @@ struct sdshdr{
 }
 ```
 用SDS保存字符串 “Redis”具体图示如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/sds.PNG">
-</center>
+</div >
 
 ### 使用SDS的优势
 ① 常数复杂度获取字符串长度
@@ -303,9 +303,9 @@ typedef struct list{
      int (*match) (void *ptr,void *key);
 }list;
 ```
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/doublelist.PNG">
-</center>
+</div >
 
 Redis链表特性：
 
@@ -355,9 +355,9 @@ typedef struct dictEntry{
 key 用来保存键，val 属性用来保存值，值可以是一个指针，也可以是uint64_t整数，也可以是int64_t整数。
 
 该哈希表使用**链地址法**来解决哈希冲突，这里的next指针指向下一个哈希值相同的节点，形成一条链表。如下图所示：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/dictht.PNG">
-</center>
+</div >
 
 ### 扩容和收缩
 Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。**在扩容时**，根据原哈希表已使用的空间扩大一倍创建另一个哈希表，然后将原 dictht 上的键值对 rehash 到新建的 dictht 上面，完成之后释放空间并交换两个 dictht 的角色；**收缩时类似**，只不过时根据已使用空间缩小一倍创建一个新的哈希表。
@@ -433,9 +433,9 @@ int dictRehash(dict *d, int n) {
 ③ 最底层的链表包含了所有的元素；
 ④ 如果一个元素出现在某一层的链表中，那么在该层之下的链表也全都会出现（上一层的元素是当前层的元素的子集）；
 ⑤ 链表中的每个节点都包含两个指针，一个指向同一层的下一个链表节点，另一个指向下一层的同一个链表节点；
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jmplist_1.png">
-</center>
+</div >
 
 
 Redis中跳跃表节点定义如下：
@@ -480,9 +480,9 @@ typedef struct zskiplist{
 ③ 删除：在各个层中找到包含指定值的节点，然后将节点从链表中删除即可，如果删除以后只剩下头尾两个节点，则删除这一层。删除的时间复杂度就是查询元素插入位置的时间复杂度，**所以是O(logn)**。
 
 在上述跳跃表中寻找22的过程如下图所示：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/jumplist_2.png">
-</center>
+</div >
 
 与红黑树等平衡树相比，跳跃表具有以下优点：
 
