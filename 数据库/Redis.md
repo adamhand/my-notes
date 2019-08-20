@@ -81,7 +81,7 @@ Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，�
 
 ## STRING
 <center>
-<img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/pics/6019b2db-bc3e-4408-b6d8-96025f4481d6.png" width="450">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/6019b2db-bc3e-4408-b6d8-96025f4481d6.png" width="450">
 </center>
 
 ```redis
@@ -97,7 +97,7 @@ OK
 
 ## LIST
 <center>
-<img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/pics/fb327611-7e2b-4f2f-9f5b-38592d408f07.png" width="450">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/fb327611-7e2b-4f2f-9f5b-38592d408f07.png" width="450">
 </center>
 
 ```redis
@@ -126,7 +126,7 @@ OK
 
 ## SET
 <center>
-<img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/pics/cd5fbcff-3f35-43a6-8ffa-082a93ce0f0e.png" width="450">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/cd5fbcff-3f35-43a6-8ffa-082a93ce0f0e.png" width="450">
 </center>
 
 ```redis
@@ -161,7 +161,7 @@ OK
 
 ## HASH
 <center>
-<img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/pics/7bd202a7-93d4-4f3a-a878-af68ae25539a.png" width="450">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/7bd202a7-93d4-4f3a-a878-af68ae25539a.png" width="450">
 </center>
 
 ```redis
@@ -193,7 +193,7 @@ OK
 
 ## ZSET
 <center>
-<img src="https://raw.githubusercontent.com/adamhand/CS-Notes/master/pics/1202b2d6-9469-4251-bd47-ca6034fb6116.png" width="450">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/1202b2d6-9469-4251-bd47-ca6034fb6116.png" width="450">
 </center>
 
 ```redis
