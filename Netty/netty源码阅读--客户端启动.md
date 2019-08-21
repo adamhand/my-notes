@@ -168,11 +168,11 @@ NioSocketChannel.newSocket() -> SelectorProviderImpl.openSocketChannel() -> Sock
     
 ## Unsafe字段的初始化
 刚才说到，AbstractChannel()构造函数中对Unsafe字段进行了初始化：
-```
+```java
 unsafe = newUnsafe();
 ```
 Unsafe接口的逻辑如下，它封装了对 Java 底层 Socket 的操作, 因此Unsafe实际上是沟通 Netty 上层和 Java 底层的重要的桥梁。
-```
+```java
 interface Unsafe {
     SocketAddress localAddress();
     SocketAddress remoteAddress();
@@ -191,23 +191,23 @@ interface Unsafe {
 }
 ```
 newUnsafe()函数的逻辑如下，它返回一个 NioSocketChannelUnsafe 实例。
-```
+```java
 protected AbstractNioUnsafe newUnsafe() {
     return new NioSocketChannelUnsafe();
 }
 ```
 NioSocketChannelUnsafe的继承关系如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/niosocketchannelunsafe.PNG">
-</center>
+</div>
 
 ## pipeline的初始化
 每初始化一个Channel，都会伴随着初始化一个pipeline。在AbstractChannel中对pipeline进行了初始化：
-```
+```java
 pipeline = newChannelPipeline();
 ```
 DefaultChannelPipeline 构造器如下：
-```
+```java
 protected DefaultChannelPipeline(Channel channel) {
     this.channel = ObjectUtil.checkNotNull(channel, "channel");
     succeededFuture = new SucceededChannelFuture(channel, null);
@@ -224,24 +224,24 @@ protected DefaultChannelPipeline(Channel channel) {
 
 TailContext 的继承层次结构如下所示:
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/tailcontext.PNG">
-</center>
+</div>
 
 HeadContext 的继承层次结构如下所示:
 
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/headcontext.PNG">
-</center>
+</div>
 
 ## NioEventLoopGroup的初始化
 NioEventLoopGroup的继承关系图如下：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/NioEventLoopGroup.PNG">
-</center>
+</div>
 
 NioEventLoopGroup一共有几个构造函数：
-```
+```java
 // 1
 public NioEventLoopGroup() {
     this(0);
@@ -261,14 +261,14 @@ public NioEventLoopGroup(int nThreads, Executor executor, final SelectorProvider
 }
 ```
 这几个构造函数最后调用到父类的构造函数，如下所示：
-```
+```java
 // 2
 protected MultithreadEventLoopGroup(int nThreads, ThreadFactory threadFactory, Object... args) {
     super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, threadFactory, args);
 }
 ```
 可以看到，这里会对nTreads做一个判断，如果nThreads为0，就创建DEFAULT_EVENT_LOOP_THREADS个线程。而在构造函数1中可以看到，如果在创建NioEventLoopGroup时不指定线程数，传入的就是0。也就是说，如果不传入参数，默认创建DEFAULT_EVENT_LOOP_THREADS个线程，DEFAULT_EVENT_LOOP_THREADS会在静态语句块中被初始化，为当前CPU内核数的两倍，如下：
-```
+```java
 static {
     DEFAULT_EVENT_LOOP_THREADS = Math.max(1, SystemPropertyUtil.getInt(
             "io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2));
@@ -279,7 +279,7 @@ static {
 }
 ```
 构造函数2又会继续调用父类的构造函数：
-```
+```java
 protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
                                             EventExecutorChooserFactory chooserFactory, Object... args) { ...   }
 ```
@@ -291,13 +291,13 @@ protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
 
 ### 第一部分
 第一部分对应的代码如下：
-```
+```java
 if (executor == null) {
     executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
 }
 ```
 ThreadPerTaskExecutor的作用是每次执行任务之前都会创建一个线程实体。它的构造器如下：
-```
+```java
 public ThreadPerTaskExecutor(ThreadFactory threadFactory) {
     ...
     this.threadFactory = threadFactory;
@@ -309,14 +309,14 @@ public void execute(Runnable command) {
 }
 ```
 可以看到，会根据创建来的线程工厂ThreadFactory来新建线程并启动。这里比较重点的是newThread()方法。这个方法在DefalutThreadFactory类中，关键代码下：
-```
+```java
 public Thread newThread(Runnable r) {
     Thread t = newThread(FastThreadLocalRunnable.wrap(r), prefix + nextId.incrementAndGet());
     ...
 }
 ```
 继续跟进newThread方法：
-```
+```java
 protected Thread newThread(Runnable r, String name) {
     return new FastThreadLocalThread(threadGroup, r, name);
 }
@@ -325,19 +325,19 @@ protected Thread newThread(Runnable r, String name) {
 
 
 另外，还需要知道一点，即NioEventLoop的命名规则为：nioEventLoop-xx-yy。其中，xx为EventLoopGroup的编号，yy为EventLoop在Group中的编号。这一点是从newDefaultThreadFactory()方法中得知的。该方法的逻辑如下：
-```
+```java
 protected ThreadFactory newDefaultThreadFactory() {
     return new DefaultThreadFactory(getClass());
 }
 ```
 沿着DefaultThreadFactory的构造函数调用链一路追踪，直到下面的构造函数：
-```
+```java
 public DefaultThreadFactory(Class<?> poolType, boolean daemon, int priority) {
     this(toPoolName(poolType), daemon, priority);
 }
 ```
 这里的poolName()方法的作用就是将NioEventLoop名字的首字母变为小写。继续跟进，发现下面的构造函数：
-```
+```java
 public DefaultThreadFactory(String poolName, boolean daemon, int priority, ThreadGroup threadGroup) {
     ...
     prefix = poolName + '-' + poolId.incrementAndGet() + '-';
@@ -355,11 +355,11 @@ public DefaultThreadFactory(String poolName, boolean daemon, int priority, Threa
 - 创建一个MpscQueue
 
 从newChild()方法出发，经过如下引用链：
-```
+```java
 NioEventLoopGroup.new Child() -> NioEventLoop.NioEventLoop()
 ```
 在NioEventLoop()构造函数中有两句句比较重要的逻辑：
-```
+```java
 NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,
              SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {
     super(parent, executor, false, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);
@@ -370,11 +370,11 @@ NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selec
 其中selector = selectorTuple.selector;的意思就是创建一个selector。openSelector()中的逻辑比较简单，主要是通过SelectorProvider来打开一个Selector。
 
 沿着super看向父类的构造函数，在SingleThreadEventExecutor中有重要逻辑如下：
-```
+```java
 taskQueue = newTaskQueue(this.maxPendingTasks);
 ```
 进入NioEventLoop中的newTaskQueue方法看一下，如下：
-```
+```java
 protected Queue<Runnable> newTaskQueue(int maxPendingTasks) {
     // This event loop never calls takeTask()
     return maxPendingTasks == Integer.MAX_VALUE ? PlatformDependent.<Runnable>newMpscQueue()
@@ -385,11 +385,11 @@ protected Queue<Runnable> newTaskQueue(int maxPendingTasks) {
 
 ### 第三部分
 看一下创建选择器的代码：
-```
+```java
 chooser = chooserFactory.newChooser(children);
 ```
 这段代码的意思就是创建选择器，选择器的作用就是当创建连接的之后，选择哪个EventLoop与其绑定。它的逻辑很简单，就是通过next()方法在上面创建了的EventLoop数组中寻找EventLoop进行绑定，即每来一个连接都会找下一个EventLoop进行绑定。但是netty对next()方法做了一个优化，点进去看newChooser()的实现：
-```
+```java
 public EventExecutorChooser newChooser(EventExecutor[] executors) {
     if (isPowerOfTwo(executors.length)) {
         return new PowerOfTwoEventExecutorChooser(executors);
@@ -399,13 +399,13 @@ public EventExecutorChooser newChooser(EventExecutor[] executors) {
 }
 ```
 这里判断executors即EventLoop的数量是否为2的幂次方，如果是的话，会调用PowerOfTwoEventExecutorChooser，否则会调用普通的GenericEventExecutorChooser方法。PowerOfTwoEventExecutorChooser方法对next()做了优化，如下所示：
-```
+```java
 public EventExecutor next() {
     return executors[idx.getAndIncrement() & executors.length - 1];
 }
 ```
 即`idx++ & executors.length - 1`。而GenericEventExecutorChooser的next()方法如下：
-```
+```java
 public EventExecutor next() {
     return executors[Math.abs(idx.getAndIncrement() % executors.length)];
 }
@@ -414,25 +414,25 @@ public EventExecutor next() {
 
 ## channel 的注册过程
 回到AbstractBootstrap.initAndRegister()方法，这个方法会不仅会创建channel，还会将channel注册到EventLoopGroup上，如下代码：
-```
+```java
 ChannelFuture regFuture = config().group().register(channel);
 ```
 追踪register的调用链，发现最终调用了unsafe的register()方法，如下：
-```
+```java
 AbstractBootstrap.initAndRegister -> 
     MultithreadEventLoopGroup.register -> 
         SingleThreadEventLoop.register -> 
             AbstractUnsafe.register
 ```
 AbstractUnsafe.register的关键逻辑如下：
-```
+```java
 public final void register(EventLoop eventLoop, final ChannelPromise promise) {
     AbstractChannel.this.eventLoop = eventLoop;
     register0(promise);
 }
 ```
 首先将eventLoop 赋值给 Channel 的 eventLoop 属性，接着调用register0()方法，register0()方法又会调用AbstractNioChannel.doRegister：
-```
+```java
 protected void doRegister() throws Exception {
     ...
     selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
@@ -452,7 +452,7 @@ javaChannel()返回的是一个 Java NIO SocketChannel, 之后将这个 SocketCh
 
 ## handler 的添加过程
 hander的添加代码如下：
-```
+```java
 handler(new ChannelInitializer<SocketChannel>() {
      @Override
      public void initChannel(SocketChannel ch) throws Exception {
@@ -468,7 +468,7 @@ handler(new ChannelInitializer<SocketChannel>() {
 ChannelInitializer 是一个抽象类, 它有一个抽象的方法 initChannel, 添加Channel的时候需要实现这个方法, 并在这个方法中添加的自定义的 handler 。initChannel 会在ChannelInitializer.channelRegistered 方法中被调用。
 
 channelRegistered方法源码如下：
-```
+```java
 public final void channelRegistered(ChannelHandlerContext ctx) throws Exception {
     if (initChannel(ctx)) {
         ctx.pipeline().fireChannelRegistered();
@@ -482,29 +482,29 @@ public final void channelRegistered(ChannelHandlerContext ctx) throws Exception 
 从上面的源码中可以看到, 在 channelRegistered 方法中, 会调用 initChannel 方法, 将自定义的 handler 添加到 ChannelPipeline 中, 然后调用 ctx.pipeline().remove(this) 将自己从 ChannelPipeline 中删除。 上面的分析过程, 可以用如下图片展示:
 
 一开始, ChannelPipeline 中只有三个 handler, head, tail 和自定义添加的 ChannelInitializer。
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_1.png">
-</center>
+</div>
 
 接着 initChannel 方法调用后, 添加了自定义的 handler：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_2.png">
-</center>
+</div>
 
 最后将 ChannelInitializer 删除：
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/channelpipeline_3.png">
-</center>
+</div>
 
 ## 客户端连接分析
 下面看看一下客户端是怎么发起TCP连接的。
 
 首先, 客户端通过调用 Bootstrap 的 connect 方法进行连接。引用链为：
-```
+```java
 BootStrap.connect() -> BootStrap.doResolveAndConnect() -> BootStrap.doResolveAndConnect0() ->  BootStrap.doConnect()
 ```
 BootStrap.doConnect()关键代码如下：
-```
+```java
 private static void doConnect(
         final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise connectPromise) {
     final Channel channel = connectPromise.channel();
@@ -524,13 +524,13 @@ private static void doConnect(
 在 doConnect 中, 会在 event loop 线程中调用 Channel 的 connect 方法, 而这个 Channel 的具体类型是NioSocketChannel。
 
 进行跟踪到 channel.connect 中, 发现它调用的是 DefaultChannelPipeline#connect, 而, pipeline 的 connect 代码如下:
-```
+```java
 public final ChannelFuture connect(SocketAddress remoteAddress, ChannelPromise promise) {
     return tail.connect(remoteAddress, promise);
 }
 ```
 继续追踪，进入AbstractChannelHandlerContext.connect，代码如下：
-```
+```java
 public ChannelFuture connect(
         final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise promise) {
     if (remoteAddress == null) {
@@ -556,14 +556,14 @@ public ChannelFuture connect(
 }
 ```
 上面的代码中有一个关键的地方, 即 final AbstractChannelHandlerContext next = findContextOutbound(), 这里调用 findContextOutbound 方法, 从 DefaultChannelPipeline 内的双向链表的 tail 开始, 不断向前寻找第一个 outbound 为 true 的 AbstractChannelHandlerContext, 然后调用它的 invokeConnect 方法, 其代码如下:
-```
+```java
 private void invokeConnect(SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {
     // 忽略 try 块
     ((ChannelOutboundHandler) handler()).connect(this, remoteAddress, localAddress, promise);
 }
 ```
 而第一个 outbound 为 true 的 AbstractChannelHandlerContext就是HeadContext。接着跟踪到 HeadContext.connect, 其代码如下:
-```
+```java
 @Override
 public void connect(
         ChannelHandlerContext ctx,
@@ -573,7 +573,7 @@ public void connect(
 }
 ```
 这个 connect 方法很简单, 仅仅调用了 unsafe 的 connect 方法。而 unsafe 是 pipeline.channel().unsafe() 返回的, 而 Channel 的 unsafe 字段, 在这个例子中,其实是 AbstractNioByteChannel.NioByteUnsafe 内部类。进行跟踪 NioByteUnsafe -> AbstractNioUnsafe.connect:
-```
+```java
 @Override
 public final void connect(
         final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise promise) {
@@ -586,7 +586,7 @@ public final void connect(
 }
 ```
 AbstractNioUnsafe.connect 的实现如上代码所示, 在这个 connect 方法中, 调用了 doConnect 方法, 注意, 这个方法并不是 AbstractNioUnsafe 的方法, 而是 AbstractNioChannel 的抽象方法. doConnect 方法是在 NioSocketChannel 中实现的, 因此进入到 NioSocketChannel.doConnect 中:
-```
+```java
 @Override
 protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
     if (localAddress != null) {
@@ -611,11 +611,17 @@ protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddr
 上面的代码首先是获取 Java NIO SocketChannel, 即从 NioSocketChannel.newSocket 返回的 SocketChannel 对象; 然后是调用 SocketChannel.connect 方法完成 Java NIO 层面上的 Socket 的连接。
 
 最后, 上面的代码流程可以用如下时序图直观地展示:
-<center>
+<div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/netty_1111111.png">
-</center>
+</div>
+
+上述分析过程可以进化为以下：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/%E5%AE%A2%E6%88%B7%E7%AB%AF.png">
+</div>
 
 ## 参考
-[netty](https://github.com/netty/netty)
-[Netty 源码分析之 一 揭开 Bootstrap 神秘的红盖头 (客户端)](https://segmentfault.com/a/1190000007282789)
-慕课网闪电侠netty源码分析
+[netty](https://github.com/netty/netty)</br>
+[Netty 源码分析之 一 揭开 Bootstrap 神秘的红盖头 (客户端)](https://segmentfault.com/a/1190000007282789)</br>
+慕课网闪电侠netty源码分析</br>

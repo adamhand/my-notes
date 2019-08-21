@@ -4,11 +4,11 @@
 # 一、jdk1.7中的HashMap
 ## 1. 整体结构
 
-&emsp; jdk1.7中HashMap的结构如下图所示：
+jdk1.7中HashMap的结构如下图所示：
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java7hashmap.png">
 
-&emsp; HashMap 里面是一个Entry[]数组，然后数组中每个元素是一个单向链表。上图中，每个绿色的实体是嵌套类 Entry 的实例，Entry 包含四个属性：key, value, hash 值和用于单向链表的 next。几个属性的意义如下：
+HashMap 里面是一个Entry[]数组，然后数组中每个元素是一个单向链表。上图中，每个绿色的实体是嵌套类 Entry 的实例，Entry 包含四个属性：key, value, hash 值和用于单向链表的 next。几个属性的意义如下：
 > - capacity：当前数组容量，始终保持 2^n，可以扩容，扩容后数组大小为当前的 2 倍。
 > - loadFactor：负载因子，默认为 0.75。
 > - threshold：扩容的阈值，等于 capacity * loadFactor
@@ -21,7 +21,7 @@ put操作的过程可以简要概括如下：
 - 如果key不为null，计算key的hash值，找到数组对应的下标。
 - 遍历一下对应下标处的链表，看是否有重复的 key 已经存在，如果有，直接覆盖，put 方法返回旧值；如果没有，先判断需不需要扩容，如果需要先扩容，然后将新值按照头插法插入链表中。
 
-&emsp; put操作的代码如下所示：
+put操作的代码如下所示：
 ```java
 public V put(K key, V value) {
     // 当插入第一个元素的时候，需要先初始化数组大小
@@ -53,10 +53,10 @@ public V put(K key, V value) {
     return null;
 }
 ```
-&emsp; put操作涉及到几个过程，具体有下面几个。
+put操作涉及到几个过程，具体有下面几个。
 
 ### 2.1 数组初始化
-&emsp; 在第一个元素插入 HashMap的时候做一次数组的初始化，就是先确定初始的数组大小，并计算数组扩容的阈值。
+在第一个元素插入 HashMap的时候做一次数组的初始化，就是先确定初始的数组大小，并计算数组扩容的阈值。
 ```java
 private void inflateTable(int toSize) {
     // 保证数组大小一定是 2 的 n 次方。
@@ -69,10 +69,10 @@ private void inflateTable(int toSize) {
     initHashSeedAsNeeded(capacity); //ignore
 }
 ```
-&emsp; 这里有一个将数组大小保持为 2 的 n 次方的做法，Java7 和 Java8 的 HashMap 和 ConcurrentHashMap 都有相应的要求，只不过实现的代码稍微有些不同，后面再看到的时候就知道了。
+这里有一个将数组大小保持为 2 的 n 次方的做法，Java7 和 Java8 的 HashMap 和 ConcurrentHashMap 都有相应的要求，只不过实现的代码稍微有些不同，后面再看到的时候就知道了。
 
 ### 2.2 计算具体数组位置
-&emsp; 使用 key 的 hash 值对数组长度进行取模就可以了。
+使用 key 的 hash 值对数组长度进行取模就可以了。
 ```java
 static int indexFor(int hash, int length) {
     // assert Integer.bitCount(length) == 1 : "length must be a non-zero power of 2";
@@ -81,7 +81,7 @@ static int indexFor(int hash, int length) {
 ```
 
 ### 2.3 添加节点到链表中
-&emsp; 找到数组下标后，会先进行 key 判重，如果没有重复，就准备将新值放入到链表的表头。
+找到数组下标后，会先进行 key 判重，如果没有重复，就准备将新值放入到链表的表头。
 ```java
 void addEntry(int hash, K key, V value, int bucketIndex) {
     // 如果当前 HashMap 大小已经达到了阈值，并且新值要插入的数组位置已经有元素了，那么要扩容
@@ -103,10 +103,10 @@ void createEntry(int hash, K key, V value, int bucketIndex) {
     size++;
 }
 ```
-&emsp; 这个方法的主要逻辑就是先判断是否需要扩容，需要的话先扩容，然后再将这个新的数据插入到扩容后的数组的相应位置处的链表的表头。
+这个方法的主要逻辑就是先判断是否需要扩容，需要的话先扩容，然后再将这个新的数据插入到扩容后的数组的相应位置处的链表的表头。
 
 ### 2.4 数组扩容
-&emsp; 前面我们看到，在插入新值的时候，如果当前的 size 已经达到了阈值，并且要插入的数组位置上已经有元素，那么就会触发扩容，扩容后，数组大小为原来的 2 倍。
+前面我们看到，在插入新值的时候，如果当前的 size 已经达到了阈值，并且要插入的数组位置上已经有元素，那么就会触发扩容，扩容后，数组大小为原来的 2 倍。
 ```java
 void resize(int newCapacity) {
     Entry[] oldTable = table;
@@ -123,8 +123,8 @@ void resize(int newCapacity) {
     threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
 }
 ```
-&emsp; 扩容就是用一个新的大数组替换原来的小数组，并将原来数组中的值迁移到新的数组中。
-&emsp; 由于是双倍扩容，迁移过程中，会将原来 table[i] 中的链表的所有节点，分拆到新的数组的 newTable[i] 和 newTable[i + oldLength] 位置上。如原来数组长度是 16，那么扩容后，原来 table[0] 处的链表中的所有元素会被分配到新数组中 newTable[0] 和 newTable[16] 这两个位置。
+扩容就是用一个新的大数组替换原来的小数组，并将原来数组中的值迁移到新的数组中。
+由于是双倍扩容，迁移过程中，会将原来 table[i] 中的链表的所有节点，分拆到新的数组的 newTable[i] 和 newTable[i + oldLength] 位置上。如原来数组长度是 16，那么扩容后，原来 table[0] 处的链表中的所有元素会被分配到新数组中 newTable[0] 和 newTable[16] 这两个位置。
 ```java
 //将老的表中的数据拷贝到新的结构中  
 void transfer(Entry[] newTable, boolean rehash) {  
@@ -143,10 +143,10 @@ void transfer(Entry[] newTable, boolean rehash) {
     }  
 }  
 ```
-&emsp; 这个方法将老数组中的数据逐个链表地遍历，重新计算后放入新的扩容后的数组中，我们的数组索引位置的计算是通过 对key值的hashcode进行hash扰乱运算后，再通过和 length-1进行位运算得到最终数组索引位置。 
+这个方法将老数组中的数据逐个链表地遍历，重新计算后放入新的扩容后的数组中，我们的数组索引位置的计算是通过 对key值的hashcode进行hash扰乱运算后，再通过和 length-1进行位运算得到最终数组索引位置。 
 
 ## 3. get过程
-&emsp; 相对于 put 过程，get 过程是非常简单的。
+相对于 put 过程，get 过程是非常简单的。
 > - 根据 key 计算 hash 值。
 > - 找到相应的数组下标：hash & (length – 1)。
 > - 遍历该数组位置处的链表，直到找到相等(==或equals)的 key。
@@ -173,7 +173,7 @@ private V getForNullKey() {
     return null;  
 }  
 ```
-&emsp; get方法通过key值返回对应value，如果key为null，直接去table[0]处检索。我们再看一下getEntry这个方法：
+get方法通过key值返回对应value，如果key为null，直接去table[0]处检索。我们再看一下getEntry这个方法：
 ```java
 //获取键值为key的元素  
 final Entry<K,V> getEntry(Object key) {  
@@ -199,14 +199,14 @@ final Entry<K,V> getEntry(Object key) {
 
 ## 1. 整体结构
 
-&emsp; Java8 对 HashMap 进行了一些修改，最大的不同就是利用了红黑树，所以其由 数组+链表+红黑树 组成。
-&emsp; 根据 Java7 HashMap 的介绍，我们知道，查找的时候，根据 hash 值我们能够快速定位到数组的具体下标，但是之后的话，需要顺着链表一个个比较下去才能找到我们需要的，时间复杂度取决于链表的长度，为 O(n)。
-&emsp; 为了降低这部分的开销，在 Java8 中，当链表中的元素超过了 8 个以后，会将链表转换为红黑树，在这些位置进行查找的时候可以降低时间复杂度为 O(logN)。
-&emsp; jdk1.8中的HashMap示意图如下：
+Java8 对 HashMap 进行了一些修改，最大的不同就是利用了红黑树，所以其由 数组+链表+红黑树 组成。
+根据 Java7 HashMap 的介绍，我们知道，查找的时候，根据 hash 值我们能够快速定位到数组的具体下标，但是之后的话，需要顺着链表一个个比较下去才能找到我们需要的，时间复杂度取决于链表的长度，为 O(n)。
+为了降低这部分的开销，在 Java8 中，当链表中的元素超过了 8 个以后，会将链表转换为红黑树，在这些位置进行查找的时候可以降低时间复杂度为 O(logN)。
+jdk1.8中的HashMap示意图如下：
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java8hashmap.png">
 
-&emsp; Java7 中使用 Entry 来代表每个 HashMap 中的数据节点，Java8 中使用 Node，基本没有区别，都是 key，value，hash 和 next 这四个属性，相应地，java7中的Entry[]数组也变为了Node[]数组。Node是HashMap的一个内部类，实现了Map.Entry接口，本质是就是一个映射(键值对)。不过，Node 只能用于链表的情况，红黑树的情况需要使用 TreeNode。Node类的源码如下：
+Java7 中使用 Entry 来代表每个 HashMap 中的数据节点，Java8 中使用 Node，基本没有区别，都是 key，value，hash 和 next 这四个属性，相应地，java7中的Entry[]数组也变为了Node[]数组。Node是HashMap的一个内部类，实现了Map.Entry接口，本质是就是一个映射(键值对)。不过，Node 只能用于链表的情况，红黑树的情况需要使用 TreeNode。Node类的源码如下：
 ```java
 static class Node<K,V> implements Map.Entry<K,V> {
         final int hash;    //用来定位数组索引位置
@@ -225,7 +225,7 @@ static class Node<K,V> implements Map.Entry<K,V> {
 ```
 
 ## 2. 关键属性
-&emsp; 构造函数主要是对下面几个字段进行初始化：
+构造函数主要是对下面几个字段进行初始化：
 ```java
 transient Entry[] table;   //存储元素的实体数组
 transient int size;        //容量，存放键值对的个数
@@ -233,15 +233,19 @@ int threshold;             //临界值。当实际大小超过临界值时，会
 final float loadFactor;    //加载因子。默认是0.75
 transient int modCount;    //被修改的次数
 ```
-&emsp; 首先，Node[] table的初始化长度length(默认值是16)，Load factor为负载因子(默认值是0.75)，threshold是HashMap所能容纳的最大数据量的Node(键值对)个数。threshold = length * Load factor。也就是说，在数组定义好长度之后，负载因子越大，所能容纳的键值对个数越多。
-&emsp; 结合负载因子的定义公式可知，threshold就是在此Load factor和length(数组长度)对应下允许的最大元素数目，超过这个数目就重新resize(扩容)，扩容后的HashMap容量是之前容量的两倍。默认的负载因子0.75是对空间和时间效率的一个平衡选择，建议大家不要修改，除非在时间和空间比较特殊的情况下，如果内存空间很多而又对时间效率要求很高，可以降低负载因子Load factor的值；相反，如果内存空间紧张而对时间效率要求不高，可以增加负载因子loadFactor的值，这个值可以大于1。
-&emsp; size这个字段其实很好理解，就是HashMap中实际存在的键值对数量。注意和table的长度length、容纳最大键值对数量threshold的区别。而modCount字段主要用来记录HashMap内部结构发生变化的次数，主要用于迭代的快速失败。强调一点，内部结构发生变化指的是结构发生变化，例如put新键值对，但是某个key对应的value值被覆盖不属于结构变化。
-&emsp; 在HashMap中，哈希桶数组table的长度length大小必须为2的n次方(一定是合数)，这是一种非常规的设计，常规的设计是把桶的大小设计为素数。相对来说素数导致冲突的概率要小于合数，具体证明可以参考http://blog.csdn.net/liuqiyao_01/article/details/14475159，Hashtable初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。HashMap采用这种非常规设计，主要是为了在取模和扩容时做优化，同时为了减少冲突，HashMap定位哈希桶索引位置时，也加入了高位参与运算的过程(即将预哈希得到的hashCode值向右移动n位，再进行哈希运算)。
-&emsp; 这里存在一个问题，即使负载因子和Hash算法设计的再合理，也免不了会出现拉链过长的情况，一旦出现拉链过长，则会严重影响HashMap的性能。于是，在JDK1.8版本中，对数据结构做了进一步的优化，引入了红黑树。而当链表长度太长（默认超过8）时，链表就转换为红黑树，利用红黑树快速增删改查的特点提高HashMap的性能，其中会用到红黑树的插入、删除、查找等算法。本文不再对红黑树展开讨论，想了解更多红黑树数据结构的工作原理可以参考http://blog.csdn.net/v_july_v/article/details/6105630。
+首先，Node[] table的初始化长度length(默认值是16)，Load factor为负载因子(默认值是0.75)，threshold是HashMap所能容纳的最大数据量的Node(键值对)个数。threshold = length * Load factor。也就是说，在数组定义好长度之后，负载因子越大，所能容纳的键值对个数越多。
+
+结合负载因子的定义公式可知，threshold就是在此Load factor和length(数组长度)对应下允许的最大元素数目，超过这个数目就重新resize(扩容)，扩容后的HashMap容量是之前容量的两倍。默认的负载因子0.75是对空间和时间效率的一个平衡选择，建议大家不要修改，除非在时间和空间比较特殊的情况下，如果内存空间很多而又对时间效率要求很高，可以降低负载因子Load factor的值；相反，如果内存空间紧张而对时间效率要求不高，可以增加负载因子loadFactor的值，这个值可以大于1。
+
+size这个字段其实很好理解，就是HashMap中实际存在的键值对数量。注意和table的长度length、容纳最大键值对数量threshold的区别。而modCount字段主要用来记录HashMap内部结构发生变化的次数，主要用于迭代的快速失败。强调一点，内部结构发生变化指的是结构发生变化，例如put新键值对，但是某个key对应的value值被覆盖不属于结构变化。
+
+在HashMap中，哈希桶数组table的长度length大小必须为2的n次方(一定是合数)，这是一种非常规的设计，常规的设计是把桶的大小设计为素数。相对来说素数导致冲突的概率要小于合数，具体证明可以参考[这里](http://blog.csdn.net/liuqiyao_01/article/details/14475159)，Hashtable初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。HashMap采用这种非常规设计，主要是为了在取模和扩容时做优化，同时为了减少冲突，HashMap定位哈希桶索引位置时，也加入了高位参与运算的过程(即将预哈希得到的hashCode值向右移动n位，再进行哈希运算)。
+
+这里存在一个问题，即使负载因子和Hash算法设计的再合理，也免不了会出现拉链过长的情况，一旦出现拉链过长，则会严重影响HashMap的性能。于是，在JDK1.8版本中，对数据结构做了进一步的优化，引入了红黑树。而当链表长度太长（默认超过8）时，链表就转换为红黑树，利用红黑树快速增删改查的特点提高HashMap的性能，其中会用到红黑树的插入、删除、查找等算法。本文不再对红黑树展开讨论，想了解更多红黑树数据结构的工作原理可以参考http://blog.csdn.net/v_july_v/article/details/6105630。
 
 ## 3. “拉链法”工作原理
-&emsp; HashMap就是使用哈希表来存储的。哈希表为解决冲突，可以采用开放地址法和链地址法等来解决问题，Java中HashMap采用了链地址法(就是所谓的“拉链法”)。链地址法，简单来说，就是数组加链表的结合。在每个数组元素上都一个链表结构，当数据被Hash后，得到数组下标，把数据放在对应下标元素的链表上。
-&emsp; HashMap确定哈希桶数组索引位置是通过以下三个步骤实现的：**取key的hashCode值、高位运算、取模运算**。源码如下：
+HashMap就是使用哈希表来存储的。哈希表为解决冲突，可以采用开放地址法和链地址法等来解决问题，Java中HashMap采用了链地址法(就是所谓的“拉链法”)。链地址法，简单来说，就是数组加链表的结合。在每个数组元素上都一个链表结构，当数据被Hash后，得到数组下标，把数据放在对应下标元素的链表上。
+HashMap确定哈希桶数组索引位置是通过以下三个步骤实现的：**取key的hashCode值、高位运算、取模运算**。源码如下：
 ```java
 //方法一：
 //jdk1.8 & jdk1.7
@@ -257,28 +261,32 @@ static int indexFor(int h, int length) {
      return h & (length-1);  //第三步 取模运算
 }
 ```
-&emsp; 对于任意给定的对象，只要它的hashCode()返回值相同，那么程序调用方法一所计算得到的Hash码值总是相同的。我们首先想到的就是把hash值对数组长度取模运算，这样一来，元素的分布相对来说是比较均匀的。但是，模运算的消耗还是比较大的，在HashMap中是这样做的：调用方法二来计算该对象应该保存在table数组的哪个索引处。
-&emsp; 这个方法非常巧妙，它通过h & (table.length -1)来得到该对象的保存位，而HashMap底层数组的长度总是2的n次方，这是HashMap在速度上的优化。当length总是2的n次方时，h& (length-1)运算等价于对length取模，也就是h%length，但是&比%具有更高的效率。
-&emsp; 在JDK1.8的实现中，优化了高位运算的算法，通过hashCode()的高16位异或低16位实现的：(h = k.hashCode()) ^ (h >>> 16)，主要是从速度、功效、质量来考虑的，这么做可以在数组table的length比较小的时候，也能保证考虑到高低Bit都参与到Hash的计算中，同时不会有太大的开销。
-&emsp; **另外，HashMap 允许插入键为 null 的键值对。但是因为无法调用 null 的 hashCode() 方法，也就无法确定该键值对的桶下标，只能通过强制指定一个桶下标来存放。从hash()函数的返回语句可以看出，当键为null的时候，返回0，HashMap 使用第 0 个桶存放键为 null 的键值对。对比HashTable源码我们可以知道，HashTable的key直接进行了hashCode，如果key为null时，会抛出异常，所以HashTable的key不可以是null。**
-&emsp; 下面举例说明下，n为table的长度。
+对于任意给定的对象，只要它的hashCode()返回值相同，那么程序调用方法一所计算得到的Hash码值总是相同的。我们首先想到的就是把hash值对数组长度取模运算，这样一来，元素的分布相对来说是比较均匀的。但是，模运算的消耗还是比较大的，在HashMap中是这样做的：调用方法二来计算该对象应该保存在table数组的哪个索引处。
+
+这个方法非常巧妙，它通过h & (table.length -1)来得到该对象的保存位，而HashMap底层数组的长度总是2的n次方，这是HashMap在速度上的优化。当length总是2的n次方时，h& (length-1)运算等价于对length取模，也就是h%length，但是&比%具有更高的效率。
+
+在JDK1.8的实现中，优化了高位运算的算法，通过hashCode()的高16位异或低16位实现的：(h = k.hashCode()) ^ (h >>> 16)，主要是从速度、功效、质量来考虑的，这么做可以在数组table的length比较小的时候，也能保证考虑到高低Bit都参与到Hash的计算中，同时不会有太大的开销。
+
+**另外，HashMap 允许插入键为 null 的键值对。但是因为无法调用 null 的 hashCode() 方法，也就无法确定该键值对的桶下标，只能通过强制指定一个桶下标来存放。从hash()函数的返回语句可以看出，当键为null的时候，返回0，HashMap 使用第 0 个桶存放键为 null 的键值对。对比HashTable源码我们可以知道，HashTable的key直接进行了hashCode，如果key为null时，会抛出异常，所以HashTable的key不可以是null。**
+
+下面举例说明下，n为table的长度。
 
 ![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/hashmaphash.png)
 
 ## 4. put方法
-&emsp; HashMap的put方法执行过程可以通过下图来理解
+HashMap的put方法执行过程可以通过下图来理解
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/hashmapput.png">
 
-> 第0步，先对key值做hash运算，在hash运算里面处理了key==null的情况，参见上面的hash函数，然后才是调用putVal函数，进行下面的步骤。
-①.判断键值对数组table[i]是否为空或为null，否则执行resize()进行扩容；
-②.根据键值key计算hash值得到插入的数组索引i，如果table[i]==null，直接新建节点添加，转向⑥，如果table[i]不为空，转向③；
-③.判断table[i]的首个元素是否和key一样，如果相同直接覆盖value，否则转向④，这里的相同指的是hashCode以及equals；
-④.判断table[i] 是否为treeNode，即table[i] 是否是红黑树，如果是红黑树，则直接在树中插入键值对，否则转向⑤；
-⑤.遍历table[i]，判断链表长度是否大于8，大于8的话把链表转换为红黑树，在红黑树中执行插入操作，否则进行链表的插入操作；遍历过程中若发现key已经存在直接覆盖value即可；
-⑥.插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold，如果超过，进行扩容。
+- 第0步，先对key值做hash运算，在hash运算里面处理了key==null的情况，参见上面的hash函数，然后才是调用putVal函数，进行下面的步骤。
+- ①.判断键值对数组table[i]是否为空或为null，否则执行resize()进行扩容；
+- ②.根据键值key计算hash值得到插入的数组索引i，如果table[i]==null，直接新建节点添加，转向⑥，如果table[i]不为空，转向③；
+- ③.判断table[i]的首个元素是否和key一样，如果相同直接覆盖value，否则转向④，这里的相同指的是hashCode以及equals；
+- ④.判断table[i] 是否为treeNode，即table[i] 是否是红黑树，如果是红黑树，则直接在树中插入键值对，否则转向⑤；
+- ⑤.遍历table[i]，判断链表长度是否大于8，大于8的话把链表转换为红黑树，在红黑树中执行插入操作，否则进行链表的插入操作；遍历过程中若发现key已经存在直接覆盖value即可；
+- ⑥.插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold，如果超过，进行扩容。
 
-&emsp; jdk1.8的源码如下：
+jdk1.8的源码如下：
 ```java
 public V put(K key, V value) {
      // 对key的hashCode()做hash
@@ -338,21 +346,21 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 ```
 
 ## 5. 扩容
-&emsp; 当put时，如果发现目前的bucket占用程度已经超过了Load Factor所希望的比例，那么就会发生resize。在resize的过程，简单的说就是把bucket扩充为2倍，之后重新计算index，把节点再放到新的bucket中。然而又因为我们使用的是2次幂的扩展(指长度扩为原来2倍)，所以，元素的位置要么是在原位置，要么是在原位置再移动2次幂的位置。
-&emsp; 怎么理解呢？例如我们从16扩展为32时，具体的变化如下所示：
+当put时，如果发现目前的bucket占用程度已经超过了Load Factor所希望的比例，那么就会发生resize。在resize的过程，简单的说就是把bucket扩充为2倍，之后重新计算index，把节点再放到新的bucket中。然而又因为我们使用的是2次幂的扩展(指长度扩为原来2倍)，所以，元素的位置要么是在原位置，要么是在原位置再移动2次幂的位置。
+怎么理解呢？例如我们从16扩展为32时，具体的变化如下所示：
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java8resize.png">
 
-&emsp; 因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：
+因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java8resize1.png">
 
-&emsp; 因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了，是0的话索引没变，是1的话索引变成“原索引+oldCap”。可以看看下图为16扩充为32的resize示意图：
+因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了，是0的话索引没变，是1的话索引变成“原索引+oldCap”。可以看看下图为16扩充为32的resize示意图：
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/java8resize2.png">
 
-&emsp; 这个设计确实非常的巧妙，既省去了重新计算hash值的时间，而且同时，由于新增的1bit是0还是1可以认为是随机的，因此resize的过程，均匀的把之前的冲突的节点分散到新的bucket了。
-&emsp; 具体代码如下：
+这个设计确实非常的巧妙，既省去了重新计算hash值的时间，而且同时，由于新增的1bit是0还是1可以认为是随机的，因此resize的过程，均匀的把之前的冲突的节点分散到新的bucket了。
+具体代码如下：
 ```java
 final Node<K,V>[] resize() {
     Node<K,V>[] oldTab = table;
@@ -444,7 +452,7 @@ final Node<K,V>[] resize() {
 ```
 
 ## 6. get过程分析
-&emsp; 相对于 put 来说，get 真的太简单了。
+相对于 put 来说，get 真的太简单了。
 > - 计算 key 的 hash 值，根据 hash 值找到对应数组下标: hash & (length-1)
 > - 判断数组该位置处的元素是否刚好就是我们要找的，如果不是，走第三步
 > - 判断该元素类型是否是 TreeNode，如果是，用红黑树的方法取数据，如果不是，走第四步

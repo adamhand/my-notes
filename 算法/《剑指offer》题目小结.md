@@ -29,7 +29,29 @@ class Solution {
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/find%20all%20duplicates%20in%20an%20array_2.PNG">
 </center>
 
-- 解法：这个题目就不能按照上面的解法来了，因为数组中的最小元素为0，最大元素为n-1，按照上述方法会产生越界问题。可以使用HashMap。
+- 解法：和上面的解法类似。利用现有数组设置标志，当一个数字被访问过后，可以设置对应位上的数为相反数，之后再遇到相同的数时，会发现对应位上的数已经小于0了，那么直接返回这个数即可。
+
+```java
+public boolean duplicate(int numbers[],int length,int [] duplication) {
+    if (numbers == null || numbers.length == 0)
+        return false;
+    for (int i = 0; i < numbers.length; i++) {
+        int index = numbers[i];
+        //防止数组越界
+        if (index < 0)
+            index = -index;
+        
+        if (numbers[index] < 0){
+            duplication[0] = index;
+            return true;
+        }
+        numbers[index] = -numbers[index];
+    }
+    return false;
+}
+```    
+
+- 解法：可以使用HashMap。
 
 ```java
 public boolean duplicate(int numbers[],int length,int [] duplication) {
@@ -47,6 +69,22 @@ public boolean duplicate(int numbers[],int length,int [] duplication) {
         map.put(num, 0);
     }
     return flag;
+}
+```
+
+- 解法：不使用`HashMap`，使用`boolean`数组。
+
+```java
+public boolean duplicate(int numbers[], int length, int[] duplication) {
+    boolean[] k = new boolean[length];
+    for (int i = 0; i < k.length; i++) {
+        if (k[numbers[i]] == true) {
+            duplication[0] = numbers[i];
+            return true;
+        }
+        k[numbers[i]] = true;
+    }
+    return false;
 }
 ```
 
@@ -333,12 +371,15 @@ public class Solution {
 要找到中序遍历下的下一个节点。这个节点可以分为两种情况:
 
 - 该节点有右子树。这种情况比较简单，直接将其右节点进行中序遍历即可，并将一个遍历到的最右节点返回。简单点说，该节点的下一个节点是右子树的最左节点。
+
 <center>
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/have%20a%20right%20node.PNG">
 </center>
+
 - 该节点没有右子树。这种情况又可以分为两种情况：
     - 该节点是父节点的左子节点。直接将父节点返回即可。
     - 该节点是父节点的右子节点。需要不断寻找当前节点父亲节点，直到当前节点是父亲节点的左子节点。这是因为中序遍历是**是直先遍历节点的左子树，然后是节点本身，然后是节点的右子树**，所以，如果一个节点是父节点的右子节点且该节点没有右子树，说明该节点是“当前树”的一个“最右节点”，所以我们就需要找到“当前树”的父节点。
+
 <center>
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/have%20not%20a%20right%20node.PNG">
 </center>
@@ -1261,6 +1302,33 @@ public static void deleteDuplication(Node head){
 }
 ```
 
+- 思路四。这种方法也是讲重复的节点一个不留。
+
+```java
+public ListNode deleteDuplication(ListNode pHead)
+{
+    if (pHead==null || pHead.next==null){return pHead;}
+    ListNode Head = new ListNode(0);
+    Head.next = pHead;
+    ListNode pre  = Head;
+    ListNode last = Head.next;
+    while (last!=null){
+        if(last.next!=null && last.val == last.next.val){
+            // 找到最后的一个相同节点
+            while (last.next!=null && last.val == last.next.val){
+                last = last.next;
+            }
+            pre.next = last.next;
+            last = last.next;
+        }else{
+            pre = pre.next;
+            last = last.next;
+        }
+    }
+    return Head.next;
+}
+```
+
 测试函数和Node结构。
 ```java
 public static void test(){
@@ -1677,7 +1745,10 @@ public static boolean hasCycleOrNot(ListNode head){
 ---
 > 思路2：看下图，如果链表中存在环，且环的长度为k，那么环的入口就是倒数第k个节点。现在，只要求得环的长度，就能够根据前面的**链表中倒数第k个节点**的思路进行求解，定义两个指针指向头结点，先让第一个指针在链表上移动n步，然后两个指针以相同的速度向前移动，当第二个指针指向环的入口结点时，第一个指针已经围绕着环走了一圈又回到了入口结点。
 在前面的题目中判断链表中是否有环的时候，用到一快一慢两个指针，如果两个指针相遇，说明有环，且相遇的结点一定在环内。可以从这个结点出发，一边继续向前移动一边计数，当再次回到这个结点时，就可以得到环中的结点数了。
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryoflooplist.png)
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryoflooplist.png">
+</div>
 
 ```java
 //找到相遇点
@@ -1724,17 +1795,24 @@ public static ListNode findEntryNode(ListNode head){
 }
 ```
 
-> 思路三：不用求得环的长度，只需在相遇时，让一个指针在相遇点出发，另一个指针在链表首部出发，然后两个指针一次走一步，当它们相遇时，就是环的入口处。
+- 思路三：不用求得环的长度，只需在相遇时，让一个指针在相遇点出发，另一个指针在链表首部出发，然后两个指针一次走一步，当它们相遇时，就是环的入口处。
 证明如下：
->
-- 假设存在环，fast以速度2运行，slow以速度1运行，在slow走到入口t时，如图（m1为在slow首次到t时fast的位置，a为h到t的距离，b为t到m1的距离，n为环的周长）： 
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop1.png)
-由图知fast走的距离为a+b+xn，slow走的距离为a，又v(fast) = 2*v(slow)，所以x(fast) = 2*x(slow)，即2a = a+b+xn，因此a = b+xn。 
-m1逆时针到t的距离为n-b。
-- 在首次相遇时，如图（m2为相遇点）： 
-![](https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop2.png)
-由于m1逆时针到t的距离为n-b，即要达到相遇需要追赶n-b的距离，由于两者速度差为1，因此需要n-b的时间才能相遇，此时slow再次向后n-b距离，即到达m2位置与fast相遇，因为一周长度为n，因此到t的距离为 n-(n-b) = b。
-- 为何令slow重新从pHead以速度1开始走，令fast从m2以速度1走？要想在入口t相遇，则需要从m2处再走b+xn的距离，刚好pHead处符合（由1)可知），所以令slow从pHead开始走。在相遇后就是入口t的位置。
+
+    - 假设存在环，fast以速度2运行，slow以速度1运行，在slow走到入口t时，如图（m1为在slow首次到t时fast的位置，a为h到t的距离，b为t到m1的距离，n为环的周长）：
+
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop1.png">
+    </div>
+
+    由图知fast走的距离为a+b+xn，slow走的距离为a，又v(fast) = 2*v(slow)，所以x(fast) = 2*x(slow)，即2a = a+b+xn，因此a = b+xn。 m1逆时针到t的距离为n-b。
+    - 在首次相遇时，如图（m2为相遇点）： 
+    
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/entryinaloop2.png">
+    </div>
+
+    由于m1逆时针到t的距离为n-b，即要达到相遇需要追赶n-b的距离，由于两者速度差为1，因此需要n-b的时间才能相遇，此时slow再次向后n-b距离，即到达m2位置与fast相遇，因为一周长度为n，因此到t的距离为 n-(n-b) = b。
+    - 为何令slow重新从pHead以速度1开始走，令fast从m2以速度1走？要想在入口t相遇，则需要从m2处再走b+xn的距离，刚好pHead处符合（由1)可知），所以令slow从pHead开始走。在相遇后就是入口t的位置。
 
 ```java
 public static ListNode findEntryNode_1(ListNode head){
@@ -2003,7 +2081,7 @@ public class BiTreeNode {
 }
 ```
 
-# 31. 二叉树的镜像
+# 31. 对称的二叉树
 题目描述：
 
  请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，他就是对称的。
@@ -2740,6 +2818,52 @@ private void backtracking(char[] chars, boolean[] hasUsed, StringBuilder s) {
 }
 ```
 
+> 更清晰一点的思路
+- 第一步求所有可能出现在第一个位置的字符（即把第一个字符和后面的所有字符交换[相同字符不交换]）；
+- 第二步固定第一个字符，求后面所有字符的排列。这时候又可以把后面的所有字符拆成两部分（第一个字符以及剩下的所有字符），依此类推。这样，就可以用递归的方法来解决。
+
+这整个过程就好像一个循环里面嵌套着递归，示意图如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/backtracking.jpg">
+</div>
+
+```java
+public class Solution {
+    ArrayList<String> res = new ArrayList<String>();
+    public ArrayList<String> Permutation(String str) {
+       if (str == null || str.length() == 0)
+           return new ArrayList();
+        backtracking(str.toCharArray(), 0);
+        Collections.sort(res);
+        
+        return res;
+    }
+    
+    private void backtracking(char[] str, int begin) {
+        if (begin == str.length - 1) {
+            res.add(String.valueOf(str));
+        } else {
+            for (int i = begin; i < str.length; i++) {
+                if (begin != i && str[begin] == str[i])  //如果出现这种情况，说明给的字符串中有相同的元素，比如aa，那么就不需要交换
+                    continue;
+                swap(str, i, begin);
+                backtracking(str, begin + 1);
+                swap(str, i, begin);
+            }
+        }
+    }
+    
+    private void swap(char[] str, int i, int j) {
+        char c = str[i];
+        str[i] = str[j];
+        str[j] = c;
+    }
+}
+```
+
+参考[[剑指offer] 字符串的排列](https://cloud.tencent.com/developer/article/1327426)
+
 # 44. 数组中超过一半的数
 题目描述：
 
@@ -2785,9 +2909,9 @@ public static int moreThanHalf(int[] nums){
 ```
 > 思路三：出现的次数超过数组长度的一半，表明这个数字出现的次数比其他数出现的次数的总和还多。
 
- 考虑每次删除两个不同的数，那么在剩下的数中，出现的次数仍然超过总数的一般，不断重复该过程，排除掉其他的数，最终找到那个出现次数超过一半的数字。这个方法的时间复杂度是O(N)，空间复杂度是O(1)。
+> 考虑每次删除两个不同的数，那么在剩下的数中，出现的次数仍然超过总数的一般，不断重复该过程，排除掉其他的数，最终找到那个出现次数超过一半的数字。这个方法的时间复杂度是O(N)，空间复杂度是O(1)。
 
- 换个思路，这个可以通过计数实现，而不是真正物理删除。在遍历数组的过程中，保存两个值，一个是数组中数字，一个是出现次数。当遍历到下一个数字时，如果这个数字跟之前保存的数字相同，则次数加1，如果不同，则次数减1。如果次数为0，则保存下一个数字并把次数设置为1，由于我们要找的数字出现的次数比其他所有数字出现的次数之和还要多，那么要找的数字肯定是最后一次把次数设为1时对应的数字。
+ > 换个思路，这个可以通过计数实现，而不是真正物理删除。在遍历数组的过程中，保存两个值，一个是数组中数字，一个是出现次数。当遍历到下一个数字时，如果这个数字跟之前保存的数字相同，则次数加1，如果不同，则次数减1。如果次数为0，则保存下一个数字并把次数设置为1，由于我们要找的数字出现的次数比其他所有数字出现的次数之和还要多，那么要找的数字肯定是最后一次把次数设为1时对应的数字。
 ```java
 public static int moreThanHalf(int[] nums){
     if(nums == null || nums.length <= 0)
@@ -2816,9 +2940,9 @@ public static int moreThanHalf(int[] nums){
 ```
 > 思路四：排序算法的改进。如果对一个数组进行排序，位于中间位置的那个数字肯定是所求的值。对数组排序的时间复杂度是O(nlog(n))，但是对于这道题目，还有更好的算法，能够在时间复杂度O(n)内求出。
 
- 借鉴快速排序算法，其中的Partition()方法是一个最重要的方法，该方法返回一个index，能够保证index位置的数是已排序完成的，在index左边的数都比index所在的数小，在index右边的数都比index所在的数大。那么本题就可以利用这样的思路来解。
+ > 借鉴快速排序算法，其中的Partition()方法是一个最重要的方法，该方法返回一个index，能够保证index位置的数是已排序完成的，在index左边的数都比index所在的数小，在index右边的数都比index所在的数大。那么本题就可以利用这样的思路来解。
 
- 通过Partition()返回index，如果index==mid，那么就表明找到了数组的中位数；如果index<mid，表明中位数在[index+1,end]之间；如果index>mid，表明中位数在[start,index-1]之间。知道最后求得index==mid循环结束。
+ > 通过Partition()返回index，如果index==mid，那么就表明找到了数组的中位数；如果index<mid，表明中位数在[index+1,end]之间；如果index>mid，表明中位数在[start,index-1]之间。知道最后求得index==mid循环结束。
 ```java
 private static int partition(int[] nums,int start,int end){
     int pivotkey = nums[start];
@@ -3027,8 +3151,7 @@ public static double getMidian(){
 
 ---
 > 思路一：累加法。首先，我们需要定义一个变量curSum，用for循环来记录前i项的和，curSum每次都会更改，如果curSum的值小于0，我们再往后加只有减小最大和，所以我们需要将array[i+1]项的值重新赋值给curSum。  
-
- 另外，我们需要定义一个最大值greatestSum，每次改变curSum的值时，我们都需要将greatestSum和curSum进行比较，如果curSum大于greatestSum，我们则将curSum的值赋值给greatestSum。
+> 另外，我们需要定义一个最大值greatestSum，每次改变curSum的值时，我们都需要将greatestSum和curSum进行比较，如果curSum大于greatestSum，我们则将curSum的值赋值给greatestSum。
 ```java
 public static int greatestSumOfSubArray(int[] nums){
     if(nums == null || nums.length <= 0){
@@ -3099,7 +3222,7 @@ private static int maxOfThree(int a, int b, int c){
 # 48. 从 1 到 n 整数中 1 出现的次数
 题目描述：
 
- 输入一个整数n，求1到n这n个整数的十进制表示中1出现的次数。例如输入12,从1到12这些整数中包含1的数字有1,10,11,12,1一共出现了5次。
+ 输入一个整数n，求1到n这n个整数的十进制表示中1出现的次数。例如输入12,从1到12这些整数中包含1的数字有[1,10,11,12],1一共出现了5次。
 
 ---
 > 思路一：不考虑时间效率的做法。循环查找1~n中每一个数的每一位。如果输入数字为n，n有O(logn)位，该算法的时间复杂度为O(n*logn)。
@@ -3261,7 +3384,52 @@ private static int beginNumberFor(int digits) {
  输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
 
 ---
-> 思路一：最容易想到的方法就是求出数组中所有数的全排列，然后将每个排列拼接起来(需要注意的是，两个整数拼接的结果可能超过整数的范围，所以这里隐藏着一个大数问题)，最后比较拼接后的数字大小。这显然不是最简单的方法，这里不再介绍。
+> 思路一：最容易想到的方法就是求出数组中所有数的全排列，然后将每个排列拼接起来(需要注意的是，两个整数拼接的结果可能超过整数的范围，所以这里隐藏着一个大数问题)，最后比较拼接后的数字大小。这显然不是最简单的方法，代码如下。
+
+```java
+public class Solution {
+    ArrayList<String> result = new ArrayList<String>();
+    public String PrintMinNumber(int [] numbers) {
+        if (numbers == null || numbers.length == 0)
+            return "";
+        
+        String[] strs = new String[numbers.length];
+        for (int i = 0; i < numbers.length; i++) {
+            strs[i] = String.valueOf(numbers[i]);
+        }
+        helper(strs, 0);
+        Collections.sort(result);
+        return result.get(0);
+    }
+    private void helper(String[] strs, int begin) {
+        if (begin == strs.length - 1) {
+            result.add(strsToString(strs));
+        } else {
+            for (int i = begin; i < strs.length; i++) {
+                if (i != begin && strs[i] == strs[begin])
+                    continue;
+                swap(strs, begin, i);
+                helper(strs, begin + 1);
+                swap(strs, begin, i);
+            }
+        }
+    }
+    
+    private String strsToString(String[] strs) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < strs.length; i++) {
+            sb.append(strs[i]);
+        }
+        return sb.toString();
+    }
+    
+    private void swap(String[] strs, int i, int j) {
+        String s = strs[i];
+        strs[i] = strs[j];
+        strs[j] = s;
+    }
+}
+```
 
 > 思路二：可以联想到字符串的字典排，将数字问题转化成字符串问题，也是解决大数问题的一个好方法。
 ```java
@@ -3548,9 +3716,9 @@ public static int getUglyNumber(int num){
 
 > 思路二：用空间换时间。前面的算法之所以效率低，很大程度上是因为不管一个数是不是丑数我们对它都要作计算。接下来我们试着找到一种只要计算丑数的方法，而不在非丑数的整数上花费时间。根据丑数的定义，丑数应该是另一个丑数乘以2，3，5的结果。因此我们可以创建一个数组，里面的数字是排序好的丑数，每一个丑数都是前面的丑数乘以2，3，5得到的。
 
- 这种思路的关键在于怎样确定数组里面的丑数是排序好的。假设数组中已经有若干个丑数排好后存放在数组中，并且把已有的最大的丑数记作M，我们接下来分析如何生成下一个丑数。该丑数肯定是前面某个丑数乘以2，3，5的结果。所以我们首先考虑把已有的每个丑数乘以2.在乘以2的时候，能得到若干个小于或等于M的结果。由于是按照顺序生成的，小于或者等于M肯定已经在数组中了，我们不需要再次考虑；还会得到若干个大于M的结果，但我们只需要第一个大于M的结果，因为我们希望丑数是指按从小到大的顺序生成的，其他更大的结果以后再说。我们把得到的第一个乘以2后大于M的结果即为M2.同样，我们把已有的每一个丑数乘以3，5，能得到第一个大于M的结果M3和M5.那么下一个丑数应该是M2,M3,M5。这3个数的最小者。
+> 这种思路的关键在于怎样确定数组里面的丑数是排序好的。假设数组中已经有若干个丑数排好后存放在数组中，并且把已有的最大的丑数记作M，我们接下来分析如何生成下一个丑数。该丑数肯定是前面某个丑数乘以2，3，5的结果。所以我们首先考虑把已有的每个丑数乘以2.在乘以2的时候，能得到若干个小于或等于M的结果。由于是按照顺序生成的，小于或者等于M肯定已经在数组中了，我们不需要再次考虑；还会得到若干个大于M的结果，但我们只需要第一个大于M的结果，因为我们希望丑数是指按从小到大的顺序生成的，其他更大的结果以后再说。我们把得到的第一个乘以2后大于M的结果即为M2.同样，我们把已有的每一个丑数乘以3，5，能得到第一个大于M的结果M3和M5.那么下一个丑数应该是M2,M3,M5。这3个数的最小者。
 
- 前面分析的时候，提到把已有的每个丑数分别都乘以2，3，5.事实上这不是必须的，因为已有的丑数都是按顺序存放在数组中的。对乘以2而言，肯定存在某一个丑数T2，排在它之前的每一个丑数乘以2得到的结果都会小于已有的最大丑数，在它之后的每一个丑数乘以2得到的结果都会太大。我们只需记下这个丑数的位置，同时每次生成新的丑数的时候，去更新这个T2.对乘以3和5而言，也存在这同样的T3和T5。
+ > 前面分析的时候，提到把已有的每个丑数分别都乘以2，3，5.事实上这不是必须的，因为已有的丑数都是按顺序存放在数组中的。对乘以2而言，肯定存在某一个丑数T2，排在它之前的每一个丑数乘以2得到的结果都会小于已有的最大丑数，在它之后的每一个丑数乘以2得到的结果都会太大。我们只需记下这个丑数的位置，同时每次生成新的丑数的时候，去更新这个T2.对乘以3和5而言，也存在这同样的T3和T5。
 ```java
 public static int getUglyNumber(int index){
     if(index <= 0)
@@ -3838,6 +4006,32 @@ private static int binarySearch(int[] nums, int K) {
 }
 ```
 
+或者写为:
+
+```java
+    public int GetNumberOfK(int [] array , int k) {
+       if (array == null || array.length == 0)
+           return 0;
+        int last = binarySearch(array, k + 1);
+        int first = binarySearch(array, k);
+        
+        return array[first] != k ? 0 : array[last] == k ? last - first + 1 : last - first;
+    }
+    
+    private int binarySearch(int[] array, int k) {
+        int l = 0, r = array.length - 1;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (array[mid] >= k) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+```
+
 # 59. 二叉搜索树的第K个节点
 题目描述：
 
@@ -3885,7 +4079,7 @@ public static int biTreeDeepth(BiTreeNode root){
 }
 ```
 
-# 61. 二叉树的深度
+# 61. 平衡二叉树
 题目描述：
 
  输入一棵二叉树，判断该二叉树是否是平衡二叉树。 
@@ -3940,6 +4134,27 @@ public static int[] findNumberAppendOnce(int[] nums){
     return result;
 }
 ```
+
+```java
+    public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+        if (array == null || array.length == 0)
+            return;
+        
+        Map<Integer, Integer> map = new HashMap();
+        for (int i = 0; i < array.length; i++) {
+            map.put(array[i], map.getOrDefault(array[i], 0) + 1);
+        }
+        int[] nums = new int[2];
+        int j = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (map.get(array[i]) == 1)
+                nums[j++] = array[i];
+        }
+        num1[0] = nums[0];
+        num2[0] = nums[1];
+    }
+``
+
 > 思路二：使用异或的性质。如果只有一个数字出现一次，要找出这个数字，那直接依次异或，因为两个相同的数字亦或结果为0,0与任何数字异或结果还是那个数字。
 
  现在出现两个，那么考虑分成两个子数组，但是要求成对的数字分在一起，那两个不同的数字分别在两个子数组里。
@@ -4361,6 +4576,25 @@ public static void lastRemaining(int n, int m){
 }
 ```
 
+更清晰的写法：
+
+```java
+public int LastRemaining_Solution(int n, int m) {
+    if (n == 0 || m == 0)
+        return -1;
+    ArrayList<Integer> data = new ArrayList<Integer>();
+    for (int i = 0; i < n; i++)
+        data.add(i);
+    int index = -1;
+    while (data.size() > 1) {
+        index = (index + m) % data.size();
+        data.remove(index);
+        index--;
+    }
+    return data.get(0);
+}
+```
+
 > 思路二：分析法
 ```java
 //https://blog.csdn.net/abc7845129630/article/details/52823135
@@ -4373,6 +4607,17 @@ public static int lastRemaining_Solution(int n, int m) {
 //            System.out.print(res + " ");
     }
     return res;
+}
+```
+
+> 递归。如果设`f(n)`表示有`n`个小朋友时求解的方程，那么当一个小朋友出队之后，就变成了`n-1`个小朋友，也就是`f(n-1)`的问题，可以考虑使用递归来做。如下所示。
+
+```java
+public int LastRemaining_Solution(int n, int m) {
+    if (n == 0)
+        return -1;
+    
+    return (LastRemaining_Solution(n - 1, m) + m) % n;
 }
 ```
 

@@ -85,7 +85,7 @@ Netty是如何能够使用和用于异步传输相同的API来支持OIO的呢？
 
 在NIO中，一个 EventLoop 对应一个线程，一个Channel 绑定一个 EventLoop，而一个EventLoop 可以绑定多个Channel 来实现异步，也就是说一个线程可以处理多个 Channel。而OIO中，一个 EventLoop 仅绑定一个 Channel，也就是说每个线程只处理一个Channel ，这就有点像传统IO中，在服务端（ServerSocket）写了一个多线程来处理客户端的并发请求。
 
-现在还有一个问题，channel是双向的，既可以读，也可以写。而stream是单向的，OIO中利用 InputStream 来读，OutputStream 来写。那么Channel 是如何实现阻塞的读和写的呢？答案就是， Netty利用了**SO_TIMEOUT**这个Socket标志，**它指定了等待一个I/O操作完成的最大毫秒数,I/O 操作期间Channel是阻塞的，如果操作在指定的时间间隔内没有完成，则将会抛出一个SocketTimeout Exception。 Netty将捕获这个异常并继续处理循环。在EventLoop下一次运行时，它将再次尝试。**这实际上也是类似于Netty这样的异步框架能够支持OIO的唯一方式。
+现在还有一个问题，channel是双向的，既可以读，也可以写。而stream是单向的，OIO中利用 InputStream 来读，OutputStream 来写。那么Channel 是如何实现阻塞的读和写的呢？答案就是， Netty利用了**SO_TIMEOUT**这个Socket标志，<strong>它指定了等待一个I/O操作完成的最大毫秒数,I/O 操作期间Channel是阻塞的，如果操作在指定的时间间隔内没有完成，则将会抛出一个SocketTimeout Exception。 Netty将捕获这个异常并继续处理循环。在EventLoop下一次运行时，它将再次尝试。</strong>这实际上也是类似于Netty这样的异步框架能够支持OIO的唯一方式。
 
 OIO的使用
 ```java
@@ -103,7 +103,7 @@ OIO的处理逻辑如下图所示：
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/netty-oio.PNG">
 </center>
 
-##Local —— 用于 JVM 内部通信的 Local 传输
+## Local —— 用于 JVM 内部通信的 Local 传输
 Netty 提供了一个Local传输， 用于在同一个 JVM 中运行的客户端和服务器程序之间的异步通信。
 
  在这个传输中，和服务器 Channel 相关联的 SocketAddress 并没有绑定物理网络地址；相反，只要服务器还在运行， 它就会被存储在注册表里，并在 Channel 关闭时注销。 因为这个传输并不接受真正的网络流量，所以它并不能够和其他传输实现进行互操作。因此，客户端希望连接到（在同一个 JVM 中）使用了这个传输的服务器端时也必须使用它。

@@ -454,3 +454,401 @@ public int trailingZeroes(int n) {
     return count;
 }
 ```
+
+# 字符串
+
+## 最长子串系列(`longest substring`)
+
+### [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
+
+```
+Given a string, find the length of the longest substring without repeating characters.
+```
+
+Example 1:
+```
+Input: "abcabcbb"
+Output: 3 
+Explanation: The answer is "abc", with the length of 3. 
+```
+Example 2:
+```
+Input: "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+```
+Example 3:
+```
+Input: "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3. 
+
+Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
+```
+
+> 可以使用`HashSet`配合两个指针使用。两个指针一前一后，前面的指针所指的字符如果不在`set`中，就将其放入，并且指针后移一位，然后比较当前前后指针之间的距离和已知的最大距离，取较大值；
+> 如果前面指针所指的字符在`set`中，就将后面的指针所指的字符在`set`中删除，后面的指针右移一位。
+
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if (s == null)
+            return -1;
+        HashSet<Character> set = new HashSet<Character>();
+        int i = 0, j = 0;
+        int ans = 0;
+        while (j < s.length()) {
+            if (!set.contains(s.charAt(j))) {
+                set.add(s.charAt(j++));
+                ans = Math.max(ans, j - i);
+            } else {
+                set.remove(s.charAt(i++));
+            }
+        }
+        return ans;
+    }
+}
+```
+
+### [Subarrays with K Different Integers](https://leetcode.com/problems/subarrays-with-k-different-integers/submissions/)
+```
+Given an array A of positive integers, call a (contiguous, not necessarily distinct) subarray of A good if the number of different integers in that subarray is exactly K.
+
+(For example, [1,2,3,1,2] has 3 different integers: 1, 2, and 3.)
+
+Return the number of good subarrays of A.
+```
+Example 1:
+```
+Input: A = [1,2,1,2,3], K = 2
+Output: 7
+Explanation: Subarrays formed with exactly 2 different integers: [1,2], [2,1], [1,2], [2,3], [1,2,1], [2,1,2], [1,2,1,2].
+```
+Example 2:
+```
+Input: A = [1,2,1,3,4], K = 3
+Output: 3
+Explanation: Subarrays formed with exactly 3 different integers: [1,2,1,3], [2,1,3], [1,3,4].
+
+
+Note:
+
+1 <= A.length <= 20000
+1 <= A[i] <= A.length
+1 <= K <= A.length
+```
+
+> 和上题有类似之处，但是此题中，相同的字符算做出现一次，所以考虑使用`HashMap`。
+
+```java
+public int subarraysWithKDistinct(int[] A, int K) {
+    return atMostK(A, K) - atMostK(A, K - 1);
+}
+int atMostK(int[] A, int K) {
+    int i = 0, res = 0;
+    Map<Integer, Integer> count = new HashMap<>();
+    for (int j = 0; j < A.length; ++j) {
+        if (count.getOrDefault(A[j], 0) == 0) K--;
+        count.put(A[j], count.getOrDefault(A[j], 0) + 1);
+        while (K < 0) {
+            count.put(A[i], count.get(A[i]) - 1);
+            if (count.get(A[i]) == 0) K++;
+            i++;
+        }
+        res += j - i + 1;
+    }
+    return res;
+}
+```
+
+下面这个更好理解，但是运行时间超过限制。
+
+```java
+public int subarraysWithKDistinct(int[] A, int K) {
+    if (A == null || A.length == 0)
+        return 0;
+    int ans = 0, curLen = 0;
+    int i = 0, j = 0;
+    Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    while (j < A.length) {
+        map.put(A[j], map.getOrDefault(A[j], 0) + 1);
+        if (map.size() > K) {
+            map.clear();
+            i++;
+            j = i;
+            continue;
+        }
+        
+        if (map.size() == K) {
+            ans++;
+            j++;
+            if (j == A.length) {
+                map.clear();
+                i++;
+                j = i;
+            }
+            continue;
+        }
+        j++;
+    }
+    return ans;
+}
+```
+
+### [14. Longest Common Prefix](https://leetcode.com/problems/longest-common-prefix/)
+```
+Write a function to find the longest common prefix string amongst an array of strings.
+
+If there is no common prefix, return an empty string "".
+```
+Example 1:
+```
+Input: ["flower","flow","flight"]
+Output: "fl"
+```
+Example 2:
+```
+Input: ["dog","racecar","car"]
+Output: ""
+Explanation: There is no common prefix among the input strings.
+Note:
+
+All given inputs are in lowercase letters a-z.
+```
+
+> 首先想到的就是遍历字符串数组的每一个字符串，两两比较求得前缀。
+
+```java
+public String longestCommonPrefix(String[] strs) {
+    if (strs == null || strs.length == 0)
+        return "";
+
+    String prefix = strs[0];
+    for (int i = 1; i < strs.length; i++) {
+        while (strs[i].indexOf(prefix) != 0) {
+            prefix = prefix.substring(0, prefix.length() - 1);
+            if (prefix.length() == 0)
+                return "";
+        }
+    }
+    return prefix;
+}
+```
+
+> 可以考虑使用分治的方法。示意图如下所示。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/14_lcp_diviso_et_lmpera.png">
+</div>
+
+```java
+public String longestCommonPrefix(String[] strs) {
+    if (strs == null || strs.length == 0)
+        return "";
+    
+    return longestCommonPrefix(strs, 0, strs.length - 1);
+}
+
+private String longestCommonPrefix(String[] strs, int l, int r) {
+    if (l == r) {
+        return strs[l];
+    }
+    else {
+        int mid = (l + r) / 2;
+        String leftStrs = longestCommonPrefix(strs, l, mid);
+        String rightStrs = longestCommonPrefix(strs, mid + 1, r);
+        return commonPrefix(leftStrs, rightStrs);
+    }
+}
+
+private String commonPrefix(String s1, String s2) {
+    int minLen = Math.min(s1.length(), s2.length());
+    for (int i = 0; i < minLen; i++) {
+        if (s1.charAt(i) != s2.charAt(i)) {
+            return s1.substring(0, i);
+        }
+    }
+    return s1.substring(0, minLen);
+}
+```
+
+### [Distinct Subsequences](https://leetcode.com/problems/distinct-subsequences/)
+```
+Given a string S and a string T, count the number of distinct subsequences of S which equals T.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+```
+Example 1:
+```
+Input: S = "rabbbit", T = "rabbit"
+Output: 3
+Explanation:
+
+As shown below, there are 3 ways you can generate "rabbit" from S.
+(The caret symbol ^ means the chosen letters)
+
+rabbbit
+^^^^ ^^
+rabbbit
+^^ ^^^^
+rabbbit
+^^^ ^^^
+```
+Example 2:
+```
+Input: S = "babgbag", T = "bag"
+Output: 5
+Explanation:
+
+As shown below, there are 5 ways you can generate "bag" from S.
+(The caret symbol ^ means the chosen letters)
+
+babgbag
+^^ ^
+babgbag
+^^    ^
+babgbag
+^    ^^
+babgbag
+  ^  ^^
+babgbag
+    ^^^
+```
+
+> 考虑使用动态规划来解。可以参考[这里](https://leetcode.com/problems/distinct-subsequences/discuss/37327/Easy-to-understand-DP-in-Java)。
+
+
+### [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)
+```
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+An input string is valid if:
+
+Open brackets must be closed by the same type of brackets.
+Open brackets must be closed in the correct order.
+Note that an empty string is also considered valid.
+```
+```
+Example 1:
+
+Input: "()"
+Output: true
+Example 2:
+
+Input: "()[]{}"
+Output: true
+Example 3:
+
+Input: "(]"
+Output: false
+Example 4:
+
+Input: "([)]"
+Output: false
+Example 5:
+
+Input: "{[]}"
+Output: true
+```
+
+> 使用栈。遇到左括号就入栈，遇到右括号就出栈。比较当前字符和出栈字符是否能够组成一对括号。
+
+```java
+class Solution {
+    public boolean isValid(String s) {
+        if (s == null)
+            return false;
+        if (s.length() == 0)
+            return true;
+        
+        Map<Character, Character> map = new HashMap<Character, Character>();
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put(']', '[');
+        
+        Stack<Character> stack = new Stack<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (map.containsKey(ch)) {
+                char temp = stack.isEmpty() ? '#' : stack.pop();
+                if (map.get(ch) != temp)
+                    return false;
+            } else {
+                stack.push(ch);
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+```
+
+### [301. Remove Invalid Parentheses](https://leetcode.com/problems/remove-invalid-parentheses/)
+
+### [32. Longest Valid Parentheses](https://leetcode.com/problems/longest-valid-parentheses/)
+
+### [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/)
+```
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given n = 3, a solution set is:
+
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+
+> 采用回溯法。
+
+```java
+public List<String> generateParenthesis(int n) {
+    List<String> ans = new ArrayList<>();
+    backtracking(ans, "", 0, 0, n);
+
+    return ans;
+}
+
+public void backtracking(List<String> ans, String cur, int open, int close, int max){
+    if (cur.length() == 2 * max){
+        ans.add(cur);
+        return;
+    }
+
+    if (open < max){
+        backtracking(ans, cur + "(", open + 1, close, max);
+    }
+    if (close < open){
+        backtracking(ans, cur + ")", open, close + 1, max);
+    }
+}
+```
+
+如果使用`StringBuilder`，每次要删除最后一个元素，因为传入的`s`参数始终是一个。而使用`String`则不需要，因为每次都会生成一个新的字符串。
+
+```java
+public List<String> generateParenthesis(int n) {
+    List<String> ans = new ArrayList<String>();
+    StringBuilder sb = new StringBuilder();
+    backtracking(ans, sb, 0, 0, n);
+    return ans;
+}
+
+private void backtracking(List<String> ans, StringBuilder s, int open, int close, int n) {
+    if (s.length() == 2 * n) {
+        ans.add(s.toString());
+        return;
+    }
+    
+    if (open < n){
+        backtracking(ans, s.append("("), open + 1, close, n);
+        s.deleteCharAt(s.length() - 1);
+    }
+    if (close < open){
+        backtracking(ans, s.append(")"), open, close + 1, n);
+        s.deleteCharAt(s.length() - 1);
+    }
+}
+```
