@@ -1312,6 +1312,8 @@ sList.add(new Integer(1));  //语句3，正确
 
 **JAVA泛型通配符的使用规则就是“PECS”原则（生产者使用“? extends T”通配符，消费者使用“? super T”通配符）。**
 
+**一个疑问**：为什么生产者是取元素的？不应该消费者是取元素的？
+
 ---
 参考：
 [Java泛型三：通配符详解extends super](https://blog.csdn.net/claram/article/details/51943742)
