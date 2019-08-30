@@ -1,6 +1,6 @@
 |I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|
 |-|-|-|-|-|-|-|-|-|-|-|-|
-|Java|算法|数据库|操作系统|网络|分布式|消息队列|Netty|面试相关|面向对象|开源软件|工具与其他|
+|Java|算法|数据库|操作系统|网络|分布式|消息队列|Netty|面向对象|开源软件|工具与其他|
 
 # Java
 ## Java基础
@@ -165,19 +165,6 @@
 - [Netty源码阅读-ChannelPipeline](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB--ChannelPipeline.md)
 - [Netty源码阅读-EventLoopGroup](https://github.com/adamhand/my-notes/blob/master/Netty/netty%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-EventLoopGroup.md)
 
-# 面试相关
-## 面试资料
-
-- [Java复习资料](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E8%AF%95%E8%B5%84%E6%96%99/Java%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99.md)
-- [若干面试题](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E8%AF%95%E8%B5%84%E6%96%99/%E8%8B%A5%E5%B9%B2%E9%9D%A2%E8%AF%95%E9%A2%98.md)
-
-## 面经
-
-- [字节跳动后台开发面试总结](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E5%90%8E%E5%8F%B0%E5%BC%80%E5%8F%91%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93.md)
-- [字节跳动基础架构部面试总结](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E5%AD%97%E8%8A%82%E8%B7%B3%E5%8A%A8%E5%9F%BA%E7%A1%80%E6%9E%B6%E6%9E%84%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93.md)
- -[滴滴基础平台部Java研发实习生面经](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E6%BB%B4%E6%BB%B4%E5%9F%BA%E7%A1%80%E5%B9%B3%E5%8F%B0%E9%83%A8Java%E7%A0%94%E5%8F%91%E5%AE%9E%E4%B9%A0%E7%94%9F%E9%9D%A2%E7%BB%8F.md)
- - [阿里天猫事业部面经(师兄)](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E9%98%BF%E9%87%8C%E5%A4%A9%E7%8C%AB%E4%BA%8B%E4%B8%9A%E9%83%A8%E9%9D%A2%E7%BB%8F(%E5%B8%88%E5%85%84).md)
- - [腾讯PCG事业部腾讯视频面经](https://github.com/adamhand/my-notes/blob/master/%E9%9D%A2%E7%BB%8F/%E8%85%BE%E8%AE%AFPCG%E4%BA%8B%E4%B8%9A%E9%83%A8%E8%85%BE%E8%AE%AF%E8%A7%86%E9%A2%91%E9%9D%A2%E7%BB%8F.md)
 
 # 面向对象
 

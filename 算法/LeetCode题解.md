@@ -24,7 +24,7 @@
 `rob(i)`表示面对房屋`i`时能够偷得的最大钱数。
 
 **第一种写法，使用自顶向下的递归**：
-```
+```java
 public int rob(int[] nums) {
     return rob(nums, nums.length - 1);
 }
@@ -39,7 +39,7 @@ private int rob(int[] nums, int i){
 
 **第二种写法，使用自顶向下的递归+memo**：
 这种方法的时间和空间复杂度都为O(n)。
-```
+```java
 int[] memo;
 public int rob(int[] nums){
     memo = new int[nums.length + 1];
@@ -60,7 +60,7 @@ private int rob(int[] nums, int i){
 ```
 
 **第三种写法，自底向上的递推+memo**：
-```
+```java
 public int rob(int[] nums){
     if (nums == null || nums.length == 0)
         return 0;
@@ -77,7 +77,7 @@ public int rob(int[] nums){
 
 **第四种写法，继续对空间进行优化**：
 因为考虑到写法三种的`memo`其实只用了两个数，就不必申请一个数组。当前房屋为`i`，则`pre2`代表`i-2`的房屋，`pre1`代表`i-1`的房屋。
-```
+```java
 public int rob(int[] nums){
     if (nums == null || nums.length == 0)
         return 0;
