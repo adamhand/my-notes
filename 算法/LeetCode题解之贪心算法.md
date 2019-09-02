@@ -2,9 +2,9 @@
 
 ## [121.Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
 
-> 思路：只能进行一次买卖。可以使用一种类似贪心的算法。
-> - 初始化数组的第一个元素为最低价格
-> - 从左到右遍历，如果遇到最低价格，就更新最低价格，否则更新最大收益值
+思路：只能进行一次买卖。可以使用一种类似贪心的算法。
+- 初始化数组的第一个元素为最低价格
+- 从左到右遍历，如果遇到最低价格，就更新最低价格，否则更新最大收益值
 
 ```java
 class Solution {
@@ -28,8 +28,8 @@ class Solution {
 
 ## [122. Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
 
-> 思路： 对于 [a, b, c, d]，如果有 a <= b <= c <= d ，那么最大收益为 d - a。而 d - a = (d - c) + (c - b) + (b - a) ，因此当访问到一个 prices[i] 且 prices[i] -
-> prices[i-1] > 0，那么就把 prices[i] - prices[i-1] 添加到收益中，从而在局部最优的情况下也保证全局最优。贪心算法。
+思路： 对于 [a, b, c, d]，如果有 a <= b <= c <= d ，那么最大收益为 d - a。而 d - a = (d - c) + (c - b) + (b - a) ，因此当访问到一个 prices[i] 且 prices[i] -
+prices[i-1] 0，那么就把 prices[i] - prices[i-1] 添加到收益中，从而在局部最优的情况下也保证全局最优。贪心算法。
 
 ```java
 class Solution {
@@ -39,7 +39,7 @@ class Solution {
         
         int ans = 0;
         for (int i = 1; i < prices.length; i++) {
-            if (prices[i] > prices[i - 1]) {
+            if (prices[i] prices[i - 1]) {
                 ans += prices[i] - prices[i - 1];
             }
         }
@@ -50,17 +50,17 @@ class Solution {
 
 ## [714. Best Time to Buy and Sell Stock with Transaction Fee](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)
 
-> 思路：和上一题不同，这道题有了交易费，所以当卖出的利润小于交易费的时候，我们就不应该卖了，不然亏了。考虑使用**动态规划**。
-> - sold[i]表示第i天卖掉股票此时的最大利润
-> - hold[i]表示第i天保留手里的股票此时的最大利润
+思路：和上一题不同，这道题有了交易费，所以当卖出的利润小于交易费的时候，我们就不应该卖了，不然亏了。考虑使用**动态规划**。
+- sold[i]表示第i天卖掉股票此时的最大利润
+- hold[i]表示第i天保留手里的股票此时的最大利润
 
-> 递推公式分析如下：
-> - 在第i天，如果我们要卖掉手中的股票，那么此时我们的总利润应该是前一天手里有股票的利润，加上此时的卖出价格，减去交易费得到的利润总值，跟前一天卖出的利润相比，取其中较大值，如果前一天卖出的利润较大，那么我们就前一天卖了，不留到今天了。
-> - 如果第i天不卖，就是昨天股票卖了然后今天再买入股票，得减去今天的价格，得到的值和昨天股票保留时的利润相比，取其中的较大值，如果昨天保留股票的利润大，那么我们就继续保留到今天。
+递推公式分析如下：
+- 在第i天，如果我们要卖掉手中的股票，那么此时我们的总利润应该是前一天手里有股票的利润，加上此时的卖出价格，减去交易费得到的利润总值，跟前一天卖出的利润相比，取其中较大值，如果前一天卖出的利润较大，那么我们就前一天卖了，不留到今天了。
+- 如果第i天不卖，就是昨天股票卖了然后今天再买入股票，得减去今天的价格，得到的值和昨天股票保留时的利润相比，取其中的较大值，如果昨天保留股票的利润大，那么我们就继续保留到今天。
 
-> 所以递推时可以得到：
-> - sold[i] = max(sold[i - 1], hold[i - 1] + prices[i] - fee);
-> - hold[i] = max(hold[i - 1], sold[i - 1] - prices[i]);
+所以递推时可以得到：
+- sold[i] = max(sold[i - 1], hold[i - 1] + prices[i] - fee);
+- hold[i] = max(hold[i - 1], sold[i - 1] - prices[i]);
 
 ```java
 class Solution {
@@ -80,8 +80,8 @@ class Solution {
 }
 ```
 
-> 优化方法。我们发现不管是卖出还是保留，第i天到利润只跟第i-1天有关系，所以我们可以优化空间，用两个变量来表示当前的卖出和保留的利润。
-> 新方法和上面的基本相同，就是开始要保存sold的值，不然sold先更新后，再更新hold时就没能使用更新前的值了。
+优化方法。我们发现不管是卖出还是保留，第i天到利润只跟第i-1天有关系，所以我们可以优化空间，用两个变量来表示当前的卖出和保留的利润。
+新方法和上面的基本相同，就是开始要保存sold的值，不然sold先更新后，再更新hold时就没能使用更新前的值了。
 
 ```java
 public int maxProfit(int[] prices, int fee) {
