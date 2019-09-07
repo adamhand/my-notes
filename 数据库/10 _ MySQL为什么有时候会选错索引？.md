@@ -246,4 +246,8 @@ perl mysqldumpslow.pl -s r -t 10 J:\ProfessionalSoftware\mysql-5.6.30-winx64\dat
 ```sql
 Count: 1  Time=0.01s (0s)  Lock=0.00s (0s)  Rows=10001.0 (10001), root[root]@localhost
   select * from t where a between N and N
-```            
+```
+
+## 参考
+[mysqldumpslow不是内部或外部命令，也不是可运行的程序](https://www.cnblogs.com/gyfluck/p/9969714.html)</br>
+[MySQL慢查询日志总结](https://blog.csdn.net/zlb_lover/article/details/81284267)</br>
