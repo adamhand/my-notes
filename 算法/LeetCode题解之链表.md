@@ -455,7 +455,7 @@ public ListNode insertionSortList(ListNode head) {
 ```
 
 ## 分隔链表
-### [86. Partition List(https://leetcode.com/problems/partition-list/)
+### [86. Partition List](https://leetcode.com/problems/partition-list/)
 
 ```
 Input: head = 1->4->3->2->5->2, x = 3

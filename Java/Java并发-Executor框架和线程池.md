@@ -86,6 +86,35 @@ ExecutorService的生命周期有三种状态：**运行**、**关闭**和**已�
 - isTerminated（）：测试是否所有任务都履行完毕了。,
 - isShutdown（）：测试是否该ExecutorService已被关闭
 
+# ThreadPoolExecutor类
+ThreadPoolExecutor类是线程的主类，下面提到的工具类Executors中的建立线程池的方法，里面也是调用的ThreadPoolExecutor来创建的。ThreadPoolExecutor中定义了线程池最基本的参数和executor()、addWorker()两个核心方法。
+
+它的构造函数如下所示：
+
+```java
+public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {...}
+```
+可以看到，共有7个参数，它们的功能分别如下：
+
+- corePoolSize：常驻核心线程数。如果等于0，表示任务执行完之后，没有任何请求进入时销毁线程池的线程；如果大于0，及时本地任务执行完毕，核心线程也不会被销毁。
+- maximumPoolSize：线程池能够容忍的同时执行的最大线程数，必须大于等于1，如果maximumPoolSize和corePoolSize大小相同，即是固定大小的线程池。
+- keepAliveTime：线程池中的线程空闲时间，当空闲时间达到keepAliveTime值时，线程会被销毁，直到只剩下corePoolSize个线程为止，避免浪费内存和句柄资源，但是当ThreadPoolExecutor的allowCoreThreadTimeOut变量置为true时，核心线程超时后也会被回收。
+- unit：keepAliveTime超时时间单位，
+- workQueue：缓存队列。当请求的线程大于corePoolSize时，线程会进入workQueue等待。等到workQueue中的存活线程满了，才会在线程池中创建新线程。
+- threadFactory：线程工厂。用来生产一组相同任务的线程。线程池的明明是通过给这个Factory增加组名前缀来实现的。
+- handler：表示线程池采用的拒绝策略。当workQueue的任务缓存区到达上限后，并且活动线程数大于maximumPoolSize的时候，线程池通过该策略处理请求，是一种简单的限流保护。
+
+上面的workQueue、threadFactory和handler三个参数不能为空，但是一般很少对它们进行手动初始化，而是通过Executors这个工具类来实现。这个类下面介绍，先来看一下ThreadPoolExecutor中的两个核心方法：execute()和addWorker()。
+
+## execute()方法
+
+
 # 工具类Executors的静态方法
 负责生成各种类型的ExecutorService线程池实例，共有四种。
 
@@ -239,5 +268,6 @@ https://blog.csdn.net/Holmofy/article/details/82714665
 https://www.cnblogs.com/lixuwu/p/7979480.html
 
 # 参考
-[Java的Executor框架和线程池实现原理](https://blog.csdn.net/tuke_tuke/article/details/51353925)
-[Java并发编程：线程池的使用](http://www.cnblogs.com/dolphin0520/p/3932921.html)
+[Java的Executor框架和线程池实现原理](https://blog.csdn.net/tuke_tuke/article/details/51353925)</br>
+[Java并发编程：线程池的使用](http://www.cnblogs.com/dolphin0520/p/3932921.html)</br>
+《码出高效-Java开发手册》
