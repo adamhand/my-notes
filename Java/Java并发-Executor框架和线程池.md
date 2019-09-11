@@ -114,12 +114,118 @@ public ThreadPoolExecutor(int corePoolSize,
 
 ## execute()方法
 
+execute()方法如下：
+```java
+public void execute(Runnable command) {
+    if (command == null)
+        throw new NullPointerException();
+    // 返回包含线程数及线程状态的Integer类型数据
+    int c = ctl.get();
+    // 如果工作线程数小于核心线程数，则创建线程任务并执行
+    if (workerCountOf(c) < corePoolSize) {
+        if (addWorker(command, true))
+            return;
+        c = ctl.get();
+    }
+    // 如果已经达到核心线程数，将线程任务置入队列，但是前提是线程池处于RUNNING态
+    if (isRunning(c) && workQueue.offer(command)) {
+        int recheck = ctl.get();
+        // 再次判断一下，如果线程池不是RUNNING状态，则将刚加入队列的任务移除
+        if (! isRunning(recheck) && remove(command))
+            reject(command);
+        // 如果之前的线程已经被消费完，创建一个新线程
+        else if (workerCountOf(recheck) == 0)
+            addWorker(null, false);
+    }
+    // 核心线程池和队列均已满，尝试创建一个新线程
+    else if (!addWorker(command, false))
+        // 如果创建失败，唤醒拒绝策略
+        reject(command);
+}
+```
+
+## addWorder()方法
+addWorder()方法的作用是根据当前线程池状态检查是否可以添加新的任务线程，如果可以则创建并启动任务。如果成功则返回true，否则返回false。返回false的可能性有两种：
+
+- 线程池没有处于RUNNING状态
+- 线程工厂创建新的任务线程失败
+
+addWorder()的源码如下：
+
+```java
+private boolean addWorker(Runnable firstTask, boolean core) {
+    retry:
+    for (;;) {
+        int c = ctl.get();
+        int rs = runStateOf(c);
+
+        // Check if queue empty only if necessary.
+        if (rs >= SHUTDOWN &&
+            ! (rs == SHUTDOWN &&
+                firstTask == null &&
+                ! workQueue.isEmpty()))
+            return false;
+
+        for (;;) {
+            int wc = workerCountOf(c);
+            if (wc >= CAPACITY ||
+                wc >= (core ? corePoolSize : maximumPoolSize))
+                return false;
+            if (compareAndIncrementWorkerCount(c))
+                break retry;
+            c = ctl.get();  // Re-read ctl
+            if (runStateOf(c) != rs)
+                continue retry;
+            // else CAS failed due to workerCount change; retry inner loop
+        }
+    }
+
+    boolean workerStarted = false;
+    boolean workerAdded = false;
+    Worker w = null;
+    try {
+        w = new Worker(firstTask);
+        final Thread t = w.thread;
+        if (t != null) {
+            final ReentrantLock mainLock = this.mainLock;
+            mainLock.lock();
+            try {
+                // Recheck while holding lock.
+                // Back out on ThreadFactory failure or if
+                // shut down before lock acquired.
+                int rs = runStateOf(ctl.get());
+
+                if (rs < SHUTDOWN ||
+                    (rs == SHUTDOWN && firstTask == null)) {
+                    if (t.isAlive()) // precheck that t is startable
+                        throw new IllegalThreadStateException();
+                    workers.add(w);
+                    int s = workers.size();
+                    if (s > largestPoolSize)
+                        largestPoolSize = s;
+                    workerAdded = true;
+                }
+            } finally {
+                mainLock.unlock();
+            }
+            if (workerAdded) {
+                t.start();
+                workerStarted = true;
+            }
+        }
+    } finally {
+        if (! workerStarted)
+            addWorkerFailed(w);
+    }
+    return workerStarted;
+}
+```
 
 # 工具类Executors的静态方法
 负责生成各种类型的ExecutorService线程池实例，共有四种。
 
 - newFixedThreadPool(numberOfThreads:int):（固定线程池）ExecutorService 创建一个固定线程数量的线程池，并行执行的线程数量不变，线程当前任务完成后，可以被重用执行另一个任务
-- newCachedThreadPool():（可缓存线程池）ExecutorService 创建一个线程池，按需创建新线程，如果线程的当前规模超过了处理需求时，阿么将回收空闲的线程，而当需求增加时，则可以添加新的线程，线程池的规模不存在任何限制
+- newCachedThreadPool():（可缓存线程池）ExecutorService 创建一个线程池，按需创建新线程，如果线程的当前规模超过了处理需求时，将回收空闲的线程，而当需求增加时，则可以添加新的线程，线程池的规模不存在任何限制
 - new SingleThreadExecutor();（单线程执行器）线程池中只有一个线程，依次执行任务
 - new ScheduledThreadPool()：线程池按时间计划来执行任务，允许用户设定执行任务的时间，类似于timer
 
@@ -150,7 +256,7 @@ Executors可以把一个Runnable对象转换成Callable对象：
 public static Callable<Object> callable(Runnbale task);
 ```
 
-当把一个Callable对象(Callable1,Callable2)提交给ThreadPoolExecutor和ScheduledThreadPoolExecutor执行时，submit(...)会向我们返回一个FutureTask对象。我们执行FutureTask.get()来等待任务执行完成，当任务完成后，FutureTask.get()将返回任务的结果。
+当把一个Callable对象(Callable1,Callable2)提交给ThreadPoolExecutor和ScheduledThreadPoolExecutor执行时，submit(...)会返回一个FutureTask对象。我们执行FutureTask.get()来等待任务执行完成，当任务完成后，FutureTask.get()将返回任务的结果。
 
 ## Future接口
 ```java
