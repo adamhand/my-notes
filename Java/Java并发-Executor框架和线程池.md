@@ -154,12 +154,14 @@ addWorder()的源码如下：
 
 ```java
 private boolean addWorker(Runnable firstTask, boolean core) {
+    // 类似于goto语句的标志，用于快速推出多层循环
     retry:
     for (;;) {
+        // 得到线程池状态和工作线程数
         int c = ctl.get();
         int rs = runStateOf(c);
 
-        // Check if queue empty only if necessary.
+        // 如果线程池状态是STOP及之上的状态(TIDYING、TERMINATED)，或者fitstTask初试线程不为空或者队列为空，都会直接返回创建失败
         if (rs >= SHUTDOWN &&
             ! (rs == SHUTDOWN &&
                 firstTask == null &&
@@ -168,31 +170,35 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
         for (;;) {
             int wc = workerCountOf(c);
+            // 如果超过最大允许线程数则不能再创建新的线程
             if (wc >= CAPACITY ||
                 wc >= (core ? corePoolSize : maximumPoolSize))
                 return false;
+            // 将当前活动线程数+1，是原子操作。然后跳出和retry相邻的循环体。 ---(1)
             if (compareAndIncrementWorkerCount(c))
                 break retry;
-            c = ctl.get();  // Re-read ctl
+            // 线程池的状态和工作线程数是可变的，需要经常提取这个值
+            c = ctl.get();  
+            // 如果工作线程数改变了，说明CAS失败，重新进入循环
             if (runStateOf(c) != rs)
                 continue retry;
-            // else CAS failed due to workerCount change; retry inner loop
         }
     }
 
+    // 开始创建工作线程
     boolean workerStarted = false;
     boolean workerAdded = false;
     Worker w = null;
     try {
+        // 利用Worker构造方法中的线程工厂创建线程，并封装成工作线程Worker对象
         w = new Worker(firstTask);
         final Thread t = w.thread;
         if (t != null) {
+            // 避免添加或启动线程时被干扰，需要加上锁
             final ReentrantLock mainLock = this.mainLock;
             mainLock.lock();
             try {
-                // Recheck while holding lock.
-                // Back out on ThreadFactory failure or if
-                // shut down before lock acquired.
+                // 重新检查一下，如果线程池状态为RUNNING，或者为SHUTDOWN并且firtTask为空，才允许添加worker
                 int rs = runStateOf(ctl.get());
 
                 if (rs < SHUTDOWN ||
@@ -214,12 +220,14 @@ private boolean addWorker(Runnable firstTask, boolean core) {
             }
         }
     } finally {
+        // 如果创建Worder失败，将上面(1)处增加的线程数在减掉
         if (! workerStarted)
             addWorkerFailed(w);
     }
     return workerStarted;
 }
 ```
+可以看到，创建Worker的逻辑是先用CAS将Worker的数量加1，然后才真正开始创建Worker，如果创建失败再将Worker的数量减回去。这是因为compareAndIncrementWorkerCount(c)方法执行失败的概率非常低，即使失败，再次执行是成功的概率也是极高的。而如果先建立Worker，成功之后再加1，当发现超出限制之后再销毁线程，代价会比较大。
 
 # 工具类Executors的静态方法
 负责生成各种类型的ExecutorService线程池实例，共有四种。
