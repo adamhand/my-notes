@@ -230,12 +230,13 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 可以看到，创建Worker的逻辑是先用CAS将Worker的数量加1，然后才真正开始创建Worker，如果创建失败再将Worker的数量减回去。这是因为compareAndIncrementWorkerCount(c)方法执行失败的概率非常低，即使失败，再次执行是成功的概率也是极高的。而如果先建立Worker，成功之后再加1，当发现超出限制之后再销毁线程，代价会比较大。
 
 # 工具类Executors的静态方法
-负责生成各种类型的ExecutorService线程池实例，共有四种。
+负责生成各种类型的ExecutorService线程池实例，共有5种。
 
 - newFixedThreadPool(numberOfThreads:int):（固定线程池）ExecutorService 创建一个固定线程数量的线程池，并行执行的线程数量不变，线程当前任务完成后，可以被重用执行另一个任务
+- newSingleThreadExecutor();（单线程执行器）线程池中只有一个线程，依次执行任务
 - newCachedThreadPool():（可缓存线程池）ExecutorService 创建一个线程池，按需创建新线程，如果线程的当前规模超过了处理需求时，将回收空闲的线程，而当需求增加时，则可以添加新的线程，线程池的规模不存在任何限制
-- new SingleThreadExecutor();（单线程执行器）线程池中只有一个线程，依次执行任务
-- new ScheduledThreadPool()：线程池按时间计划来执行任务，允许用户设定执行任务的时间，类似于timer
+- newScheduledThreadPool()：线程池按时间计划来执行任务，允许用户设定执行任务的时间，类似于timer
+- newWorkStealingPool()：jdk8引入的，创建持有足够线程的线程池支持给定的并行度，并通过使用多个队列减少竞争，默认并行度为CPU数量
 
 # Runnable、Callable、Future接口
 
