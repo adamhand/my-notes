@@ -245,8 +245,115 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 所以，不建议使用过Executors来创建线程，，而是使用ThreadPoolExecutor来创建，同时自定义线程工厂和拒绝策略等参数。一个例子如下：
 
+自定义线程工厂和任务：
 ```java
+public class MyThreadFactory implements ThreadFactory{
+    private final String namePrefix;
+    private final AtomicInteger nextId = new AtomicInteger(1);
 
+    MyThreadFactory(String whatFeatureOfGroup) {
+        namePrefix = "MyThreadFactory's " + whatFeatureOfGroup + " -Worder-";
+    }
+
+    @Override
+    public Thread newThread(Runnable r) {
+        String name = namePrefix + nextId.getAndIncrement();
+        // 参数分别为：ThreadGroup, Runnable, name, stackSize
+        Thread thread = new Thread(null, r, name, 0);
+        System.out.println(thread.getName());
+        return thread;
+    }
+}
+
+class Task implements Runnable {
+    private final AtomicLong count = new AtomicLong(0L);
+    @Override
+    public void run() {
+        System.out.println("running_task: " + count.getAndIncrement());
+    }
+}
+```
+
+自定义任务拒绝策略：
+```java
+public class MyRejectHandler implements RejectedExecutionHandler{
+    @Override
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+        System.out.println("task rejected : " + executor.toString());
+    }
+}
+```
+
+```java
+public class MyThreadPool {
+    public static void main(String[] args) {
+        BlockingQueue queue = new LinkedBlockingQueue(2);
+
+        MyThreadFactory f1 = new MyThreadFactory(" 第1机房 ");
+        MyThreadFactory f2 = new MyThreadFactory(" 第2机房 ");
+
+        MyRejectHandler handler = new MyRejectHandler();
+
+        ThreadPoolExecutor poolFirst = new ThreadPoolExecutor(1, 2,
+                60, TimeUnit.SECONDS, queue, f1, handler);
+        ThreadPoolExecutor poolSecond = new ThreadPoolExecutor(1, 2,
+                60, TimeUnit.SECONDS, queue, f2, handler);
+
+
+        Runnable task = new Task();
+        for (int i = 0; i < 200; i++) {
+            poolFirst.execute(task);
+            poolSecond.execute(task);
+        }
+    }
+}
+```
+
+执行结果入下所示：
+
+```java
+MyThreadFactory's  第1机房  -Worder-1
+MyThreadFactory's  第2机房  -Worder-1
+MyThreadFactory's  第1机房  -Worder-2
+MyThreadFactory's  第2机房  -Worder-2
+running_task: 0
+running_task: 1
+running_task: 2
+task rejected : java.util.concurrent.ThreadPoolExecutor@45ee12a7[Running, pool size = 2, active threads = 1, queued tasks = 0, completed tasks = 3]
+task rejected : java.util.concurrent.ThreadPoolExecutor@330bedb4[Running, pool size = 2, active threads = 2, queued tasks = 2, completed tasks = 0]
+...
+```
+
+除此之外，也可使用开源类库建立线程池，比如使用guava包建立的例子如下：
+
+```java
+public class GuavaThreadPool {
+    private static ThreadFactory namedThreadFactory =
+            new ThreadFactoryBuilder().setNameFormat("thread-pool-%d").build();
+
+    private static ExecutorService pool = new ThreadPoolExecutor(1, 2, 0L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(2), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 100; i++) {
+            pool.execute(new Task());
+        }
+    }
+}
+```
+
+执行结果如下：
+
+```java
+running_task: 0
+running_task: 0
+running_task: 0
+running_task: 0
+Exception in thread "main" java.util.concurrent.RejectedExecutionException: Task thread.thread_pool.Task@5e2de80c rejected from java.util.concurrent.ThreadPoolExecutor@1d44bcfa[Running, pool size = 2, active threads = 2, queued tasks = 0, completed tasks = 1]
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2047)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:823)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1369)
+	at thread.thread_pool.GuavaThreadPool.main(GuavaThreadPool.java:16)
 ```
 
 # Runnable、Callable、Future接口
