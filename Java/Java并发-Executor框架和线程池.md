@@ -232,11 +232,22 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 # 工具类Executors的静态方法
 负责生成各种类型的ExecutorService线程池实例，共有5种。
 
-- newFixedThreadPool(numberOfThreads:int):（固定线程池）ExecutorService 创建一个固定线程数量的线程池，并行执行的线程数量不变，线程当前任务完成后，可以被重用执行另一个任务
-- newSingleThreadExecutor();（单线程执行器）线程池中只有一个线程，依次执行任务
-- newCachedThreadPool():（可缓存线程池）ExecutorService 创建一个线程池，按需创建新线程，如果线程的当前规模超过了处理需求时，将回收空闲的线程，而当需求增加时，则可以添加新的线程，线程池的规模不存在任何限制
-- newScheduledThreadPool()：线程池按时间计划来执行任务，允许用户设定执行任务的时间，类似于timer
+- newFixedThreadPool(numberOfThreads:int):（固定线程池）输入的参数即是固定线程数，既是核心线程数也是最大线程数，不存在空闲线程，所以keepAliveTime等于0
+- newSingleThreadExecutor();（单线程执行器）线程池中只有一个线程，按任务的提交顺序执行任务
+- newCachedThreadPool():（可缓存线程池）maximumPoolSize最大可以至Integer.MAX_VALUE，keepAliveTime默认为60，工作线程处于空闲状态则会被回收，如果任务数增加，再次创建出新线程处理任务
+- newScheduledThreadPool()：和newCachedThreadPool相同，线程数最大可以达到Integer.MAX_VALUE，支持定时和周期性任务执行，不会对工作线程进行回收
 - newWorkStealingPool()：jdk8引入的，创建持有足够线程的线程池支持给定的并行度，并通过使用多个队列减少竞争，默认并行度为CPU数量
+
+除了newWorkStealingPool之外，其他四个创建方式都会存在资源耗尽的风险，具体如下：
+
+- newFixedThreadPool和newSingleThreadExecutor中允许的请求队列长度为Integer.MAX_VALUE，可能会堆积大量请求，从而导致OOM
+- newCacheThreadPool和newScheduledThreadPool允许创建线程数为Integer.MAX_VALUE，可能会创建大量线程，从而导致OOM
+
+所以，不建议使用过Executors来创建线程，，而是使用ThreadPoolExecutor来创建，同时自定义线程工厂和拒绝策略等参数。一个例子如下：
+
+```java
+
+```
 
 # Runnable、Callable、Future接口
 
