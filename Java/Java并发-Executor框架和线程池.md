@@ -229,6 +229,94 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 ```
 可以看到，创建Worker的逻辑是先用CAS将Worker的数量加1，然后才真正开始创建Worker，如果创建失败再将Worker的数量减回去。这是因为compareAndIncrementWorkerCount(c)方法执行失败的概率非常低，即使失败，再次执行是成功的概率也是极高的。而如果先建立Worker，成功之后再加1，当发现超出限制之后再销毁线程，代价会比较大。
 
+# 线程池四种拒绝策略
+线程池的拒绝策略，是指当任务添加到线程池中被拒绝，所采取的措施。当任务添加到线程池中之所以被拒绝，可能是由于：
+- 线程池异常关闭
+- 任务数量超过线程池的最大限制。
+
+在ThreadPoolExecutor中提供了四个公开的内部静态类，实现了四种拒绝策略：
+
+- AbortPolicy(默认)：丢弃任务并且抛出RejectedExecutionException异常
+- DiscardPolicy：丢弃任务，但是不抛出异常，不建议这样做
+- DiscardOldestPolicy：抛弃队列中等待最久的任务，然后把当前任务加入到队列中
+- CallerRunsPolicy：调用任务的run()方法绕过线程池直接执行
+
+AbortPolicy策略上面的例子已经看到了，就不再尝试了，下面看一下其他三个策略的实验。
+
+## DiscardPolicy策略
+例子如下：
+```java
+public class DiscardPolicyDemo {
+    public static void main(String[] args) {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 2, 0L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(2), new ThreadPoolExecutor.DiscardPolicy());
+
+        Task task = new Task();
+        for (int i = 0; i < 10; i++) {
+            pool.execute(task);
+        }
+        pool.shutdown();
+    }
+}
+```
+结果如下：
+```java
+running_task: 0
+running_task: 1
+running_task: 2
+running_task: 3
+```
+上面的例子中，最大线程数为2，阻塞队列的长度也为2，所以线程池允许的最大工作线程数为4，当超过这个数之后，就会直接将新任务丢弃，并且不会抛出异常。
+
+## DiscardOldestPolicy策略
+例子如下：
+
+```java
+public class DiscardOldestPolicyDemo {
+    public static void main(String[] args) {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 2, 0L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(2), new ThreadPoolExecutor.DiscardOldestPolicy());
+
+        MyTask task = new MyTask();
+        for (int i = 0; i < 10; i++) {
+            pool.execute(task);
+        }
+        pool.shutdown();
+    }
+}
+```
+**这个地方貌似有个问题，打印的结果和上面DiscardPolicy策略相同**
+
+## CallerRunsPolicy策略
+例子如下：
+```java
+public class DiscardOldestPolicyDemo {
+    public static void main(String[] args) {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 2, 0L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(2), new ThreadPoolExecutor.CallerRunsPolicy());
+
+        Task task = new Task();
+        for (int i = 0; i < 10; i++) {
+            pool.execute(task);
+        }
+        pool.shutdown();
+    }
+}
+```
+执行结果为：
+```java
+running_task: 0
+running_task: 1
+running_task: 3
+running_task: 4
+running_task: 5
+running_task: 6
+running_task: 7
+running_task: 8
+running_task: 9
+running_task: 2
+```
+
 # 工具类Executors的静态方法
 负责生成各种类型的ExecutorService线程池实例，共有5种。
 
@@ -467,17 +555,38 @@ Future<?> future = threadpool.submit(new Runnable(){...});
 使用submit 方法来提交任务，它会返回一个Future对象，通过future的get方法来获取返回值，get方法会阻塞住直到任务完成，而使用get(long timeout, TimeUnit unit)方法则会阻塞一段时间后立即返回，这时有可能任务没有执行完。
 
 # 线程池本身的状态
+线程池本身有5中状态，Running、ShutDown、Stop、Tidying、Terminated。
 ```java
-volatile int runState;   
-static final int RUNNING = 0;   //运行状态
-static final int SHUTDOWN = 1;   //关闭状态
-static final int STOP = 2;       //停止
-static final int TERMINATED = 3; //终止，终结
+private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+private static final int COUNT_BITS = Integer.SIZE - 3;
+private static final int CAPACITY = (1 << COUNT_BITS) - 1;
+
+private static final int RUNNING = -1 << COUNT_BITS;
+private static final int SHUTDOWN = 0 << COUNT_BITS;
+private static final int STOP = 1 << COUNT_BITS;
+private static final int TIDYING = 2 << COUNT_BITS;
+private static final int TERMINATED = 3 << COUNT_BITS;
+private static int ctlOf(int rs, int wc) { return rs | wc; }
 ```
-- 当创建线程池后，初始时，线程池处于RUNNING状态；
-- 如果调用了shutdown()方法，则线程池处于SHUTDOWN状态，此时线程池不能够接受新的任务，它会等待所有任务执行完毕，最后终止；
-- 如果调用了shutdownNow()方法，则线程池处于STOP状态，此时线程池不能接受新的任务，并且会去尝试终止正在执行的任务，返回没有执行的任务列表；
-- 当线程池处于SHUTDOWN或STOP状态，并且所有工作线程已经销毁，任务缓存队列已经清空或执行结束后，线程池被设置为TERMINATED状态。
+ctl是一个AtomicInteger类型的原子对象。ctl记录了"线程池中的任务数量"和"线程池状态"2个信息。ctl共包括32位。其中，高3位表示"线程池状态"，低29位表示"线程池中的任务数量"。
+```java
+RUNNING    -- 对应的高3位值是111。
+SHUTDOWN   -- 对应的高3位值是000。
+STOP       -- 对应的高3位值是001。
+TIDYING    -- 对应的高3位值是010。
+TERMINATED -- 对应的高3位值是011。
+```
+各个状态的转换如下：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/threadpoolstate.jpg">
+</div>
+
+- 当创建线程池后，初始时，线程池处于RUNNING状态
+- 如果调用了shutdown()方法，则线程池处于SHUTDOWN状态，此时线程池不能够接受新的任务，它会等待所有任务执行完毕，最后终止
+- 如果调用了shutdownNow()方法，则线程池处于STOP状态，此时线程池不能接受新的任务，并且会去尝试终止正在执行的任务，返回没有执行的任务列表
+- 当线程池处于SHUTDOWN或STOP状态，并且所有工作线程已经销毁，任务缓存队列已经清空或执行结束后，线程池被设置为TIDYING状态
+- 处于TIDYING状态的线程池会调用terminated()方法，该方法执行完之后，线程池就会变成TERMINATED状态
 
 # ForkJoinPool
 ForkJoinPool是jdk1.7新引入的线程池，基于ForkJoin框架，使用了“分治”的思想。关于ForkJoin框架参考另一篇笔记“Java并发之J.U.C”。
@@ -503,4 +612,6 @@ https://www.cnblogs.com/lixuwu/p/7979480.html
 # 参考
 [Java的Executor框架和线程池实现原理](https://blog.csdn.net/tuke_tuke/article/details/51353925)</br>
 [Java并发编程：线程池的使用](http://www.cnblogs.com/dolphin0520/p/3932921.html)</br>
-《码出高效-Java开发手册》
+《码出高效-Java开发手册》</br>
+[Java中线程池，你真的会用吗？](https://www.hollischuang.com/archives/2888)</br>
+[JUC线程池（5）：线程池拒绝策略](https://www.jianshu.com/p/9145672b358a)</br>
