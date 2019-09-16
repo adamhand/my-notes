@@ -817,7 +817,84 @@ redis的时间事件分为以下两类：(目前版本的redis只使用周期性
 服务器将所有时间事件都放在一个无序链表中，每当时间事件执行器运行时，它就遍历整个链表，查找所有已到达的时间事件，并调用相应的事件处理器。正常模式下的redis服务器只使用serverCron一个时间事件。
 
 # 复制
+单个redis容易崩溃，所以redis有主从模式，选定一个服务器为主服务器，其余服务器为从服务器。主服务器负责读写，然后将数据复制到从服务器。通过使用 slaveof host port 命令来让一个服务器成为另一个服务器的从服务器。
 
+## 核心原理
+当启用一个slave node的时候，他会发送一个PSYNC的命令给masternode。
+
+当slave node第一次和masternode连接的时候，会触发一次全量复制，同时会将自己的run id发送给slave node。此时master会启动一个后台线程开始升成一份rdb快照文件，同时还会降新从客户端缓存的数据写入到内存中，rdb文件升成后master会将文件发送到slave，slave会先写入磁盘，然后在写入到内存。然后master会将新写入的缓存发送给slave，slave会同步这些数据。 如果master与slave之间出现网络故障，等网络好了之后会出现网络重传。
+
+## 断点重传
+redis支持断点重传操作，主要是由以下三个机制实现的：
+
+- replication backlog：复制积压缓冲区，主服务器中维护的一个先进先出的队列
+- replication offset：复制偏移量，主服务器和从服务器中都会保存
+- run id：服务器运行id，每个redis服务器都会有自己的run id
+
+当从服务器断线并重新连上一个主服务器时，从服务器会将之前保存的run id发送给当前的主服务器，如果这个run id和当前主服务器的run id相同，说明从服务器断线之前复制的就是当前主服务器，则会从offset位置开始复制，否则的话将进行一次全量复制。
+
+# 哨兵和集群
+哨兵(sentinel)机制是Redis的高可用解决方案。它可以对Redis集群进行监控，主要作用有三个：
+
+- 监控(Monitoring): 哨兵(sentinel) 会不断地检查Master和Slave是否运作正常。
+- 提醒(Notification):当被监控的某个 Redis出现问题时, 哨兵(sentinel) 可以通过 API 向管理员或者其他应用程序发送通知。
+- 自动故障迁移(Automatic failover):当一个Master不能正常工作时，哨兵(sentinel) 会开始一次自动故障迁移操作,它会将失效Master的其中一个Slave升级为新的Master, 并让失效Master的其他Slave改为复制新的Master; 当客户端试图连接失效的Master时,集群也会向客户端返回新Master的地址,使得集群可以使用Master代替失效Master。
+
+示意图如下：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/sentinel.png">
+</div>
+
+## 工作原理
+哨兵可以看做是一个个进程组成的分布式系统,这些进程使用流言协议(gossipprotocols)来接收关于Master是否下线的信息,并使用投票协议(agreement protocols)来决定是否执行自动故障迁移,以及选择哪个Slave作为新的Master。
+
+每个哨兵会向其它哨兵、master、slave定时发送消息,以确认对方是否”活”着,如果发现对方在指定时间(可配置)内未回应,则暂时认为对方已挂(所谓的”**主观下线**” Subjective Down,简称sdown)。
+
+若“哨兵群”中的多数sentinel,都报告某一master没响应,系统才认为该master"彻底死亡"(即**客观下线**,Objective Down,简称odown),通过一定的vote算法,从剩下的slave节点中,选一台提升为master,然后自动修改相关配置。
+
+虽然哨兵释出为一个单独的可执行文件 redis-sentinel ,但实际上它只是一个运行在特殊模式下的 Redis 服务器，你可以在启动一个普通 Redis 服务器时通过给定 --sentinel 选项来启动哨兵(sentinel)。
+
+### 监控
+sentinel会每秒一次的频率与之前创建了命令连接的实例发送PING，包括主服务器、从服务器和sentinel实例，以此来判断当前实例的状态。down-after-milliseconds时间内PING连接无效，则将该实例视为主观下线。之后该sentinel会向其他监控同一主服务器的sentinel实例询问是否也将该服务器视为主观下线状态，当超过某quorum后将其视为客观下线状态。
+
+当一个主服务器被某sentinel视为客观下线状态后，该sentinel会与其他sentinel协商选出领头sentinel进行故障转移工作。**每个发现主服务器进入客观下线的sentinel都可以要求其他sentinel选自己为领头sentinel，选举是先到先得。同时每个sentinel每次选举都会自增配置纪元(configuration e[och])，每个纪元中只会选择一个领头sentinel。如果所有超过一半的sentinel选举某sentinel领头sentinel。之后该sentinel进行故障转移操作**。
+
+如果一个Sentinel为了指定的主服务器故障转移而投票给另一个Sentinel，将会等待一段时间后试图再次故障转移这台主服务器。如果该次失败另一个将尝试，Redis Sentinel保证第一个活性(liveness)属性，如果大多数Sentinel能够对话，最后只会有一个被授权来故障转移。 同时Redis Sentinel也保证安全(safety)属性，每个Sentinel将会使用不同的配置纪元来故障转移同一台主服务器。
+
+### 故障转移
+选举出Sentinel后，会由该Sentinel主导，从主服务器的从服务器中选出一个从服务器作为新的主服务器。选点的依据依次是：
+
+- 网络连接正常
+- 5秒内回复过INFO命令
+- 10*down-after-milliseconds内与主连接过的
+- 从服务器优先级
+- 复制偏移量
+- 运行id较小的
+
+选出之后通过slaveif no ont将该从服务器升为新主服务器。接着通过slaveof ip port命令让其他从服务器复制该信主服务器。
+
+最后当旧主重新连接后将其变为新主的从服务器。(注意，如果客户端与就主服务器分隔在一起，写入的数据在恢复后由于旧主会复制新主的数据会造成数据丢失)
+
+故障转移成功后会通过发布订阅连接广播新的配置信息，其他sentinel收到后依据配置纪元更大来更新主服务器信息。Sentinel保证第二个活性属性：一个可以相互通信的Sentinel集合会统一到一个拥有更高版本号的相同配置上。  
+
+# 数据丢失
+从上面的主从复制和故障转移的过程来看，Redis是有丢失数据的可能的，具体如下：
+
+- 异步复制导致的数据丢失。因为`master -> slave`的复制是异步的，所以可能有部分数据还没复制到slave，master就宕机了，此时这些部分数据就丢失了
+- 脑裂导致的数据丢失。某个master所在机器突然脱离了正常的网络，跟其他slave机器不能连接，但是实际上master还运行着此时哨兵可能就会认为master宕机了，然后开启选举，将其他slave切换成了master。这个时候，集群里就会有两个master，也就是所谓的脑裂。此时虽然某个slave被切换成了master，但是可能client还没来得及切换到新的master，还继续写向旧master写数据。旧master再次恢复的时候，会被作为一个slave挂到新的master上去，自己的数据会清空，重新从新的master复制数据，这样一来，故障转移过程中向旧master写的数据就丢失了
+
+对于第一种数据丢失，可以通过持久化的方式来减小，AOF的持久化可以达到秒级，是数据丢失控制在可接受范围内。
+
+对于第二种数据丢失，可以通过以下两个配置来减小。
+
+```redis
+min-slaves-to-write 1
+min-slaves-max-lag 10
+```
+配置的意思是，要求至少有1个slave且数据复制和同步的延迟不能超过10秒。如果一个master出现了脑裂，不能继续给指定数量的slave发送数据，而且slave超过10秒没有给自己ack消息，那么就直接拒绝客户端的写请求。这样脑裂后的旧master就不会接受client的新数据，也就避免了数据丢失。
+
+所以，Redis的数据丢失只能尽可能较小，不能完全避免。
 
 # 参考
 
@@ -832,6 +909,10 @@ redis的时间事件分为以下两类：(目前版本的redis只使用周期性
 [深入学习Redis（2）：持久化](https://www.cnblogs.com/williamjie/p/9230557.html)
 [Redis事务](https://www.cnblogs.com/qq931399960/p/10556699.html)</br>
 [Redis事务](https://www.jianshu.com/p/479398a8e82c)</br>
-[]()</br>
+[redis主从复制下哨兵模式---选举原理](https://www.cnblogs.com/huangfuyuan/p/9880379.html)</br>
+[Redis如何保证高并发和高可用？主从复制？如何做到高可用？](https://blog.csdn.net/GeekTeamXin/article/details/84943087)</br>
+[如何保证Redis的高可用](https://www.cnblogs.com/mengchunchen/p/10044840.html)</br>
+[如何保证Redis的高并发](https://www.cnblogs.com/mengchunchen/p/10044603.html)</br>
+[为什么Redis 单线程却能支撑高并发？](https://www.cnblogs.com/javazhiyin/p/10823768.html)</br>
 
 
