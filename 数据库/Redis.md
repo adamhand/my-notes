@@ -529,14 +529,309 @@ length 属性记录了 contents 数组的大小。
 
 **压缩列表的原理：压缩列表并不是对数据利用某种算法进行压缩，而是将数据按照一定规则编码在一块连续的内存区域，目的是节省内存。**
 
----
-参考：
-[Redis详解（四）------redis的底层数据结构](https://www.cnblogs.com/ysocean/p/9080942.html#_label6)
-[Redis详解（五）------redis的五大数据类型实现原理](https://www.cnblogs.com/ysocean/p/9102811.html)
-[Redis详解（三）------redis的五大数据类型详细用法](https://www.cnblogs.com/ysocean/p/9080940.html#_label4)
-[漫画算法：什么是跳跃表？](http://blog.jobbole.com/111731/)
-[跳跃表-原理及Java实现](http://www.cnblogs.com/acfox/p/3688607.html)
-[跳表SkipList的原理和实现](https://imtinx.iteye.com/blog/1291165)
+# 缓存淘汰策略
+Redis 可以为每个键设置过期时间，当键过期时，会自动删除该键。可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。
 
+Reids 具体有 6 种淘汰策略：
+|策略|描述|
+|-|-|
+|volatile-lru|从已设置过期时间的数据集中挑选最近最少使用的数据淘汰|
+|volatile-ttl|从已设置过期时间的数据集中挑选将要过期的数据淘汰|
+|volatile-random|从已设置过期时间的数据集中任意选择数据淘汰|
+|allkeys-lru|从所有数据集中挑选最近最少使用的数据淘汰|
+|allkeys-random|从所有数据集中任意选择数据进行淘汰|
+|noeviction|禁止驱逐数据|
+
+# 持久化
+持久化是将内存中的数据持久化到硬盘上，目的方式数据在断电后丢失。Redis提供两种持久化策略：RDB持久化和AOF持久化。**RDB持久化是将数据保存到硬盘，AOF持久化是将每次执行的写命令保存到硬盘**。Redis默认开启RDB，关闭AOF。
+
+## RDB持久化
+将某个时间点的所有数据保存到硬盘上的.rdb文件中，适合全量复制，但是实时性不高，可能会丢数据，而且如果数据量很大，保存的时间会很长。
+
+RDB持久化的触发分为两种：**手动触发**与**Redis定时触发**。
+
+**手动触发可以使用**：
+
+- save：会阻塞当前Redis服务器，直到持久化完成，线上应该禁止使用。
+- bgsave：该触发方式会fork一个子进程，由子进程负责持久化过程，因此阻塞只会发生在fork子进程的时候。
+
+**自动触发的场景主要有**：
+
+- 根据 save m n 配置规则自动触发；
+- 从节点全量复制时，主节点发送rdb文件给从节点完成复制操作，主节点会触发 bgsave；
+- 执行 debug reload 时；
+- 执行 shutdown时，如果没有开启aof，也会触发。
+
+其中通过 save m n 配置的一个例子是，在redis.conf文件中进行如下配置：
+
+```conf
+# 时间策略
+save 900 1
+save 300 10
+save 60 10000
+
+# 文件名称
+dbfilename dump.rdb
+
+# 文件保存路径
+dir /home/work/app/redis/data/
+
+# 如果持久化出错，主进程是否停止写入
+stop-writes-on-bgsave-error yes
+
+# 是否压缩
+rdbcompression yes
+
+# 导入时是否检查
+rdbchecksum yes
+```
+
+上述配置的含义如下：
+
+- save 900 1 表示900s内如果有1条是写入命令，就触发产生一次快照(调用bgsave方法)
+- save 300 10 表示300s内有10条写入，就产生快照
+
+save 60 10000含义相同，上述三个命令只要满足一个就会进行备份。
+
+- stop-writes-on-bgsave-error yes表示当备份进程出错时，主进程就停止接受新的写入操作，是为了保护持久化的数据一致性问题
+- rdbcompression yes表示开启压缩功能，开启后可能会消耗更多的CPU资源，但是可以节省磁盘资源。一般选择不开启，因为CPU资源相对来说更珍贵
+
+如果想要禁用RDB配置，只需要在save的最后一行写上：save ""。
+
+save m n的操作其实是一种Redis定时任务，是由Redis的定时任务机制实现的。定时任务执行的频率可以在配置文件中通过 hz 10 来设置（这个配置表示1s内执行10次，也就是每100ms触发一次定时任务）。配置文件的注释中说，该值最大能够设置为500，但是不建议超过100，因为值越大说明执行频率越频繁越高，这会带来CPU的更多消耗，从而影响主进程读写性能。
+
+## AOF持久化
+将写命令添加到 AOF 文件（Append Only File）的末尾，支持命令级和秒级持久化，但是随着服务器写请求的增多，AOF 文件会越来越大，恢复时间慢。
+
+AOF的整个流程大体来看可以分为两步，一步是**命令的实时写入**，第二步**是对aof文件的重写**。
+
+将命令写入AOF文件之前会先写入缓冲区中，步骤是：`命令写入->追加到aof_buf ->同步到aof磁盘`，这是为了减少磁盘IO。
+
+aof重写是为了减少aof文件的大小，可以手动触发也可以自动触发。**手动触发**是通过`bgrewriteaof`，**自动触发**方式可以参见下面的配置。重写的过程可以使用下面的流程图来表示：
+
+<div align="center">
+<img src="2347795269-5b70e0fd162b4_articlex.png">
+</div>
+
+需要注意以下几点：
+
+- 在重写期间，由于主进程依然在响应命令，为了保证最终备份的完整性；因此它依然会写入旧的AOF file中，如果重写失败，能够保证数据不丢失。
+- 为了把重写期间响应的写入信息也写入到新的文件中，因此也会为子进程保留一个buf，防止新写的file丢失数据。
+- **重写是直接把当前内存的数据生成对应命令，并不需要读取老的AOF文件进行分析、命令合并。**
+
+AOF模式的配置方式如下：
+
+```conf
+# 是否开启aof
+appendonly yes
+
+# 文件名称
+appendfilename "appendonly.aof"
+
+# 同步方式
+appendfsync everysec
+
+# aof重写期间是否同步
+no-appendfsync-on-rewrite no
+
+# 重写触发配置
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+# 加载aof时如果有错如何处理
+aof-load-truncated yes
+
+# 文件重写策略
+aof-rewrite-incremental-fsync yes
+```
+appendfsync everysec 它其实有三种模式:
+
+always：把每个写命令都立即同步到aof，很慢，但是很安全
+everysec：每秒同步一次，是折中方案。一般情况下都采用此配置，这样可以兼顾速度与安全，最多损失1s的数据。
+no：redis不处理交给OS来处理，非常快，但是也最不安全
+
+aof-load-truncated yes 如果该配置启用，在加载时发现aof尾部不正确是，会向客户端写入一个log，但是会继续执行，如果设置为 no ，发现错误就会停止，必须修复后才能重新加载。
+
+## 恢复数据
+Redis异常重启之后需要恢复数据时，会先检查AOF文件是否存在，因为AOF保存的数据更完整。如果不存在就尝试加载RDB。
+
+# 事务
+Redis中和事务相关的命令有四个： MULTI 、 DISCARD 、 EXEC 和 WATCH，它们的基本功能如下：
+
+- MULTI：开启一个事务，接下来的命令会放入一个队列中
+- DISCARD：终止当前事务并丢弃，也即是清空队列中的命令。该命令必须应用在MULTI命令中
+- EXEC：和MULTI配合使用，提交事务并触发执行
+- WATCH：因为Redis不支持回滚事务，所以当多个事务操作同一个数据时可能会出现并发问题，WATCH是一种乐观锁的实现方式，用于监视某个变量是不是被更改过。必须在MULTI之前执行
+
+下面较为详细地看一下各个命令。
+
+## MULTI
+对于一个非事务的命令，Redis服务器接收到客户端发过来的命令时，会直接执行，并返回执行结果。而使用MULTI开启一个事务之后，服务器在收到来自客户端的命令时， 不会立即执行命令， 而是将这些命令全部放进一个事务队列里， 然后返回 QUEUED ， 表示命令已入队，如下所示：
+
+```redis
+redis> multi
+OK
+redis> set msg "hello world"
+QUEUED
+redis> get msg
+QUEUED
+redis> exec
+1) OK
+2) "hello world"
+```
+由于Redis中的事务不能嵌套，所以再MULTI命令中再发送一次MULTI命令会返回一个错误，但不会造成事务失败，也不会修改事务队列中已有的数据，如下所示。
+
+```redis
+redis> multi
+OK
+redis> set name Zhangsan
+QUEUED
+redis> multi
+(error) ERR MULTI calls can not be nested
+redis> exec
+1) OK
+redis> get name
+"Zhangsan"
+```
+
+## EXEC
+该命令会提交事务并触发命令的执行，按照FIFO的顺序执行队列中的命令。
+
+## DISCARD
+终止当前事务并清空队列。如下面的例子所示，使用MULTI开启一个事务之后，执行set capital_of_China Beijing之后执行DISCARD命令，之后使用get capital_of_China命令得到的结果为nil。
+
+```redis
+redis> multi
+OK
+redis> set capital_of_China Beijing
+QUEUED
+redis> discard
+OK
+redis> get capital_of_China
+(nil)
+```
+
+## WATCH
+由于Redis不支持事务回滚，所以当多个事务对同一个变量进行操作的时候，会出现并发问题。如下所示。
+
+首先打开一个客户端，之后开启一个事务，然后将money变量设置为10，但不提交事务。
+```redis
+redis> multi
+OK
+redis> set money 10
+QUEUED
+```
+之后打开另一个客户端，开启一个事务，将money变量设置为50，之后提交事务并进行一次查询。
+```redis
+redis> multi
+OK
+redis> set money 50
+QUEUED
+redis> exec
+1) OK
+redis> get money
+"50"
+```
+可以看到，此时money的值为50。然后在第一个客户端进行提交，然后在两个客户端查询money。
+```redis
+redis> exec
+1) OK
+redis> get money
+"10"
+```
+```redis
+redis> get money
+"10"
+```
+可以看到，两个客户端的结果都变为了10。为了解决这个问题，可以使用WATCH命令。WATCH用于监控某个key是否发生了改变，如果在一个事务中，某个key在设置参数之后，在执行exec之前，其他客户端修改了该key，则该事务将返回nil。
+
+还是上面的例子，打开一个客户端，执行以下命令：
+```redis
+redis> flushall
+OK
+redis> watch money
+OK
+redis> multi
+OK
+redis> set money 10
+QUEUED
+```
+在另一个客户端中将money改为50
+```redis
+redis> multi
+OK
+redis> set money 50
+QUEUED
+redis> exec
+1) OK
+```
+之后在第一个客户端中提交事务，会返回nil，同时查询money的值，为50。
+```redis
+redis> exec
+(nil)
+redis> get money
+"50"
+```
+
+需要注意的是：
+
+- WATCH监控的元素在当前事务提交之前发生变化（另一个事务执行了EXEC），则无论当前事务中有多少命令，全部失败
+- WATCH监控的元素在当前事务提交之前，被放入到另外一个事务的队列中，但并未执行EXEC，则当前事务可正常提交
+
+### WATCH命令的实现
+每个Redis数据库保存着一个watched_keys字典，这个字典的键是某个被WATCH命令监视的数据库键，而字典的值是一个链表，链表记录了所有监视相应数据库键的客户端。如下图所示。
+
+<div align="center">
+<img src="18464438-7358a18d9263b767.png">
+</div>
+
+所有对数据库进行修改命令，如SET、LPUSH、SADD、ZREM、DEL等，在执行后都会对watched_keys字典进行检查，查看被修改的数据库键是否是被客户端所监视的键，如果有的话，客户端REDIS_DIRTY_CAS标识将会被打开，表示该客户端的事务安全性已经被破坏。
+
+当服务器接收到一个客户端发来的EXEC命令，服务器会根据这个客户端是否打开了REDIS_DIRTY_CAS标识来决定是否执行事务。
+
+# 事件
+Redis是一个事件驱动的服务器，主要有两类事件：
+
+- 文件事件(file event)：Redis服务器通过套接字与客户端或其他Redis服务器进行连接，文件事件就是服务器对套接字操作的抽象。
+- 时间事件(time event)：redis服务器中的一些操作（比如serverCron函数）需要在给定的时间点执行，而时间事件就是对这类定时操作的抽象。
+
+## 文件事件
+redis基于Reactor模式开发了自己的网络事件处理器，即文件事件处理器(file event handler)：
+- 文件事件处理器以单线程方式运行。通过使用I/O多路复用程序来监听多个套接字，并根据套接字目前执行的任务来为套接字关联不同的事件处理器。
+- 当被监听的套接字准备好执行连接应答(accept)，读取(read)，写入(write)，关闭(close)等操作时，与操作相对应的文件事件就会产生，这时文件事件处理器就会调用套接字之前关联好的事件处理器来处理这些事件。
+
+文件事件处理器的四个组成部分，分别是套接字，I/O多路复用程序，文件事件分派器（dispatch），以及事件处理器。如下图所示。
+
+<div algin="center">
+<img src="file event handler.PNG">
+</div>
+
+程序会在编译时自动选择系统中性能最高的I/O多路复用函数库来作为redis的I/O多路复用程序的底层实现，包括 Solaries 10 中的 evport、Linux 中的 epoll 和 macOS/FreeBSD 中的 kqueue。如果当前编译环境没有上述函数，就会选择 select 作为备选方案
+
+## 时间事件
+redis的时间事件分为以下两类：(目前版本的redis只使用周期性事件，而没有使用定时事件。)
+
+- 定时事件：让一段程序在指定的时间之后执行一次。比如说，让程序X在当前时间的30毫秒之后执行一次。
+- 周期性事件：让一段程序每隔指定时间就执行一次。比如说，让程序Y每隔30毫秒就执行一次。
+
+服务器将所有时间事件都放在一个无序链表中，每当时间事件执行器运行时，它就遍历整个链表，查找所有已到达的时间事件，并调用相应的事件处理器。正常模式下的redis服务器只使用serverCron一个时间事件。
+
+# 复制
+
+
+# 参考
+---
+[Redis设计与实现-黄建宏](http://redisbook.com/)</br>
+[Redis详解（四）------redis的底层数据结构](https://www.cnblogs.com/ysocean/p/9080942.html#_label6)</br>
+[Redis详解（五）------redis的五大数据类型实现原理](https://www.cnblogs.com/ysocean/p/9102811.html)</br>
+[Redis详解（三）------redis的五大数据类型详细用法](https://www.cnblogs.com/ysocean/p/9080940.html#_label4)</br>
+[漫画算法：什么是跳跃表？](http://blog.jobbole.com/111731/)</br>
+[跳跃表-原理及Java实现](http://www.cnblogs.com/acfox/p/3688607.html)</br>
+[跳表SkipList的原理和实现](https://imtinx.iteye.com/blog/1291165)</br>
+[一起看懂Redis两种持久化方式的原理](https://segmentfault.com/a/1190000015983518?utm_source=tag-newest)</br>
+[深入学习Redis（2）：持久化](https://www.cnblogs.com/williamjie/p/9230557.html)
+[Redis事务](https://www.cnblogs.com/qq931399960/p/10556699.html)</br>
+[Redis事务](https://www.jianshu.com/p/479398a8e82c)</br>
+[]()</br>
 ---
 
