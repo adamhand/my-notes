@@ -610,7 +610,7 @@ AOF的整个流程大体来看可以分为两步，一步是**命令的实时写
 aof重写是为了减少aof文件的大小，可以手动触发也可以自动触发。**手动触发**是通过`bgrewriteaof`，**自动触发**方式可以参见下面的配置。重写的过程可以使用下面的流程图来表示：
 
 <div align="center">
-<img src="2347795269-5b70e0fd162b4_articlex.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/2347795269-5b70e0fd162b4_articlex.png">
 </div>
 
 需要注意以下几点：
@@ -782,7 +782,7 @@ redis> get money
 每个Redis数据库保存着一个watched_keys字典，这个字典的键是某个被WATCH命令监视的数据库键，而字典的值是一个链表，链表记录了所有监视相应数据库键的客户端。如下图所示。
 
 <div align="center">
-<img src="18464438-7358a18d9263b767.png">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/18464438-7358a18d9263b767.png">
 </div>
 
 所有对数据库进行修改命令，如SET、LPUSH、SADD、ZREM、DEL等，在执行后都会对watched_keys字典进行检查，查看被修改的数据库键是否是被客户端所监视的键，如果有的话，客户端REDIS_DIRTY_CAS标识将会被打开，表示该客户端的事务安全性已经被破坏。
@@ -802,8 +802,8 @@ redis基于Reactor模式开发了自己的网络事件处理器，即文件事�
 
 文件事件处理器的四个组成部分，分别是套接字，I/O多路复用程序，文件事件分派器（dispatch），以及事件处理器。如下图所示。
 
-<div algin="center">
-<img src="file event handler.PNG">
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/file event handler.PNG">
 </div>
 
 程序会在编译时自动选择系统中性能最高的I/O多路复用函数库来作为redis的I/O多路复用程序的底层实现，包括 Solaries 10 中的 evport、Linux 中的 epoll 和 macOS/FreeBSD 中的 kqueue。如果当前编译环境没有上述函数，就会选择 select 作为备选方案
