@@ -820,7 +820,7 @@ redis的时间事件分为以下两类：(目前版本的redis只使用周期性
 
 
 # 参考
----
+
 [Redis设计与实现-黄建宏](http://redisbook.com/)</br>
 [Redis详解（四）------redis的底层数据结构](https://www.cnblogs.com/ysocean/p/9080942.html#_label6)</br>
 [Redis详解（五）------redis的五大数据类型实现原理](https://www.cnblogs.com/ysocean/p/9102811.html)</br>
@@ -833,5 +833,5 @@ redis的时间事件分为以下两类：(目前版本的redis只使用周期性
 [Redis事务](https://www.cnblogs.com/qq931399960/p/10556699.html)</br>
 [Redis事务](https://www.jianshu.com/p/479398a8e82c)</br>
 []()</br>
----
+
 
