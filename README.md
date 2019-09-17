@@ -5,7 +5,7 @@
 # Java
 ## Java基础
 
-- [Java基础(补充)](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%9F%BA%E7%A1%80%EF%BC%88%E8%A1%A5%E5%85%85%EF%BC%89.md)
+- [Java基础](https://github.com/adamhand/my-notes/blob/master/Java/Java%E5%9F%BA%E7%A1%80.md)
 - [Java集合](https://github.com/adamhand/my-notes/blob/master/Java/Java%E9%9B%86%E5%90%88.md)
 - [Java泛型数组](https://github.com/adamhand/my-notes/blob/master/Java/Java--%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84.md)
 - [Java代理](https://github.com/adamhand/my-notes/blob/master/Java/Java--%E4%BB%A3%E7%90%86.md)
