@@ -1946,6 +1946,129 @@ Lambda表达式的基本语法：
 [【java8新特性】兰姆达表达式-1](https://blog.csdn.net/equaker/article/details/81635633)
 [Java8 Lambda表达式和流操作如何让你的代码变慢5倍](http://www.importnew.com/17262.html)
 
+# 十四、多态
+多态是面向对象三大特性之一(还有继承和封装)。多态即一个对象可以表现出多种形态，比如Student类继承了Person类，那么一个Student类的对象既可以表现出Student的特性，也可以表现出Person的特性。
+
+多态分为编译时多态和运行时多态：
+
+- 编译时多态主要指**方法的重载**
+- 运行时多态指程序中定义的对象引用所指向的具体类型在运行期间才确定
+
+运行时多态有三个条件：
+
+- 继承
+- 覆盖（重写）
+- 向上转型（父类引用指向子类对象）
+
+多态可以提高带么的可维护性和可扩展性。
+
+## 多态中成员的特点
+多态中需要关注的成员主要有：成员变量、成员函数和静态函数。比如SubClass继承了SuperClass，既有`SuperClass s = new SubClass();`，那么使用s访问三种成员时，表现形式为：
+
+- 访问成员变量
+    - 编译时，参考左边的引用变量所属的类中是否有该成员变量，有则编译通过，否则编译失败
+    - 运行时，参考引用变量所属的类中的成员变量，并运行之
+    
+    即**编译运行都看左边**
+
+- 访问成员函数
+    - 编译时，参考引用变量所属的类中是否有该函数，有则通过否则失败
+    - 运行时，参考对象所属的类中是否有该函数
+ 
+    即**编译看左边，运行看右边**
+
+- 访问静态函数
+    - 编译时，参考引用型变量所属的类中的是否有调用的静态方法。
+    - 运行时，参考引用型变量所属的类中的是否有调用的静态方法。
+
+    即**编译和运行都看左边**，这是因为，静态函数是属于类的，和对象是没有关系的，所以不用看右边的对象
+
+下面是一个例子。
+
+```java
+class SuperClass {
+    int num = 3;
+
+    public void show(){
+        System.out.println("superClass show..."+num);
+    }
+
+    public static void method(){
+        System.out.println("superClass method...");
+    }
+}
+
+class SubClass extends SuperClass {
+    int num = 4;
+
+    public void show(){
+        System.out.println("subClass show..."+ num);
+    }
+
+    public static void method(){
+        System.out.println("subClass method....");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SuperClass sc = new SubClass();
+        sc.show();
+        sc.method();
+        System.out.println(sc.num);
+    }
+}
+```
+运行结果如下：
+
+```java
+subClass show...4
+superClass method...
+3
+```
+
+## 向下转型
+多态有一个缺点，使用父类引用无法直接访问子类所特有的成员，需要向下转型才可以，即父类引用转为子类对象（强制转换），且向下转型的过程中如果没有转换为真实子类类型，会出现类型转换异常。所以为了安全起见，每次向下转型都需要做类型判断，使用instansof关键字。
+
+instanceof是Java中的二元运算符，左边是对象，右边是类；当对象是右边类或子类所创建对象时，返回true；否则，返回false。
+
+例子如下。
+
+```java
+class Person {
+    void say () {
+        System.out.println("person say...");
+    }
+}
+
+class Student extends Person {
+    @Override
+    void say() {
+        System.out.println("student say...");
+    }
+
+    void doTest () {
+        System.out.println("i am doing a test");
+    }
+}
+
+public class InstanseOfDemo {
+    public static void main(String[] args) {
+        Person p = new Student();
+
+        if (p instanceof Student) {
+            Student s = (Student)p;
+            s.doTest();
+        }
+    }
+}
+```
+运行结果如下：
+
+```java
+i am doing a test
+```
+
 # 十五、System类中的getProperties()和getenv()
 
 - getenv是获取系统的环境变更，对于windows对在系统属性-->高级-->环境变量中设置的变量将显示在此(对于linux,通过export设置的变量将显示在此) 
