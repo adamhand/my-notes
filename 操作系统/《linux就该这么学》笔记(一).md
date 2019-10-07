@@ -1,16 +1,18 @@
 ﻿# 《linux就该这么学》笔记(一)
 ---
 # 1.RPM(Redhat Package Manager)红帽软件包管理器
-> RPM 为了解决包的安装、升级、依赖操作的难度过大而设计的
-常见命令有：
-```
-rpm -ivh filename.rpm -> 安装软件的命令格式
-rpm -Uvh filename.rpm -> 升级软件的命令格式
-rpm -e   filename.rpm -> 卸载软件的命令格式
-rpm -qpi filename.rpm -> 查询软件描述信息的命令格式
-rpm -qpl filename.rpm -> 列出软件文件信息的命令格式
-rpm -qf  filename.rpm -> 查询文件属于哪个RPM的命令格式
-```
+
+RPM 为了解决包的安装、升级、依赖操作的难度过大而设计的，常见命令有：
+
+|命令|作用|
+|-|-|
+|rpm -ivh filename.rpm | 安装软件的命令格式|
+|rpm -Uvh filename.rpm | 升级软件的命令格式|
+|rpm -e   filename.rpm | 卸载软件的命令格式|
+|rpm -qpi filename.rpm | 查询软件描述信息的命令格式|
+|rpm -qpl filename.rpm | 列出软件文件信息的命令格式|
+|rpm -qf  filename.rpm | 查询文件属于哪个RPM的命令格式|
+
 # 2.yum软件仓库
 > yum软件仓库则是为了进一步简化RPM管理软件难度而设计的，能够根据用户的需求分析出所需软件包及其相关依赖关系，自动从服务器下载软件包并安装到系统。
 
@@ -51,7 +53,7 @@ shell的意思是“壳”，充当的是人和内核之间的翻译官，提供
 空格键          向下翻一页
 [Page Down]     向下翻一页
 [Page Up]       向上翻一页
-[Home]          之间前往首页
+[Home]          直接前往首页
 [End]           直接前往尾页
 / 关键词        从上之下搜过某个关键词
 ? 关键词        从下至上搜索某个关键词
