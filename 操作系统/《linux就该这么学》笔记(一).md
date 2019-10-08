@@ -18,6 +18,7 @@ RPM 为了解决包的安装、升级、依赖操作的难度过大而设计的�
 yum软件仓库则是为了进一步简化RPM管理软件难度而设计的，能够根据用户的需求分析出所需软件包及其相关依赖关系，自动从服务器下载软件包并安装到系统。
 
 常用命令有：
+
 |命令|作用|
 |-|-|
 |yum repolist all        |列出所有仓库|
@@ -188,7 +189,7 @@ CentOS Linux release 7.7.1908 (Core)
 用于持续观察系统中的进程快照。命令为`top`，如下：
 
 <div align="center">
-<img src="top-command.PNG">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/top-command.PNG">
 </div>
 第一行的内容和uptime相同。进程详细信息的含义为：
 
