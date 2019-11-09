@@ -654,6 +654,8 @@ public class ThreadSafe extends Thread {
 ```java
 public class ThreadSafe extends Thread {
     public void run() {
+        // 如果实现Runnable，则应该指定是当前线程，因为Runnable中没有isInterrupted方法，应该写为
+        // Thread.currentThread.isInterrupted()
         while (!isInterrupted()){ //非阻塞过程中通过判断中断标志来退出
             try{
                 Thread.sleep(5*1000);//阻塞过程捕获中断异常来退出
@@ -667,6 +669,8 @@ public class ThreadSafe extends Thread {
 ```
 
 <strong>需要注意的是，`isInterrupted()`是`Thread`类中的方法，使用`isInterrupted()`方法的线程类必须继承`Thread`，实现`Runnable`的类是用不了这个方法的。</strong>
+
+<strong>上面这句话说得不对啊，怎么会有这样的结论的？</strong>
 
 # 2. 多线程基础
 ## 2.1 同步
