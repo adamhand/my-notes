@@ -655,7 +655,7 @@ public class ThreadSafe extends Thread {
 public class ThreadSafe extends Thread {
     public void run() {
         // 如果实现Runnable，则应该指定是当前线程，因为Runnable中没有isInterrupted方法，应该写为
-        // Thread.currentThread.isInterrupted()
+        // Thread.currentThread().isInterrupted()
         while (!isInterrupted()){ //非阻塞过程中通过判断中断标志来退出
             try{
                 Thread.sleep(5*1000);//阻塞过程捕获中断异常来退出
