@@ -11,7 +11,7 @@ CREATE TABLE `t` (
   PRIMARY KEY (`id`),
   KEY `a` (`a`),
   KEY `b` (`b`)
-) ENGINE=InnoDB；
+) ENGINE=InnoDB;
 ```
 然后，往表 t 中插入 10 万行记录，取值按整数递增，即：(1,1,1)，(2,2,2)，(3,3,3) 直到 (100000,100000,100000)。语句如下：
 
