@@ -1,61 +1,63 @@
 ﻿<!-- TOC -->
 
-- [1. Spring概念](#1-spring概念)
-- [2. IOC(DI)](#2-iocdi)
-    - [2.1. IOC和DI的概念和理解](#21-ioc和di的概念和理解)
-    - [2.2. IOC原理](#22-ioc原理)
-        - [2.2.1. 工厂模式和反射](#221-工厂模式和反射)
-        - [2.2.2. IOC容器的技术剖析](#222-ioc容器的技术剖析)
-        - [2.2.3. spring运行原理](#223-spring运行原理)
-- [3. IOC配置(配置bean)](#3-ioc配置配置bean)
-    - [3.1. xml方式](#31-xml方式)
-        - [3.1.1. 通过全类名（反射）](#311-通过全类名反射)
-        - [3.1.2. 通过工厂方法配置bean](#312-通过工厂方法配置bean)
-            - [3.1.2.1. 静态工厂方法](#3121-静态工厂方法)
-            - [3.1.2.2. 实例工厂方法](#3122-实例工厂方法)
-        - [3.1.3. 通过FactoryBean配置bean（需要继承FactoryBean接口）](#313-通过factorybean配置bean需要继承factorybean接口)
-    - [3.2. 注解方式](#32-注解方式)
-        - [3.2.1. 组件扫描](#321-组件扫描)
-        - [3.2.2. 常用注解](#322-常用注解)
-            - [3.2.2.1. @Bean](#3221-bean)
-            - [3.2.2.2. @Autowired](#3222-autowired)
-            - [3.2.2.3. @Required](#3223-required)
-            - [3.2.2.4. @Qualifier](#3224-qualifier)
-        - [3.2.3. JSR(Java Specification Requests，Java规范提案)注解](#323-jsrjava-specification-requestsjava规范提案注解)
-            - [3.2.3.1. @Resource](#3231-resource)
+- [Spring概念](#spring概念)
+- [IOC(DI)](#iocdi)
+    - [IOC和DI的概念和理解](#ioc和di的概念和理解)
+    - [IOC原理](#ioc原理)
+        - [工厂模式和反射](#工厂模式和反射)
+        - [IOC容器的技术剖析](#ioc容器的技术剖析)
+        - [spring运行原理](#spring运行原理)
+- [IOC配置(配置bean)](#ioc配置配置bean)
+    - [什么是bean](#什么是bean)
+    - [xml方式](#xml方式)
+        - [通过全类名（反射）](#通过全类名反射)
+        - [通过工厂方法配置bean](#通过工厂方法配置bean)
+            - [静态工厂方法](#静态工厂方法)
+            - [实例工厂方法](#实例工厂方法)
+        - [通过FactoryBean配置bean（需要继承FactoryBean接口）](#通过factorybean配置bean需要继承factorybean接口)
+    - [注解方式](#注解方式)
+        - [组件扫描](#组件扫描)
+        - [常用注解](#常用注解)
+            - [@Bean](#bean)
+            - [@Autowired](#autowired)
+            - [@Required](#required)
+            - [@Qualifier](#qualifier)
+        - [JSR(Java Specification Requests，Java规范提案)注解](#jsrjava-specification-requestsjava规范提案注解)
+            - [@Resource](#resource)
         - [几个注解之间的区别](#几个注解之间的区别)
             - [@Component和@Configuration](#component和configuration)
             - [什么时候使用@Bean](#什么时候使用bean)
-    - [3.3. 注解方式和xml文件方式的关系](#33-注解方式和xml文件方式的关系)
-- [4. DI(依赖注入方式)](#4-di依赖注入方式)
-    - [4.1. setter注入](#41-setter注入)
-    - [4.2. 构造器注入](#42-构造器注入)
-    - [4.3. 工厂方法注入（比较少用，先放置）](#43-工厂方法注入比较少用先放置)
-    - [4.4. setter注入的三种写法](#44-setter注入的三种写法)
-        - [4.4.1. 正常方式](#441-正常方式)
-        - [4.4.2. 快捷方式](#442-快捷方式)
-        - [4.4.3. p模式](#443-p模式)
-- [5. 在一个bean里引用另一个bean](#5-在一个bean里引用另一个bean)
-    - [5.1. ref=”beanName”](#51-refbeanname)
-        - [5.1.1. setter](#511-setter)
-        - [5.1.2. 构造器](#512-构造器)
-    - [5.2. ref bean=”beanName”](#52-ref-beanbeanname)
-        - [5.2.1. setter](#521-setter)
-        - [5.2.2. 构造器](#522-构造器)
-    - [5.3. 内部bean](#53-内部bean)
-- [6. 级联属性赋值](#6-级联属性赋值)
-- [7. 集合属性](#7-集合属性)
-    - [7.1. List示例](#71-list示例)
-    - [7.2. Set示例](#72-set示例)
-    - [7.3. Map示例](#73-map示例)
-    - [7.4. Properties示例](#74-properties示例)
-    - [7.5. 单例的集合bean](#75-单例的集合bean)
-- [8. 参考](#8-参考)
-- [9. spring、pring boot和spring mvc的区别](#9-springpring-boot和spring-mvc的区别)
+    - [注解方式和xml文件方式的关系](#注解方式和xml文件方式的关系)
+    - [bean的生命周期](#bean的生命周期)
+- [DI(依赖注入方式)](#di依赖注入方式)
+    - [setter注入](#setter注入)
+    - [构造器注入](#构造器注入)
+    - [工厂方法注入（比较少用，先放置）](#工厂方法注入比较少用先放置)
+    - [setter注入的三种写法](#setter注入的三种写法)
+        - [正常方式](#正常方式)
+        - [快捷方式](#快捷方式)
+        - [p模式](#p模式)
+- [在一个bean里引用另一个bean](#在一个bean里引用另一个bean)
+    - [ref=”beanName”](#refbeanname)
+        - [setter](#setter)
+        - [构造器](#构造器)
+    - [ref bean=”beanName”](#ref-beanbeanname)
+        - [setter](#setter-1)
+        - [构造器](#构造器-1)
+    - [内部bean](#内部bean)
+- [级联属性赋值](#级联属性赋值)
+- [集合属性](#集合属性)
+    - [List示例](#list示例)
+    - [Set示例](#set示例)
+    - [Map示例](#map示例)
+    - [Properties示例](#properties示例)
+    - [单例的集合bean](#单例的集合bean)
+- [参考](#参考)
+- [spring、pring boot和spring mvc的区别](#springpring-boot和spring-mvc的区别)
 
 <!-- /TOC -->
 
-# 1. Spring概念
+# Spring概念
 spring是开源的轻量级框架
 
 spring核心主要两部分：
@@ -67,8 +69,8 @@ spring是一站式框架，spring在javaee三层结构中，每一层都提供�
 -  service层：spring的ioc
 -  dao层：spring的jdbcTemplate
 
-# 2. IOC(DI)
-## 2.1. IOC和DI的概念和理解
+# IOC(DI)
+## IOC和DI的概念和理解
 IOC（DI）：通常，每个对象在使用他的合作对象时，自己均要使用像new object（） 这样的语法来完成合作对象的申请工作，比如在A类的对象中要使用B类的对象，就要通过new方法创建一个B类对象。这样，对象间的耦合度高了。而IOC的思想是：Spring容器来实现这些相互依赖对象的创建、协调工作。对象只需要关系业务逻辑本身就可以了。从这方面来说，对象如何得到他的协作对象的责任被反转了（IOC、DI）。
 
 DI其实就是IOC的另外一种说法。DI是由Martin Fowler 在2004年初的一篇论文中首次提出的。他总结：控制的什么被反转了？就是：获得**依赖对象**的方式反转了。
@@ -79,10 +81,10 @@ DI其实就是IOC的另外一种说法。DI是由Martin Fowler 在2004年初的�
 Spring所倡导的开发方式就是如此，所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。
 - **DI（Dependency Injection，依赖注入）**。IoC的一个重点是在系统运行中，动态的向某个对象提供它所需要的其他对象。这一点是通过DI（Dependency Injection，依赖注入）来实现的。比如对象A需要操作数据库，以前我们总是要在A中自己编写代码来获得一个Connection对象，有了 spring我们就只需要告诉spring，A中需要一个Connection，至于这个Connection怎么构造，何时构造，A不需要知道。在系统运行时，spring会在适当的时候制造一个Connection，然后像打针一样，注射到A当中，这样就完成了对各个对象之间关系的控制。A需要依赖 Connection才能正常运行，而这个Connection是由spring注入到A中的，依赖注入的名字就这么来的。依赖注入是通过反射来实现的。
 
-## 2.2. IOC原理
+## IOC原理
 **Spring中的IoC的实现原理就是工厂模式加反射机制**
 
-### 2.2.1. 工厂模式和反射
+### 工厂模式和反射
 先来看一下工厂模式。下面是不使用反射的工厂模式。
 ```java
 interface fruit{
@@ -213,12 +215,12 @@ class hello{
 }
 ```
 
-### 2.2.2. IOC容器的技术剖析
+### IOC容器的技术剖析
 IOC中最基本的技术就是“反射(Reflection)”编程，通俗来讲就是**根据给出的类名（字符串方式）来动态地生成对象，这种编程方式可以让对象在生成时才被决定到底是哪一种对象。**只是在Spring中要生产的对象都在配置文件中给出定义，目的就是提高灵活性和可维护性。
 
 我们可以**把IOC容器的工作模式看做是工厂模式的升华，可以把IOC容器看作是一个工厂，这个工厂里要生产的对象都在配置文件中给出定义，然后利用编程语言提供的反射机制，根据配置文件中给出的类名生成相应的对象。**从实现来看，IOC是把以前在工厂方法里写死的对象生成代码，改变为由配置文件来定义，也就是把工厂和对象生成这两者独立分隔开来，目的就是提高灵活性和可维护性。
 
-### 2.2.3. spring运行原理
+### spring运行原理
 main函数如下：
 ```java
 public static void main(String[] args) {
@@ -366,16 +368,18 @@ if (value instanceof Map) {
 }
 ```
 
-# 3. IOC配置(配置bean)
-什么是bean。首先，spring一个很重要的贡献就是解耦，它将 类(class) 从源文件中抽离出来，放到xml文件中，使得我们可以用xml文件对源文件中的类进行配置和修改，这样就不用每次跑去乱找源文件。但如果我们需要在xml文件中对源文件进行修改，必须在xml文件中建立一种映射关系，也就是说在xml文件中为源文件中的类起一个“别名”，并形成关联，这样我们修改xml文件的时候才会调用源文件的中的对应类和属性。而bean就是源文件中的类在xml文件中的“别名”。
+# IOC配置(配置bean)
+## 什么是bean
+
+首先，spring一个很重要的贡献就是解耦，它将 类(class) 从源文件中抽离出来，放到xml文件中，使得我们可以用xml文件对源文件中的类进行配置和修改，这样就不用每次跑去乱找源文件。但如果我们需要在xml文件中对源文件进行修改，必须在xml文件中建立一种映射关系，也就是说在xml文件中为源文件中的类起一个“别名”，并形成关联，这样我们修改xml文件的时候才会调用源文件的中的对应类和属性。而bean就是源文件中的类在xml文件中的“别名”。
 
 bean的配置形式有两种：**通过xml的方式**和**通过注解的方式**。其中，通过xml的方式又可以分为三种
 -  通过全类名（反射）方式
 -  通过工厂方法（静态工厂方法&实例工厂方法）
 -  FactoryBean的方式。
 
-## 3.1. xml方式
-### 3.1.1. 通过全类名（反射）
+## xml方式
+### 通过全类名（反射）
 要求，源文件中要有一个无参的构造函数。
 ```java
 <bean id = “helloWorld” class = “com.cn.HelloWorld”> 
@@ -383,8 +387,8 @@ bean的配置形式有两种：**通过xml的方式**和**通过注解的方式*
 </bean>
 ```
 
-### 3.1.2. 通过工厂方法配置bean
-#### 3.1.2.1. 静态工厂方法
+### 通过工厂方法配置bean
+#### 静态工厂方法
 直接调用某一个类的静态方法就可以返回bean的实例，不需要创建对象。
 ```java
 package com.yl.factory;
@@ -429,7 +433,7 @@ public class StaticCarFactory {
 </bean>
 ```
 
-#### 3.1.2.2. 实例工厂方法
+#### 实例工厂方法
 ```java
 package com.yl.factory;
 
@@ -469,7 +473,7 @@ public class InstanceCarFactory {
     <constructor-arg value="ford"></constructor-arg>
 </bean>
 ```
-### 3.1.3. 通过FactoryBean配置bean（需要继承FactoryBean接口）
+### 通过FactoryBean配置bean（需要继承FactoryBean接口）
 当配置的bean里需要引用其他的bean，通过FactoryBean配置是最好的方式。
 过程：定义类实现FactoryBean接口，并实现三个方法：
 -  getObject()：返回对象
@@ -533,8 +537,8 @@ public class CarFactoryBean implements FactoryBean<Car> {
 </beans>
 ```
 
-## 3.2. 注解方式
-### 3.2.1. 组件扫描
+## 注解方式
+### 组件扫描
 spring能够从classpath下自动扫描，侦测和实例化具有特定注解的组件。特定的组件包括：
 
 -  @Component：基本组件，标识了一个受spring管理的组件
@@ -574,13 +578,13 @@ spring内建支持如下四种过滤器：
 </context:component-scan>
 ```
 
-### 3.2.2. 常用注解
+### 常用注解
 常用注解详细解释：
 
-#### 3.2.2.1. @Bean 
+#### @Bean 
 @Bean是一个方法级别上的注解，主要用在@Configuration注解的类里，也可以用在@Component注解的类里。使用@Bean注解和使用xml配置bean效果一样。
 
-#### 3.2.2.2. @Autowired
+#### @Autowired
 @Autowired注解可用于修饰属性、setter 方法、构造方法。其作用是为了消除Java代码里面的getter/setter与bean属性中的property。@Autowired注解的意思就是，当Spring发现@Autowired注解时，将自动在代码上下文中找到和其匹配（默认是类型匹配）的Bean，并自动注入到相应的地方去。
 
 @Autowired注解自动装配具有兼容类型的单个bean属性。默认情况下，所有使用@Autowired注解的属性都需要设置，当Spring找不到匹配的bean装配属性时，会抛出异常。若某一属性允许不被设置，可以设置@Autowired注解的required属性为false。 
@@ -611,7 +615,7 @@ public class Zoo {
 </beans>
 ```
 
-#### 3.2.2.3. @Required
+#### @Required
 @Required 注解只能用于修饰 bean 属性的 setter 方法。受影响的 bean 属性必须在配置时被填充在 xml 配置文件中，否则容器将抛出BeanInitializationException。
 
 例如，下述程序会出错，因为age的setter方法没有在bean中注入，而age的setter方法标记了@Required，也就是必须要输入，抛出的异常为：BeanInitializationException。
@@ -664,7 +668,7 @@ public class Student {
 </beans>
 ```
 
-#### 3.2.2.4. @Qualifier
+#### @Qualifier
 在@Autowired注解中，提到了如果发现有多个候选的 bean 都符合修饰类型，Spring 就会抓瞎了。
 
 那么，如何解决这个问题。
@@ -735,8 +739,8 @@ class Cat extends Animal {
 <bean id="annotationQualifier" class="org.zp.notes.spring.beans.annotation.sample.AnnotationQualifier"/>
 ```
 
-### 3.2.3. JSR(Java Specification Requests，Java规范提案)注解
-#### 3.2.3.1. @Resource
+### JSR(Java Specification Requests，Java规范提案)注解
+#### @Resource
 @Resource注解与@Autowired注解作用非常相似
 ```java
 public class AnnotationResource {
@@ -904,7 +908,7 @@ public class MyClass {
 
 [参考](https://github.com/dunwu/spring-notes/blob/master/docs/spring/core/ioc.md#xml-%E9%85%8D%E7%BD%AE)
 
-## 3.3. 注解方式和xml文件方式的关系
+## 注解方式和xml文件方式的关系
 <center>
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/component1.jpg" width="500">
 
@@ -913,10 +917,30 @@ public class MyClass {
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/component3.jpg" width="500">
 </center>
 
-# 4. DI(依赖注入方式)
+## bean的生命周期
+`bean`的生命周期如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/bean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
+</div>
+
+一个`bean`从产生到销毁主要包括如下过程：
+
+- `Spring`启动，查找并加载需要被`Spring`管理的`bean`，进行`Bean`的实例化
+- `Bean`实例化后对将`Bean`的引入和值注入到`Bean`的属性中
+- 如果`Bean`实现了`BeanNameAware`接口的话，`Spring`将`Bean`的`Id`传递给`setBeanName()`方法
+- 如果`Bean`实现了`BeanFactoryAware`接口的话，`Spring`将调用`setBeanFactory()`方法，将`BeanFactory`容器实例传入
+- 如果`Bean`实现了`ApplicationContextAware`接口的话，`Spring`将调用`Bean`的`setApplicationContext()`方法，将`bean`所在应用上下文引用传入进来。
+- 如果`Bean`实现了`BeanPostProcessor`接口，`Spring`就将调用他们的`postProcessBeforeInitialization()`方法。
+- 如果`Bean` 实现了`InitializingBean`接口，`Spring`将调用他们的`afterPropertiesSet()`方法。类似的，如果`bean`使用`init-method`声明了初始化方法，该方法也会被调用
+- 如果`Bean` 实现了`BeanPostProcessor`接口，`Spring`就将调用他们的`postProcessAfterInitialization()`方法。
+- 此时，`Bean`已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。
+- 如果`bean`实现了`DisposableBean`接口，`Spring`将调用它的`destory()`接口方法，同样，如果`bean`使用了`destory-method` 声明销毁方法，该方法也会被调用。
+
+# DI(依赖注入方式)
 依赖注入也可以叫做属性注入，主要有三种方式：setter方法注入、构造器注入和工厂方法注入(不常用)。
 
-## 4.1. setter注入
+## setter注入
 使用这种方法时，bean要有一个setter方法，在下例中，类中必须有一个setName()方法。
 ```jsp
 <bean id = "helloWorld" class="com.cn.HelloWorld">
@@ -924,7 +948,7 @@ public class MyClass {
 </bean>
 ```
 
-## 4.2. 构造器注入
+## 构造器注入
 ```jsp
 <bean id = "car" class = "com.cn.Car">
     <constructor-arg vaule="audi" index="0" />
@@ -938,11 +962,11 @@ public class MyClass {
 ```
 其中，index表示参数的顺序，type表示参数的类型，可以混用。type可以用来解决构造器注入歧义的问题。
 
-## 4.3. 工厂方法注入（比较少用，先放置）
+## 工厂方法注入（比较少用，先放置）
 
-## 4.4. setter注入的三种写法
+## setter注入的三种写法
 setter注入又有是那种不同的写法：
-### 4.4.1. 正常方式
+### 正常方式
 ```jsp
 <bean id="FileNameGenerator" class="com.yiibai.common.FileNameGenerator">
 	<property name="name">
@@ -966,7 +990,7 @@ setter注入又有是那种不同的写法：
 <constructor-arg />
 ```
 
-### 4.4.2. 快捷方式
+### 快捷方式
 ```jsp
 <bean id="FileNameGenerator" class="com.yiibai.common.FileNameGenerator">
 	<property name="name" value="yiibai" />
@@ -974,28 +998,28 @@ setter注入又有是那种不同的写法：
 </bean>
 ```
 
-### 4.4.3. p模式
+### p模式
 ```jsp
 <bean id="FileNameGenerator" class="com.yiibai.common.FileNameGenerator" 
              p:name="yiibai" p:type="txt" />
 ```
 
-# 5. 在一个bean里引用另一个bean
-## 5.1. ref=”beanName”
-### 5.1.1. setter
+# 在一个bean里引用另一个bean
+## ref=”beanName”
+### setter
 ```jsp
 <bean id=”person” class=”com.cn.Person”>
 	<property name=”car” ref=”Car”>
 </bean>
 ```
-### 5.1.2. 构造器
+### 构造器
 ```jsp
 <bean id = “person” class = “com.cn.Personr”>
     <constructor-arg index=”0” ref=”Car” />
 </bean>
 ```
-## 5.2. ref bean=”beanName”
-### 5.2.1. setter
+## ref bean=”beanName”
+### setter
 ```jsp
 <bean id=”person” class=”com.cn.Person”>
 	<property name=”car” >
@@ -1004,7 +1028,7 @@ setter注入又有是那种不同的写法：
 </bean>
 ```
 
-### 5.2.2. 构造器
+### 构造器
 ```jsp
 <bean id = “person” class = “com.cn.Personr”>
     <constructor-arg index=”0” />
@@ -1013,7 +1037,7 @@ setter注入又有是那种不同的写法：
 </bean>
 ```
 
-## 5.3. 内部bean
+## 内部bean
 ```jsp
 <bean id=”person” class=”com.cn.Person”>
 	<property name=”name” value=”Tom”></property>
@@ -1029,7 +1053,7 @@ setter注入又有是那种不同的写法：
 ```
 注：内部bean不能被外部引用；内部bean不用写id。
 
-# 6. 级联属性赋值
+# 级联属性赋值
 属性首先需要初始化才可以为级联属性赋值。
 ```jsp
 <!--初始化属性-->
@@ -1040,8 +1064,8 @@ setter注入又有是那种不同的写法：
 <property name=”car.maxSpeed” value=”260”></properry>
 ```
 
-# 7. 集合属性
-## 7.1. List示例 
+# 集合属性
+## List示例 
 ```jsp
 <property name="lists">
 	<list>
@@ -1055,7 +1079,7 @@ setter注入又有是那种不同的写法：
 	</list>
 </property>
 ```
-## 7.2. Set示例 
+## Set示例 
 ```jsp
 <property name="sets">
 	<set>
@@ -1069,7 +1093,7 @@ setter注入又有是那种不同的写法：
 	</set>
 </property>
 ```
-## 7.3. Map示例 
+## Map示例 
 ```jsp
 <property name="maps">
 	<map>
@@ -1086,7 +1110,7 @@ setter注入又有是那种不同的写法：
 </property>
 ```
 
-## 7.4. Properties示例 
+## Properties示例 
 ```jsp
 <property name="pros">
 	<props>
@@ -1096,7 +1120,7 @@ setter注入又有是那种不同的写法：
 </property>
 ```
 
-## 7.5. 单例的集合bean
+## 单例的集合bean
 配置单例的集合bean，以供多个bean进行调用。
 ```jsp
 <util:list id="cars">
@@ -1112,14 +1136,14 @@ setter注入又有是那种不同的写法：
 ```
 
 
-# 8. 参考
+# 参考
 -  https://blog.csdn.net/fuzhongmin05/article/details/61614873
 -  https://blog.csdn.net/fuzhongmin05/article/details/61614873
 -  https://blog.csdn.net/m13666368773/article/details/7802126
 -  https://blog.csdn.net/qq_22654611/article/details/52606960
 -  https://blog.csdn.net/it_man/article/details/4402245
 
-# 9. spring、pring boot和spring mvc的区别
+# spring、pring boot和spring mvc的区别
 spring boot就是一个大框架里面包含了许许多多的东西，其中spring就是最核心的内容之一，当然就包含spring mvc。
 
 spring mvc 是只是spring 处理web层请求的一个模块。
