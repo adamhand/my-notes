@@ -29,6 +29,14 @@
             - [什么时候使用@Bean](#什么时候使用bean)
     - [注解方式和xml文件方式的关系](#注解方式和xml文件方式的关系)
     - [bean的生命周期](#bean的生命周期)
+- [高级装配](#高级装配)
+    - [`profile`的应用](#profile的应用)
+        - [`profile`的配置](#profile的配置)
+            - [注解式配置](#注解式配置)
+            - [`xml`方式配置](#xml方式配置)
+        - [`profile`的激活](#profile的激活)
+    - [条件化的`bean`](#条件化的bean)
+    - [参考](#参考)
 - [DI(依赖注入方式)](#di依赖注入方式)
     - [setter注入](#setter注入)
     - [构造器注入](#构造器注入)
@@ -52,7 +60,7 @@
     - [Map示例](#map示例)
     - [Properties示例](#properties示例)
     - [单例的集合bean](#单例的集合bean)
-- [参考](#参考)
+- [参考](#参考-1)
 - [spring、pring boot和spring mvc的区别](#springpring-boot和spring-mvc的区别)
 
 <!-- /TOC -->
@@ -936,6 +944,127 @@ public class MyClass {
 - 如果`Bean` 实现了`BeanPostProcessor`接口，`Spring`就将调用他们的`postProcessAfterInitialization()`方法。
 - 此时，`Bean`已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。
 - 如果`bean`实现了`DisposableBean`接口，`Spring`将调用它的`destory()`接口方法，同样，如果`bean`使用了`destory-method` 声明销毁方法，该方法也会被调用。
+
+# 高级装配
+## `profile`的应用
+当程序从一个运行环境迁移到另一个运行环境时，由于环境的配置各不相同，可能需要手动对程序进行配置以对环境进行适应，这种做法费时且容易出错。`spring`的`profile`机制正是为了解决这种问题而产生的。通过`profile`的配置，可以使得在运行时根据环境选择该创建哪个`bean`和不创建哪个`bean`，使得同一个部署单元（比如`war`包）能够适用于所有的环境，没有必要重新进行重构。`profile`功能是从`spring3.1`版本引入的。
+
+### `profile`的配置
+`profile`的配置方式有两种：注解式和`xml`文件式。
+
+#### 注解式配置
+注解的配置方式是通过在类或者方法级别（`spring3.2`开始支持）上添加`@Profile`属性类做的。比如：
+
+```java
+// 在类级别上添加注解
+@Configuration
+@Profile("dev")
+public class ProductionProfileConfig {
+    @Bean
+    public DataSource dataSource() {
+        ...
+    }
+}
+
+// 在方法级别上添加注解
+@Configuration
+public class DataSourceConfig {
+    @Bean
+    @Profile("dev")
+    public DataSource embeddedDataSource() {
+        ...
+    }
+
+    @Bean
+    @Profile("prod")
+    public DataSource jndiDataSource() {
+        ...
+    }
+}
+```
+
+#### `xml`方式配置
+如果`spring`是基于`XML`来配置的话，可以通过<beans>元素的profile属性来配置。
+
+```xml
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       profile="dev">
+</beans>
+```
+
+`<beans>`中的`profile`属性也可嵌套使用。
+
+```xml
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+  <beans profile="dev">
+    ...
+  </beans>
+
+  <beans profile="prod">
+    ...
+  </beans>
+
+  <beans profile="qa">
+    ...
+  </beans>
+</beans>
+```
+
+### `profile`的激活
+通过设置`spring.profiles.active`和`spring.profiles.default`属性可以对`profile`激活，前者优先级会高于后者。有多中方式设置这两个属性。
+
+- 作为`DispatcherServlet`的初始化参数
+- 作为`WEB`应用上下文参数
+- 作为`JNDI`条目
+- 作为环境变量
+- 作为`JVM`的系统属性
+- 在集成测试类上，使用`@ActiveProfiles`注解
+
+第一种配置方式，可以在`web.xml`中配置下列代码。
+
+```xml
+<servlet>
+    <servlet-name>scdp-dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>spring.profiles.default</param-name>
+        <param-value>dev</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+```
+
+第二种配置方式，可以在`web.xml`中配置下列代码。
+
+```xml
+<context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>dev</param-value>
+</context-param>
+```
+这两种方式都可以在`param-value`启动多个环境，名称用逗号分隔即可。
+
+第六种方式，需要`spring`集成测试环境。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={PersistenceTestConfig.class})
+@ActiveProfiles("dev")
+public class PersistenceTest {
+    ...
+}
+```
+
+## 条件化的`bean`
+
+## 参考
+[根据环境装配你的bean——Spring中profile的应用](https://blog.csdn.net/u011230736/article/details/77715968)
 
 # DI(依赖注入方式)
 依赖注入也可以叫做属性注入，主要有三种方式：setter方法注入、构造器注入和工厂方法注入(不常用)。
