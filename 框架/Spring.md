@@ -1062,6 +1062,30 @@ public class PersistenceTest {
 ```
 
 ## 条件化的`bean`
+有时候可能有这样的需求：希望一个或多个 `bean` 只有在应用的类路径下包含特定的库时才创建，或者希望某个 `bean` 只有当另外某个特定的 `bean` 也声明了之后才创建，还可能要求只有某个特定的环境变量设置之后，才会创建某个 `bean`。
+
+要实现条件化的 `bean`使用 `Spring4`之后引入的`@Conditional`注解即可。例子如下，加入说有一个名为`MagicBean`的类，希望只有设置了`magic`环境属性的时候，`Spring`才会实例化这个类。如果环境中没有这个属性，那么`MagicBean`将会被忽略。
+
+```java
+@Bean
+@Condition(MagicExistsCondition.class)
+public MagicBean magicBean() {
+    return new MagicBean();
+}
+```
+设置给`@Conditional`的类可以是任意实现了 `Condition` 接口的类型，如下。
+
+```java
+public class MagicExistsCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+        Environment environment = conditionContext.getEnvironment();
+        return environment.containsProperty("magic");
+    }
+}
+```
+这样，所有`@Condition`注解上引用`MagicExistsCondition`的`bean`都会被创建。
 
 ## 参考
 [根据环境装配你的bean——Spring中profile的应用](https://blog.csdn.net/u011230736/article/details/77715968)
