@@ -45,7 +45,7 @@
 - 浏览器输入访问路径后，携带了请求行，请求头和请求体
 - 根据访问路径找到已注册的`servlet`名称，既下图中的`demo`
 - 根据映射找到对应的`servlet`名 
-- 根据根据`servlet`名找到我们全限定类名
+- 根据根据`servlet`名找到我们定类名，这里便是`DemoServlet`类
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet1.jpg">
