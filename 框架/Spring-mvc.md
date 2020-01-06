@@ -2,6 +2,12 @@
 
 - [web.xml加载过程](#webxml加载过程)
 - [servlet生命周期](#servlet生命周期)
+- [servlet完成执行流程](#servlet完成执行流程)
+    - [浏览器发起请求](#浏览器发起请求)
+    - [创建servlet对象](#创建servlet对象)
+    - [调用init()方法](#调用init方法)
+    - [调用service方法](#调用service方法)
+    - [向浏览器响应](#向浏览器响应)
 - [DispatcherServlet配置方式](#dispatcherservlet配置方式)
     - [使用xml配置](#使用xml配置)
     - [使用Java Config配置](#使用java-config配置)
@@ -28,6 +34,53 @@
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet%20life.jpg">
+</div>
+
+## servlet完成执行流程
+了解了`servlet`的生命周期之后，再了解一下从浏览器请求到返回的过程中`servlet`的完整执行流程。
+
+### 浏览器发起请求
+浏览器向服务器发起请求，服务器首先会到`web.xml`里寻找路径名。具体步骤为。
+
+- 浏览器输入访问路径后，携带了请求行，请求头和请求体
+- 根据访问路径找到已注册的`servlet`名称，既下图中的`demo`
+- 根据映射找到对应的`servlet`名 
+- 根据根据`servlet`名找到我们全限定类名
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet1.jpg">
+</div>
+
+### 创建servlet对象
+服务器找到全限定类名后，通过反射创建对象，同时也创建了servletConfig，里面存放了一些初始化信息（服务器只会创建一次servlet对象，所以servletConfig也只有一个）。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet2.jpg">
+</div>
+
+### 调用init()方法
+对象创建好之后，首先要执行`init`方法。这时由于自定义的`sevlet`程序里没有定义`init()`方法，需要沿着继承链寻找父类中的`init()`方法：`DemoServlet -> HttpServlet -> GenericServlet`，最终调用`GenericServlet`中的`init()`方法。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet3.jpg">
+</div>
+
+### 调用service方法
+接着，服务器会创建两个对象：`ServletRequest`请求对象和`ServletResponse`响应对象，用来封装浏览器的请求数据和封装向浏览器的响应数据。
+
+接着服务器会默认在`DemoServlet`寻找`service(ServletRequest req, ServletResponse res)`方法，但是该类中没有`service`，于是会沿着调用链在父类中寻找，在父类`HttpServlet`中发现有此方法，则直接调用此方法，并将之前创建好的两个对象传入，将传入的两个参数强转，并调用`HttpServlet`下的另外一个`service`方法。
+
+接着执行`service(HttpServletRequest req, HttpServletResponseresp)`方法，在此方法内部进行了判断请求方式，并执行`doGet`和`doPost`，但是这两个方法已经在`DemoServlet`中被重写了，所以会执行重写的方法。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet4.jpg">
+</div>
+
+### 向浏览器响应
+将`doGet()`或`doPost()`方法执行的结果封装成响应消息，返回给浏览器。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/servlet5.jpg">
 </div>
 
 ## DispatcherServlet配置方式
