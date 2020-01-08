@@ -14,6 +14,8 @@
         - [创建`DispatcherServlet`上下文](#创建dispatcherservlet上下文)
         - [刷新`DispatcherServlet`自己的应用上下文](#刷新dispatcherservlet自己的应用上下文)
     - [参考](#参考)
+- [Spring mvc请求流程](#spring-mvc请求流程)
+    - [参考](#参考-1)
 - [DispatcherServlet配置方式](#dispatcherservlet配置方式)
     - [使用xml配置](#使用xml配置)
     - [使用Java Config配置](#使用java-config配置)
@@ -435,48 +437,71 @@ protected void initStrategies(ApplicationContext context) {
 [DispatcherServlet的初始化过程](https://www.jianshu.com/p/9865f749e550)</br>
 [Spring mvc之DispatcherServlet初始化详解](http://www.360doc.com/content/18/0930/19/13328254_791025670.shtml)</br>
 
+## Spring mvc请求流程
+`Spring mvc`请求过程如下图所示。
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/dispatcherservlet%20flow.jpg">
+</div>
+
+详细流程如下：
+
+- 用户发送请求至前端控制器`DispatcherServlet`，`DispatcherServlet`根据`<url-pattern>`对请求进行过滤
+- 前端控制器根据`url`请求`HandlerMapping`查找`Handler`(可以根据`xml`配置、注解进行查找)
+- 处理器映射器`HandlerMapping`向前端控制器返回`Handler`，`HandlerMapping`会把请求映射为`HandlerExecutionChain`对象(包含一个`Handler`处理器(页面控制器)对象，多个`HandlerInterceptor`拦截器对象)
+- 前端控制器调用处理器适配器去执行`Handler`
+- 处理器适配器`HandlerAdapter`将会根据适配的结果去执行`Handler`
+- `Handler`执行完成给适配器返回`ModelAndView`
+- 处理器适配器向前端控制器返回`ModelAndView`(`ModelAndView`是`springmvc`框架的一个底层对象，包括 `Model`和`view`)
+- 前端控制器请求视图解析器去进行视图解析(根据逻辑视图名解析成真正的视图(`jsp`))，通过这种策略很容易更换其他视图技术，只需要更改视图解析器即可
+- 视图解析器向前端控制器返回`View`
+- 前端控制器进行视图渲染
+- 前端控制器向用户响应结果
+
+### 参考
+[SpringMVC详细流程（一）](https://www.cnblogs.com/myitnews/p/11565941.html)
 
 ## DispatcherServlet配置方式
 ### 使用xml配置
 需要在`web.xml`文件中进行如下配置：
 
 ```xml
-  <context-param>
+<context-param>
+  <param-name>contextConfigLocation</param-name>
+  <param-value>classpath:applicationContext.xml</param-value>
+</context-param>
+
+<filter>
+  <filter-name>encodingFilter</filter-name>
+  <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+  <async-supported>true</async-supported>
+  <init-param>
+    <param-name>encoding</param-name>
+    <param-value>UTF-8</param-value>
+  </init-param>
+</filter>
+<filter-mapping>
+  <filter-name>encodingFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<listener>
+  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+
+<servlet>
+  <servlet-name>dispatcherServlet</servlet-name>
+  <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  <init-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml</param-value>
-  </context-param>
+  </init-param>
+</servlet>
 
-  <filter>
-    <filter-name>encodingFilter</filter-name>
-    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-    <async-supported>true</async-supported>
-    <init-param>
-      <param-name>encoding</param-name>
-      <param-value>UTF-8</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>encodingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-
-  <servlet>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:applicationContext.xml</param-value>
-    </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>dispatcherServlet</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
+<servlet-mapping>
+  <servlet-name>dispatcherServlet</servlet-name>
+  <url-pattern>/</url-pattern>
+</servlet-mapping>
 ```
 
 ### 使用Java Config配置
