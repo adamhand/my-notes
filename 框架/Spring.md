@@ -1,16 +1,81 @@
-﻿# Spring
----
+﻿<!-- TOC -->
+
+- [Spring概念](#spring概念)
+- [IOC(DI)](#iocdi)
+    - [IOC和DI的概念和理解](#ioc和di的概念和理解)
+    - [IOC原理](#ioc原理)
+        - [工厂模式和反射](#工厂模式和反射)
+        - [IOC容器的技术剖析](#ioc容器的技术剖析)
+        - [spring运行原理](#spring运行原理)
+- [IOC配置(配置bean)](#ioc配置配置bean)
+    - [什么是bean](#什么是bean)
+    - [xml方式](#xml方式)
+        - [通过全类名（反射）](#通过全类名反射)
+        - [通过工厂方法配置bean](#通过工厂方法配置bean)
+            - [静态工厂方法](#静态工厂方法)
+            - [实例工厂方法](#实例工厂方法)
+        - [通过FactoryBean配置bean（需要继承FactoryBean接口）](#通过factorybean配置bean需要继承factorybean接口)
+    - [注解方式](#注解方式)
+        - [组件扫描](#组件扫描)
+        - [常用注解](#常用注解)
+            - [@Bean](#bean)
+            - [@Autowired](#autowired)
+            - [@Required](#required)
+            - [@Qualifier](#qualifier)
+        - [JSR(Java Specification Requests，Java规范提案)注解](#jsrjava-specification-requestsjava规范提案注解)
+            - [@Resource](#resource)
+        - [几个注解之间的区别](#几个注解之间的区别)
+            - [@Component和@Configuration](#component和configuration)
+            - [什么时候使用@Bean](#什么时候使用bean)
+    - [注解方式和xml文件方式的关系](#注解方式和xml文件方式的关系)
+    - [bean的生命周期](#bean的生命周期)
+- [高级装配](#高级装配)
+    - [`profile`的应用](#profile的应用)
+        - [`profile`的配置](#profile的配置)
+            - [注解式配置](#注解式配置)
+            - [`xml`方式配置](#xml方式配置)
+        - [`profile`的激活](#profile的激活)
+    - [条件化的`bean`](#条件化的bean)
+    - [参考](#参考)
+- [DI(依赖注入方式)](#di依赖注入方式)
+    - [setter注入](#setter注入)
+    - [构造器注入](#构造器注入)
+    - [工厂方法注入（比较少用，先放置）](#工厂方法注入比较少用先放置)
+    - [setter注入的三种写法](#setter注入的三种写法)
+        - [正常方式](#正常方式)
+        - [快捷方式](#快捷方式)
+        - [p模式](#p模式)
+- [在一个bean里引用另一个bean](#在一个bean里引用另一个bean)
+    - [ref=”beanName”](#refbeanname)
+        - [setter](#setter)
+        - [构造器](#构造器)
+    - [ref bean=”beanName”](#ref-beanbeanname)
+        - [setter](#setter-1)
+        - [构造器](#构造器-1)
+    - [内部bean](#内部bean)
+- [级联属性赋值](#级联属性赋值)
+- [集合属性](#集合属性)
+    - [List示例](#list示例)
+    - [Set示例](#set示例)
+    - [Map示例](#map示例)
+    - [Properties示例](#properties示例)
+    - [单例的集合bean](#单例的集合bean)
+- [参考](#参考-1)
+- [spring、pring boot和spring mvc的区别](#springpring-boot和spring-mvc的区别)
+
+<!-- /TOC -->
+
 # Spring概念
 spring是开源的轻量级框架
 
 spring核心主要两部分：
->- aop：面向切面编程，扩展功能不是修改源代码实现
->- ioc：控制反转：对象的创建不是通过new方式实现，而是交给spring配置创建类对象
+-  aop：面向切面编程，扩展功能不是修改源代码实现
+-  ioc：控制反转：对象的创建不是通过new方式实现，而是交给spring配置创建类对象
 
 spring是一站式框架，spring在javaee三层结构中，每一层都提供不同的解决技术
->- web层：springMVC
->- service层：spring的ioc
->- dao层：spring的jdbcTemplate
+-  web层：springMVC
+-  service层：spring的ioc
+-  dao层：spring的jdbcTemplate
 
 # IOC(DI)
 ## IOC和DI的概念和理解
@@ -312,12 +377,14 @@ if (value instanceof Map) {
 ```
 
 # IOC配置(配置bean)
-什么是bean。首先，spring一个很重要的贡献就是解耦，它将 类(class) 从源文件中抽离出来，放到xml文件中，使得我们可以用xml文件对源文件中的类进行配置和修改，这样就不用每次跑去乱找源文件。但如果我们需要在xml文件中对源文件进行修改，必须在xml文件中建立一种映射关系，也就是说在xml文件中为源文件中的类起一个“别名”，并形成关联，这样我们修改xml文件的时候才会调用源文件的中的对应类和属性。而bean就是源文件中的类在xml文件中的“别名”。
+## 什么是bean
+
+首先，spring一个很重要的贡献就是解耦，它将 类(class) 从源文件中抽离出来，放到xml文件中，使得我们可以用xml文件对源文件中的类进行配置和修改，这样就不用每次跑去乱找源文件。但如果我们需要在xml文件中对源文件进行修改，必须在xml文件中建立一种映射关系，也就是说在xml文件中为源文件中的类起一个“别名”，并形成关联，这样我们修改xml文件的时候才会调用源文件的中的对应类和属性。而bean就是源文件中的类在xml文件中的“别名”。
 
 bean的配置形式有两种：**通过xml的方式**和**通过注解的方式**。其中，通过xml的方式又可以分为三种
->- 通过全类名（反射）方式
->- 通过工厂方法（静态工厂方法&实例工厂方法）
->- FactoryBean的方式。
+-  通过全类名（反射）方式
+-  通过工厂方法（静态工厂方法&实例工厂方法）
+-  FactoryBean的方式。
 
 ## xml方式
 ### 通过全类名（反射）
@@ -417,9 +484,9 @@ public class InstanceCarFactory {
 ### 通过FactoryBean配置bean（需要继承FactoryBean接口）
 当配置的bean里需要引用其他的bean，通过FactoryBean配置是最好的方式。
 过程：定义类实现FactoryBean接口，并实现三个方法：
->- getObject()：返回对象
->- getObjectType()：返回对象的类型
->- isSingleton()：对象是否为单例。
+-  getObject()：返回对象
+-  getObjectType()：返回对象的类型
+-  isSingleton()：对象是否为单例。
 
 编写配置文件，class指向FactoryBean的全类名。
 ```java
@@ -481,10 +548,13 @@ public class CarFactoryBean implements FactoryBean<Car> {
 ## 注解方式
 ### 组件扫描
 spring能够从classpath下自动扫描，侦测和实例化具有特定注解的组件。特定的组件包括：
->- @Component：基本组件，标识了一个受spring管理的组件
->- @Repository：标识持久层组件
->- @Service：标识服务层（业务层）组件
->- @Controller：标识表现层组件
+
+-  @Component：基本组件，标识了一个受spring管理的组件
+-  @Repository：标识持久层组件
+-  @Service：标识服务层（业务层）组件
+-  @Controller：标识表现层组件
+-  @Configuration：配置注解，作用和上述四个相同
+-  @Bean：上述五个注解均为类注解，@Bean是方法层面的注解，需要在上述五个注解的类中才能生效
 
 对于扫描的的组件，spring有默认的命名策略：使用非限定类名，第一个字母小写。也可以在注解中通过value属性标识组件的名称。
 
@@ -492,11 +562,14 @@ spring能够从classpath下自动扫描，侦测和实例化具有特定注解�
 
 当在组件类上使用了特定的注解之后，还需要在spring的配置文件中声明<context:component-scan>来标识需要扫描的包。<context:component-scan>可以拥有若干个<context:include-filter>（需要use-default-filters="false"配合使用）或<context:exclude-filter>子节点过滤器，前者表示要包含的目标类，后者表示要排除在外的目标类。
 
+或者不使用`xml`，使用`java`配置类，在配置类上声明`@ComponentScan`。该注解默认扫描该类下组件，扫描范围可以设定，比如使用`@ComponentScan(basePackages="包名")`或者`@ComponentScan(basePackagesClasses={类名1.class, 类名2.class)`。
+
 spring内建支持如下四种过滤器：
->- annotation：该过滤器要指定一个annotation名，如lee.AnnotationTest。
->- assignable：类名过滤器，该过滤器直接指定一个java类。
->- regex:正则表达式过滤器，该过滤器指定一个正则表达式，匹配该正则表达式的java类将满足该过滤规则，如org\.example\.default.*。
->- aspectj:如org.example..*service+。
+
+-  annotation：该过滤器要指定一个annotation名，如lee.AnnotationTest。
+-  assignable：类名过滤器，该过滤器直接指定一个java类。
+-  regex:正则表达式过滤器，该过滤器指定一个正则表达式，匹配该正则表达式的java类将满足该过滤规则，如org\.example\.default.*。
+-  aspectj:如org.example..*service+。
 
 当需要扫描多个包时，可以使用逗号隔开。
 ```jsp
@@ -513,8 +586,8 @@ spring内建支持如下四种过滤器：
 </context:component-scan>
 ```
 
-### 其他注解
-除了上述四种特定注解，还有以下常用注解：
+### 常用注解
+常用注解详细解释：
 
 #### @Bean 
 @Bean是一个方法级别上的注解，主要用在@Configuration注解的类里，也可以用在@Component注解的类里。使用@Bean注解和使用xml配置bean效果一样。
@@ -722,15 +795,124 @@ public class AnnotationResource {
 <bean id="annotationResource" class="org.zp.notes.spring.beans.annotation.sample.AnnotationResource"/>
 ```
 @Resource的装配顺序：
->- @Resource后面没有任何内容，默认通过name属性去匹配bean，找不到再按type去匹配
->- 指定了name或者type则根据指定的类型去匹配bean
->- 指定了name和type则根据指定的name和type去匹配bean，任何一个不匹配都将报错
+-  @Resource后面没有任何内容，默认通过name属性去匹配bean，找不到再按type去匹配
+-  指定了name或者type则根据指定的类型去匹配bean
+-  指定了name和type则根据指定的name和type去匹配bean，任何一个不匹配都将报错
 
 @Autowired和@Resource两个注解的区别：
->- @Autowired默认按照byType方式进行bean匹配，@Resource默认按照byName方式进行bean匹配
->- @Autowired是Spring的注解，@Resource是J2EE的注解，这个看一下导入注解的时候这两个注解的包名就一清二楚了
+-  @Autowired默认按照byType方式进行bean匹配，@Resource默认按照byName方式进行bean匹配
+-  @Autowired是Spring的注解，@Resource是J2EE的注解
 
 Spring属于第三方的，J2EE是Java自己的东西，因此，建议使用@Resource注解，以减少代码和Spring之间的耦合。
+
+### 几个注解之间的区别
+#### @Component和@Configuration
+
+- 用法不太相同。`@Component`可以用在所有类，`@Configuration`一般用在有`@Bean`等注解的类上，作为配置类
+- `@Component`产生的`bean`为多例，`@Configuration`中所有使用`@Bean`的方法都会使用动态代理，产生的是单例。测试代码如下。
+
+```java
+public interface Dog {
+}
+
+public class LittleDog implements Dog {
+}
+
+public class Master {
+    private Dog dog;
+
+    public Master(Dog dog) {
+        this.dog = dog;
+    }
+
+    public Dog getDog() {
+        return this.dog;
+    }
+}
+
+@Configuration
+public class MyConfig0 {
+    @Bean
+    public Dog dog() {
+        return new LittleDog();
+    }
+
+    @Bean
+    public Master master() {
+        return new Master(dog());
+    }
+}
+
+@Component
+public class MyConfig1 {
+    @Bean
+    public Dog dog() {
+        return new LittleDog();
+    }
+
+    @Bean
+    public Master master() {
+        return new Master(dog());
+    }
+}
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = MyConfig0.class) // 修改这里的class来测试两个注解是否为单例模式，当为@Configuration时，dog和master0.getDog()是一个对象，当为@Component时不是一个对象
+public class ConfigTest {
+    @Autowired
+    private Master master0;
+
+    @Autowired
+    private Master master1;
+
+    @Autowired
+    private Dog dog;
+
+    @Test
+    public void test() {
+        System.out.println(master0.getDog() == master1.getDog());
+        System.out.println(dog == master0.getDog());
+    }
+}
+```
+要想让`MyConfig1`中的`dog`也为单例，则可以做如下更改：
+
+```java
+@Component
+public class MyConfig1 {
+    @Autowired
+    private Dog dog;
+
+    @Bean
+    public Dog dog() {
+        return new LittleDog();
+    }
+
+    @Bean
+    public Master master() {
+        return new Master(dog);
+    }
+}
+```
+
+#### 什么时候使用@Bean
+当需要使用第三方的库中的组件时，第三方组件可能以`jar`包的形式存在，这时没办法在它的类上添加`@Component`和`@Autowired`注解，这时可以考虑使用`@Bean`手动进行装配，如下。
+
+```java
+@Configuration
+public class MyClass {
+  // classA和classB就是jar包里写好的
+  @Bean
+  public ClassA getClassA() {
+    return new ClassA();
+  }
+  @Bean
+  public ClassB getClassB() {
+    return new ClassB();
+  }
+  .....
+}
+```
 
 [参考](https://github.com/dunwu/spring-notes/blob/master/docs/spring/core/ioc.md#xml-%E9%85%8D%E7%BD%AE)
 
@@ -742,6 +924,171 @@ Spring属于第三方的，J2EE是Java自己的东西，因此，建议使用@Re
 
 <img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/component3.jpg" width="500">
 </center>
+
+## bean的生命周期
+`bean`的生命周期如下图所示：
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adamhand/LeetCode-images/master/bean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
+</div>
+
+一个`bean`从产生到销毁主要包括如下过程：
+
+- `Spring`启动，查找并加载需要被`Spring`管理的`bean`，进行`Bean`的实例化
+- `Bean`实例化后对将`Bean`的引入和值注入到`Bean`的属性中
+- 如果`Bean`实现了`BeanNameAware`接口的话，`Spring`将`Bean`的`Id`传递给`setBeanName()`方法
+- 如果`Bean`实现了`BeanFactoryAware`接口的话，`Spring`将调用`setBeanFactory()`方法，将`BeanFactory`容器实例传入
+- 如果`Bean`实现了`ApplicationContextAware`接口的话，`Spring`将调用`Bean`的`setApplicationContext()`方法，将`bean`所在应用上下文引用传入进来。
+- 如果`Bean`实现了`BeanPostProcessor`接口，`Spring`就将调用他们的`postProcessBeforeInitialization()`方法。
+- 如果`Bean` 实现了`InitializingBean`接口，`Spring`将调用他们的`afterPropertiesSet()`方法。类似的，如果`bean`使用`init-method`声明了初始化方法，该方法也会被调用
+- 如果`Bean` 实现了`BeanPostProcessor`接口，`Spring`就将调用他们的`postProcessAfterInitialization()`方法。
+- 此时，`Bean`已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。
+- 如果`bean`实现了`DisposableBean`接口，`Spring`将调用它的`destory()`接口方法，同样，如果`bean`使用了`destory-method` 声明销毁方法，该方法也会被调用。
+
+# 高级装配
+## `profile`的应用
+当程序从一个运行环境迁移到另一个运行环境时，由于环境的配置各不相同，可能需要手动对程序进行配置以对环境进行适应，这种做法费时且容易出错。`spring`的`profile`机制正是为了解决这种问题而产生的。通过`profile`的配置，可以使得在运行时根据环境选择该创建哪个`bean`和不创建哪个`bean`，使得同一个部署单元（比如`war`包）能够适用于所有的环境，没有必要重新进行重构。`profile`功能是从`spring3.1`版本引入的。
+
+### `profile`的配置
+`profile`的配置方式有两种：注解式和`xml`文件式。
+
+#### 注解式配置
+注解的配置方式是通过在类或者方法级别（`spring3.2`开始支持）上添加`@Profile`属性类做的。比如：
+
+```java
+// 在类级别上添加注解
+@Configuration
+@Profile("dev")
+public class ProductionProfileConfig {
+    @Bean
+    public DataSource dataSource() {
+        ...
+    }
+}
+
+// 在方法级别上添加注解
+@Configuration
+public class DataSourceConfig {
+    @Bean
+    @Profile("dev")
+    public DataSource embeddedDataSource() {
+        ...
+    }
+
+    @Bean
+    @Profile("prod")
+    public DataSource jndiDataSource() {
+        ...
+    }
+}
+```
+
+#### `xml`方式配置
+如果`spring`是基于`XML`来配置的话，可以通过<beans>元素的profile属性来配置。
+
+```xml
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       profile="dev">
+</beans>
+```
+
+`<beans>`中的`profile`属性也可嵌套使用。
+
+```xml
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+  <beans profile="dev">
+    ...
+  </beans>
+
+  <beans profile="prod">
+    ...
+  </beans>
+
+  <beans profile="qa">
+    ...
+  </beans>
+</beans>
+```
+
+### `profile`的激活
+通过设置`spring.profiles.active`和`spring.profiles.default`属性可以对`profile`激活，前者优先级会高于后者。有多中方式设置这两个属性。
+
+- 作为`DispatcherServlet`的初始化参数
+- 作为`WEB`应用上下文参数
+- 作为`JNDI`条目
+- 作为环境变量
+- 作为`JVM`的系统属性
+- 在集成测试类上，使用`@ActiveProfiles`注解
+
+第一种配置方式，可以在`web.xml`中配置下列代码。
+
+```xml
+<servlet>
+    <servlet-name>scdp-dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>spring.profiles.default</param-name>
+        <param-value>dev</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+```
+
+第二种配置方式，可以在`web.xml`中配置下列代码。
+
+```xml
+<context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>dev</param-value>
+</context-param>
+```
+这两种方式都可以在`param-value`启动多个环境，名称用逗号分隔即可。
+
+第六种方式，需要`spring`集成测试环境。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={PersistenceTestConfig.class})
+@ActiveProfiles("dev")
+public class PersistenceTest {
+    ...
+}
+```
+
+## 条件化的`bean`
+有时候可能有这样的需求：希望一个或多个 `bean` 只有在应用的类路径下包含特定的库时才创建，或者希望某个 `bean` 只有当另外某个特定的 `bean` 也声明了之后才创建，还可能要求只有某个特定的环境变量设置之后，才会创建某个 `bean`。
+
+要实现条件化的 `bean`使用 `Spring4`之后引入的`@Conditional`注解即可。例子如下，加入说有一个名为`MagicBean`的类，希望只有设置了`magic`环境属性的时候，`Spring`才会实例化这个类。如果环境中没有这个属性，那么`MagicBean`将会被忽略。
+
+```java
+@Bean
+@Condition(MagicExistsCondition.class)
+public MagicBean magicBean() {
+    return new MagicBean();
+}
+```
+设置给`@Conditional`的类可以是任意实现了 `Condition` 接口的类型，如下。
+
+```java
+public class MagicExistsCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+        Environment environment = conditionContext.getEnvironment();
+        return environment.containsProperty("magic");
+    }
+}
+```
+这样，所有`@Condition`注解上引用`MagicExistsCondition`的`bean`都会被创建。
+
+## 参考
+[根据环境装配你的bean——Spring中profile的应用](https://blog.csdn.net/u011230736/article/details/77715968)
 
 # DI(依赖注入方式)
 依赖注入也可以叫做属性注入，主要有三种方式：setter方法注入、构造器注入和工厂方法注入(不常用)。
@@ -871,7 +1218,7 @@ setter注入又有是那种不同的写法：
 ```
 
 # 集合属性
-##  List示例 
+## List示例 
 ```jsp
 <property name="lists">
 	<list>
@@ -943,11 +1290,11 @@ setter注入又有是那种不同的写法：
 
 
 # 参考
->- https://blog.csdn.net/fuzhongmin05/article/details/61614873
->- https://blog.csdn.net/fuzhongmin05/article/details/61614873
->- https://blog.csdn.net/m13666368773/article/details/7802126
->- https://blog.csdn.net/qq_22654611/article/details/52606960
->- https://blog.csdn.net/it_man/article/details/4402245
+-  https://blog.csdn.net/fuzhongmin05/article/details/61614873
+-  https://blog.csdn.net/fuzhongmin05/article/details/61614873
+-  https://blog.csdn.net/m13666368773/article/details/7802126
+-  https://blog.csdn.net/qq_22654611/article/details/52606960
+-  https://blog.csdn.net/it_man/article/details/4402245
 
 # spring、pring boot和spring mvc的区别
 spring boot就是一个大框架里面包含了许许多多的东西，其中spring就是最核心的内容之一，当然就包含spring mvc。
