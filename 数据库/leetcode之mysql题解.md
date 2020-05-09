@@ -377,6 +377,8 @@ select  *
 [MySQL之join语句](https://blog.csdn.net/jyxmust/article/details/70304333)
 [MySQL的JOIN用法](https://blog.csdn.net/yanqianglifei/article/details/82883226)
 [MySQL的Join使用](https://blog.csdn.net/taylor_tao/article/details/7068511)
+[Mysql：ON 与 WHERE 的区别](https://www.jianshu.com/p/d923cf8ae25f)
+[SQL中的ON和WHERE的区别](https://blog.csdn.net/liitdar/article/details/80817957)
 
 ---
 
