@@ -570,3 +570,72 @@ csvData.map(x->{
         }).saveAsTextFile("file;///sparkRS/csv");
 ```
 
+#### sequenceFile
+SequeceFile是Hadoop API提供的一种二进制文件支持。这种二进制文件直接将`<key, value>对`序列化到文件中。
+
+由于 Hadoop 使用了一套自定义的序列化框架，因此 SequenceFile 是由实现 Hadoop 的 Writable接口的元素组成。常见的数据类型和它对应的Writeable类如下所示：
+
+|Scala类型| Java类型 |Hadoop Writable类|
+|-|-|-|
+|Int |Integer| IntWritable 或 VIntWritable 2|
+|Long| Long |LongWritable 或 VLongWritable 2|
+|Float |Float |FloatWritable|
+|Double| Double| DoubleWritable|
+|Boolean| Boolean| BooleanWritable|
+|Array[Byte]| byte[]| BytesWritable|
+|String| String| Text|
+|Array[T]| T[]| ArrayWritable<TW>|
+|List[T] |List<T> |ArrayWritable<TW>|
+|Map[A, B] |Map<A, B>| MapWritable<AW, BW>|
+
+读取sequenceFile比较简单，在Java中只需要使用 sequenceFile(path, keyClass, valueClass, minPartitions)方法。比如，要从一个SequenceFile 中读取人员以及他们所见过的熊猫数目，按照上面基本类和Writable类的对应关系，keyClass 是 Text，而 valueClass 则是 IntWritable 或 VIntWritable(变长类型)。例子如下：
+
+```java
+public static class ConvertToNativeTypes implements 
+  PairFunction<Tuple2<Text, IntWritable>, String, Integer> { 
+  public Tuple2<String, Integer> call(Tuple2<Text, IntWritable> record) { 
+    return new Tuple2(record._1.toString(), record._2.get()); 
+  } 
+} 
+ 
+JavaPairRDD<Text, IntWritable> input = sc.sequenceFile(fileName, Text.class, 
+  IntWritable.class); 
+JavaPairRDD<String, Integer> result = input.mapToPair( 
+  new ConvertToNativeTypes());
+```
+
+Java API中没有直接保存sequenceFile的方法，需要保存自定义Hadoop格式。
+
+```java
+public static class ConvertToWritableTypes implements 
+  PairFunction<Tuple2<String, Integer>, Text, IntWritable> { 
+  public Tuple2<Text, IntWritable> call(Tuple2<String, Integer> record) { 
+    return new Tuple2(new Text(record._1), new IntWritable(record._2)); 
+  } 
+} 
+ 
+JavaPairRDD<String, Integer> rdd = sc.parallelizePairs(input); 
+JavaPairRDD<Text, IntWritable> result = rdd.mapToPair(new ConvertToWritableTypes()); 
+result.saveAsHadoopFile(fileName, Text.class, IntWritable.class, 
+  SequenceFileOutputFormat.class);
+```
+
+### 文件系统
+#### 本地/“常规”文件系统
+Spark 支持从本地文件系统中读取文件，不过它要求文件在集群中所有节点的相同路径下都可以找到。如果文件还没有放在集群中的所有节点上，可以在驱动器程序中从本地读取该文件而无
+需使用整个集群，然后再调用 parallelize 将内容分发给工作节点。不过这种方式可能会比较慢。
+
+#### Amazon S3
+..
+
+#### HDFS
+..
+
+### Spark SQL中的结构化数据
+
+## Spark编程进阶
+Spark提供了两种类型的共享变量：累加器（accumulator）与广播变量（broadcast variable）。累加器用来对信息进行聚合，而广播变量用来高效分发较大的对象。
+
+### 累加器
+累加器主要用于多个节点对一个变量进行共享性的操作，提供了将工作节点中的值聚合到驱动器程序中的简单语法。Accumulator只提供了累加的功能，只能累加，不能减少累加器只能在Driver端构建，并只能从Driver端读取结果，在Task端只能进行累加。
+
