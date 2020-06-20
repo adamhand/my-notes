@@ -1,70 +1,82 @@
-# 1. `Java8`实战笔记
+# `Java8`实战笔记
 
 <!-- TOC -->
 
-- [`Java8`实战笔记](#java8实战笔记)
-    - [行为参数化](#行为参数化)
-        - [行为参数化的例子：筛选苹果](#行为参数化的例子筛选苹果)
-            - [第一次尝试：筛选绿苹果](#第一次尝试筛选绿苹果)
-            - [第二次尝试：把颜色作为参数](#第二次尝试把颜色作为参数)
-            - [第三次尝试：对想到的每个属性做筛选](#第三次尝试对想到的每个属性做筛选)
-            - [第四次尝试：根据抽象条件筛选](#第四次尝试根据抽象条件筛选)
-            - [第五次尝试：使用匿名类](#第五次尝试使用匿名类)
-            - [第六次尝试：使用 Lambda 表达式](#第六次尝试使用-lambda-表达式)
-            - [第七次尝试：将List类型抽象化](#第七次尝试将list类型抽象化)
-    - [lambda表达式](#lambda表达式)
-        - [lambda表达式的基本语法](#lambda表达式的基本语法)
-        - [函数式接口](#函数式接口)
-            - [Predicate接口使用示例](#predicate接口使用示例)
-            - [Function接口使用示例](#function接口使用示例)
-            - [Consumer接口使用示例](#consumer接口使用示例)
-            - [Supplier接口使用示例](#supplier接口使用示例)
-            - [原始类型特化接口](#原始类型特化接口)
-        - [类型检查和类型推断](#类型检查和类型推断)
-        - [方法引用](#方法引用)
-            - [构造函数引用](#构造函数引用)
-                - [无参构造函数](#无参构造函数)
-                - [一个参数的构造函数](#一个参数的构造函数)
-                - [两个参数的构造函数](#两个参数的构造函数)
-        - [复合lambda表达式](#复合lambda表达式)
-    - [流](#流)
-        - [流的特性](#流的特性)
-        - [流与集合](#流与集合)
-            - [内部迭代和外部迭代](#内部迭代和外部迭代)
-        - [流操作](#流操作)
+- [`Java8`实战笔记](#java8%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0)
+    - [行为参数化](#%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0%E5%8C%96)
+        - [行为参数化的例子：筛选苹果](#%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0%E5%8C%96%E7%9A%84%E4%BE%8B%E5%AD%90%E7%AD%9B%E9%80%89%E8%8B%B9%E6%9E%9C)
+            - [第一次尝试：筛选绿苹果](#%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%9D%E8%AF%95%E7%AD%9B%E9%80%89%E7%BB%BF%E8%8B%B9%E6%9E%9C)
+            - [第二次尝试：把颜色作为参数](#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%B0%9D%E8%AF%95%E6%8A%8A%E9%A2%9C%E8%89%B2%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0)
+            - [第三次尝试：对想到的每个属性做筛选](#%E7%AC%AC%E4%B8%89%E6%AC%A1%E5%B0%9D%E8%AF%95%E5%AF%B9%E6%83%B3%E5%88%B0%E7%9A%84%E6%AF%8F%E4%B8%AA%E5%B1%9E%E6%80%A7%E5%81%9A%E7%AD%9B%E9%80%89)
+            - [第四次尝试：根据抽象条件筛选](#%E7%AC%AC%E5%9B%9B%E6%AC%A1%E5%B0%9D%E8%AF%95%E6%A0%B9%E6%8D%AE%E6%8A%BD%E8%B1%A1%E6%9D%A1%E4%BB%B6%E7%AD%9B%E9%80%89)
+            - [第五次尝试：使用匿名类](#%E7%AC%AC%E4%BA%94%E6%AC%A1%E5%B0%9D%E8%AF%95%E4%BD%BF%E7%94%A8%E5%8C%BF%E5%90%8D%E7%B1%BB)
+            - [第六次尝试：使用 Lambda 表达式](#%E7%AC%AC%E5%85%AD%E6%AC%A1%E5%B0%9D%E8%AF%95%E4%BD%BF%E7%94%A8-lambda-%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+            - [第七次尝试：将List类型抽象化](#%E7%AC%AC%E4%B8%83%E6%AC%A1%E5%B0%9D%E8%AF%95%E5%B0%86list%E7%B1%BB%E5%9E%8B%E6%8A%BD%E8%B1%A1%E5%8C%96)
+    - [lambda表达式](#lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+        - [lambda表达式的基本语法](#lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95)
+        - [函数式接口](#%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3)
+            - [Predicate接口使用示例](#predicate%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+            - [Function接口使用示例](#function%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+            - [Consumer接口使用示例](#consumer%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+            - [Supplier接口使用示例](#supplier%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+            - [原始类型特化接口](#%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B%E7%89%B9%E5%8C%96%E6%8E%A5%E5%8F%A3)
+        - [类型检查和类型推断](#%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD)
+        - [方法引用](#%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8)
+            - [构造函数引用](#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%BC%95%E7%94%A8)
+                - [无参构造函数](#%E6%97%A0%E5%8F%82%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+                - [一个参数的构造函数](#%E4%B8%80%E4%B8%AA%E5%8F%82%E6%95%B0%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+                - [两个参数的构造函数](#%E4%B8%A4%E4%B8%AA%E5%8F%82%E6%95%B0%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0)
+        - [复合lambda表达式](#%E5%A4%8D%E5%90%88lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    - [流](#%E6%B5%81)
+        - [流的特性](#%E6%B5%81%E7%9A%84%E7%89%B9%E6%80%A7)
+        - [流与集合](#%E6%B5%81%E4%B8%8E%E9%9B%86%E5%90%88)
+            - [内部迭代和外部迭代](#%E5%86%85%E9%83%A8%E8%BF%AD%E4%BB%A3%E5%92%8C%E5%A4%96%E9%83%A8%E8%BF%AD%E4%BB%A3)
+        - [流操作](#%E6%B5%81%E6%93%8D%E4%BD%9C)
         - [Stream API](#stream-api)
-            - [筛选和切片](#筛选和切片)
-                - [用谓词进行筛选](#用谓词进行筛选)
-                - [筛选各异的元素](#筛选各异的元素)
-                - [截短流](#截短流)
-                - [跳过元素](#跳过元素)
-            - [映射](#映射)
-                - [对流中每一个元素应用函数](#对流中每一个元素应用函数)
-                - [流的扁平化](#流的扁平化)
-            - [查找和匹配](#查找和匹配)
-                - [检查谓词是否至少匹配一个元素](#检查谓词是否至少匹配一个元素)
-                - [检查谓词是否匹配所有元素](#检查谓词是否匹配所有元素)
-                - [查找元素](#查找元素)
-                - [查找第一个元素](#查找第一个元素)
-            - [归约(reduce)](#归约reduce)
-                - [有状态和无状态](#有状态和无状态)
-            - [数值流](#数值流)
-                - [原始类型特化流](#原始类型特化流)
-                    - [映射到数值流](#映射到数值流)
-                    - [转换回对象流](#转换回对象流)
-                    - [默认值](#默认值)
-                - [数值范围](#数值范围)
-            - [构件流](#构件流)
-                - [由值创建流](#由值创建流)
-                - [由数组创建流](#由数组创建流)
-                - [由文件生成流](#由文件生成流)
-                - [由函数生成流：创建无限流](#由函数生成流创建无限流)
+            - [筛选和切片](#%E7%AD%9B%E9%80%89%E5%92%8C%E5%88%87%E7%89%87)
+                - [用谓词进行筛选](#%E7%94%A8%E8%B0%93%E8%AF%8D%E8%BF%9B%E8%A1%8C%E7%AD%9B%E9%80%89)
+                - [筛选各异的元素](#%E7%AD%9B%E9%80%89%E5%90%84%E5%BC%82%E7%9A%84%E5%85%83%E7%B4%A0)
+                - [截短流](#%E6%88%AA%E7%9F%AD%E6%B5%81)
+                - [跳过元素](#%E8%B7%B3%E8%BF%87%E5%85%83%E7%B4%A0)
+            - [映射](#%E6%98%A0%E5%B0%84)
+                - [对流中每一个元素应用函数](#%E5%AF%B9%E6%B5%81%E4%B8%AD%E6%AF%8F%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0%E5%BA%94%E7%94%A8%E5%87%BD%E6%95%B0)
+                - [流的扁平化](#%E6%B5%81%E7%9A%84%E6%89%81%E5%B9%B3%E5%8C%96)
+            - [查找和匹配](#%E6%9F%A5%E6%89%BE%E5%92%8C%E5%8C%B9%E9%85%8D)
+                - [检查谓词是否至少匹配一个元素](#%E6%A3%80%E6%9F%A5%E8%B0%93%E8%AF%8D%E6%98%AF%E5%90%A6%E8%87%B3%E5%B0%91%E5%8C%B9%E9%85%8D%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0)
+                - [检查谓词是否匹配所有元素](#%E6%A3%80%E6%9F%A5%E8%B0%93%E8%AF%8D%E6%98%AF%E5%90%A6%E5%8C%B9%E9%85%8D%E6%89%80%E6%9C%89%E5%85%83%E7%B4%A0)
+                - [查找元素](#%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0)
+                - [查找第一个元素](#%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0)
+            - [归约(reduce)](#%E5%BD%92%E7%BA%A6reduce)
+                - [有状态和无状态](#%E6%9C%89%E7%8A%B6%E6%80%81%E5%92%8C%E6%97%A0%E7%8A%B6%E6%80%81)
+            - [数值流](#%E6%95%B0%E5%80%BC%E6%B5%81)
+                - [原始类型特化流](#%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B%E7%89%B9%E5%8C%96%E6%B5%81)
+                    - [映射到数值流](#%E6%98%A0%E5%B0%84%E5%88%B0%E6%95%B0%E5%80%BC%E6%B5%81)
+                    - [转换回对象流](#%E8%BD%AC%E6%8D%A2%E5%9B%9E%E5%AF%B9%E8%B1%A1%E6%B5%81)
+                    - [默认值](#%E9%BB%98%E8%AE%A4%E5%80%BC)
+                - [数值范围](#%E6%95%B0%E5%80%BC%E8%8C%83%E5%9B%B4)
+            - [构件流](#%E6%9E%84%E4%BB%B6%E6%B5%81)
+                - [由值创建流](#%E7%94%B1%E5%80%BC%E5%88%9B%E5%BB%BA%E6%B5%81)
+                - [由数组创建流](#%E7%94%B1%E6%95%B0%E7%BB%84%E5%88%9B%E5%BB%BA%E6%B5%81)
+                - [由文件生成流](#%E7%94%B1%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E6%B5%81)
+                - [由函数生成流：创建无限流](#%E7%94%B1%E5%87%BD%E6%95%B0%E7%94%9F%E6%88%90%E6%B5%81%E5%88%9B%E5%BB%BA%E6%97%A0%E9%99%90%E6%B5%81)
                     - [iterate](#iterate)
                     - [generate](#generate)
+    - [用流收集数据](#%E7%94%A8%E6%B5%81%E6%94%B6%E9%9B%86%E6%95%B0%E6%8D%AE)
+        - [预定义收集器](#%E9%A2%84%E5%AE%9A%E4%B9%89%E6%94%B6%E9%9B%86%E5%99%A8)
+        - [规约和汇总](#%E8%A7%84%E7%BA%A6%E5%92%8C%E6%B1%87%E6%80%BB)
+            - [counting收集器](#counting%E6%94%B6%E9%9B%86%E5%99%A8)
+            - [查找流的最大值和最小值](#%E6%9F%A5%E6%89%BE%E6%B5%81%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8C%E6%9C%80%E5%B0%8F%E5%80%BC)
+            - [汇总](#%E6%B1%87%E6%80%BB)
+            - [连接字符串](#%E8%BF%9E%E6%8E%A5%E5%AD%97%E7%AC%A6%E4%B8%B2)
+        - [分组](#%E5%88%86%E7%BB%84)
+            - [多级分组](#%E5%A4%9A%E7%BA%A7%E5%88%86%E7%BB%84)
+            - [按子组收集数据](#%E6%8C%89%E5%AD%90%E7%BB%84%E6%94%B6%E9%9B%86%E6%95%B0%E6%8D%AE)
+                - [把收集器的结果转换为另一种类型](#%E6%8A%8A%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%9C%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%8F%A6%E4%B8%80%E7%A7%8D%E7%B1%BB%E5%9E%8B)
+                - [与groupingBy联合使用的其他收集器的例子](#%E4%B8%8Egroupingby%E8%81%94%E5%90%88%E4%BD%BF%E7%94%A8%E7%9A%84%E5%85%B6%E4%BB%96%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90)
 
 <!-- /TOC -->
 
-## 1.1. 行为参数化
+## 行为参数化
 “行为参数化”的含义，从字面上来看就是：把行为当做参数传递给方法，与之对应的是“值参数化”。这里的“行为”其实就是一段代码。比如说，需要写两个只有几行代码不同的方法，现在只需要把不同的那部分代码作为参数传递进去就行了。一言以蔽之，“行为参数化”就是让方法接受多种行为（或策略）作为参数，并在内部使用，来完成不同的行为
 
 行为参数化和设计模式中的“策略模式”很像，该模式的思想是这样的：定义一个函数式接口(定义一个抽象方法的接口)，根据不同的需要来实现这个接口，然后把不同实现类的实例当做参数加入到方法中。
@@ -73,9 +85,9 @@
 
 本文用到的代码在[java8](https://github.com/adamhand/java8)。
 
-### 1.1.1. 行为参数化的例子：筛选苹果
+### 行为参数化的例子：筛选苹果
 
-#### 1.1.1.1. 第一次尝试：筛选绿苹果
+#### 第一次尝试：筛选绿苹果
 有个应用程序是帮助农民了解自己的库存的，这位农民一开始想有一个查找库存中所有绿色苹果的功能，根据需求可以写出如下方案：
 
 ```java
@@ -90,7 +102,7 @@ private static List<Apple> filterGreenApples(List<Apple> inventory) {
 }
 ```
 
-#### 1.1.1.2. 第二次尝试：把颜色作为参数
+#### 第二次尝试：把颜色作为参数
 
 之后农民扩展需求，还想找出红色的、黄色的、浅绿色的苹果，这时，想到一个好的办法，将参数抽象化，即将`color`作为参数进行传递，如下：
 
@@ -120,7 +132,7 @@ private static List<Apple> filterHeavyApples(List<Apple> inventory, int weight) 
 ```
 想法不多，但是`filterHeavyApples()`方法大部分代码和`filterApplesByColor()`重复了，显然不是一个好的解决方法。
 
-#### 1.1.1.3. 第三次尝试：对想到的每个属性做筛选
+#### 第三次尝试：对想到的每个属性做筛选
 将颜色和重量都作为参数，并且设置`flag`来区分需要筛选哪个属性。如下。
 
 ```java
@@ -145,7 +157,7 @@ List<Apple> heavyApples = filterApples(inventory, "", 150, false);
 
 这时，就需要“行为参数化”上场了，首先对选择标准建模：现在考虑的是苹果，需要根据`Apple`的某些属性（比如它是绿色的吗？重量超过`150`克吗？）来返回一个boolean值，称为**谓词**（即一个返回`boolean`值得函数）。
 
-#### 1.1.1.4. 第四次尝试：根据抽象条件筛选
+#### 第四次尝试：根据抽象条件筛选
 首先定义一个接口对选择标准建模：
 
 ```java
@@ -202,7 +214,7 @@ public static List<Apple> filterApples(List<Apple> inventory, ApplePredicate pre
 
 到目前为止，行为参数化的功能已经基本实现，但是还有不足之处。若某个`predicate`只用一次，就没必要新建一个类来实现`ApplePredicate`接口了，而是可以使用匿名类。
 
-#### 1.1.1.5. 第五次尝试：使用匿名类
+#### 第五次尝试：使用匿名类
 使用匿名类的例子如下：
 
 ```java
@@ -214,7 +226,7 @@ List<Apple> redApples = filterApples(inventory, new Applepredicate(){
 ```
 然而，对于精益求精的人来说，这还不够好，因为匿名类写起来很麻烦，且有时候不易理解。
 
-#### 1.1.1.6. 第六次尝试：使用 Lambda 表达式
+#### 第六次尝试：使用 Lambda 表达式
 上面的匿名类的例子可以使用`lambda`表达式写为如下的形式：
 
 ```java
@@ -222,7 +234,7 @@ List<Apple> result =
     filterApples(inventory, (Apple apple) -> "red".equals(apple.getColor()));
 ```
 
-#### 1.1.1.7. 第七次尝试：将List类型抽象化
+#### 第七次尝试：将List类型抽象化
 在通往抽象的道路上，还可以更近一步。目前`filterApples`方法还只适用于`Apple`。还可以将`List`类型抽象化，从而超越你眼前要处理的问题：
 
 ```java
@@ -249,7 +261,7 @@ List<Integer> evenNumbers =
     filter(numbers, (Integer i) -> i % 2 == 0);
 ```
 
-## 1.2. lambda表达式
+## lambda表达式
 `lambda`表达式可以看成是对匿名类的一种简写，比如，在`java8`之前，使用比较器的匿名类写法时可以这样写：
 
 ```java
@@ -268,7 +280,7 @@ Arrays.sort(nums, new Comparator<Integer>() {
 Arrays.sort(nums, (Integer o1, Integer o2) -> o1.compareTo(o2));
 ```
 
-### 1.2.1. lambda表达式的基本语法
+### lambda表达式的基本语法
 `lambda`表达式的基本语法是：
 
 ```java
@@ -278,7 +290,7 @@ Arrays.sort(nums, (Integer o1, Integer o2) -> o1.compareTo(o2));
 ```
 包括：参数列表、箭头(`->`)和`lambda`主体三部分。当只有一条`expression`时，`{}`和`return`可以省略，但是有多条时，不能省略。
 
-### 1.2.2. 函数式接口
+### 函数式接口
 `lambda`表达式当使用必须需要“函数式接口”，即**只有一个抽象方法的接口**。成为函数式接口可以使用注解`@FunctionalInterface`。上面的`Comparator<T>`接口，还有`Runnable`接口和`Callable<V>`接口都是函数式接口。
 
 `java8`开始，接口可以拥有默认方法(即在类没有对方法进行实现时，其主体为方法提供默认实现的方法)。但是，**哪怕有很多默认方法，只要接口只定义了一个抽象方法，它就仍然是一个函数式接口。**
@@ -296,7 +308,7 @@ Arrays.sort(nums, (Integer o1, Integer o2) -> o1.compareTo(o2));
 
 示例如下。
 
-#### 1.2.2.1. Predicate接口使用示例
+#### Predicate接口使用示例
 判断输入的字符串是否为空：
 
 ```java
@@ -315,7 +327,7 @@ List<String> noneEmpty = PredicateDemo.filter(Arrays.asList("a", "b", "c"),
         noneEmptyStringPredicate);
 ```
 
-#### 1.2.2.2. Function接口使用示例
+#### Function接口使用示例
 输入字符串，输出字符串的长度。即将字符串类型映射为整型。
 
 ```java
@@ -333,7 +345,7 @@ List<String> noneEmpty = PredicateDemo.filter(Arrays.asList("a", "b", "c"),
 ```
 上面的代码中的`lambda`表达式其实还可以简化，如果在编译器中加入了诸如阿里的代码检查工具，对`(String s) -> s.length()`会提示进行修改：`Can be replaced with method reference less`，即可以使用“函数引用”来简化，可以将这句改为`String::length`。“函数引用”在下面会进行记录。
 
-#### 1.2.2.3. Consumer接口使用示例
+#### Consumer接口使用示例
 对输入的数组进行遍历。
 
 ```java
@@ -349,7 +361,7 @@ forEach(
 );
 ```
 
-#### 1.2.2.4. Supplier接口使用示例
+#### Supplier接口使用示例
 由名字可以看出，这个接口的作用是作为一个“提供者”，可`Consumer`接口的作用相反，它可以提供一个对象。比如：
 
 ```java
@@ -362,7 +374,7 @@ System.out.println(
 );
 ```
 
-#### 1.2.2.5. 原始类型特化接口
+#### 原始类型特化接口
 由于`java8`中提供的上述函数式接口用到了泛型，只能绑定到到引用类型，不能绑定到原始类型(比如`int`、`double`等)。所以下面的语句会涉及到自动拆箱和装箱功能：
 
 ```java
@@ -398,7 +410,7 @@ Predicate<Integer> oddNumbers = (Integer i) -> i % 2 == 1;
 oddNumbers.test(1000); 
 ```
 
-### 1.2.3. 类型检查和类型推断
+### 类型检查和类型推断
 在将`lambda`表达式和函数式接口进行匹配的时候，会将表达式的签名(参数类型，返回值等)和接口的函数描述符进行匹配。`Java`编译器会从上下文(目标类型)推断出用什么函数式接
 口来配合`Lambda`表达式，也可以推断出适合`Lambda`的签名。因此，可以在`Lambda`语法中省去标注参数类型。如下：
 
@@ -412,7 +424,7 @@ Comparator<Apple> c =
     (a1, a2) -> a1.getWeight().compareTo(a2.getWeight()); 
 ```
 
-### 1.2.4. 方法引用
+### 方法引用
 方法引用可以看成是`lambda`表达式的一种快捷写法。它的基本思想是，如果一个Lambda代表的只是“直接调用这个方法”，那最好还是用名称来调用它，而不是去描述如何调用它。方法引用的一般格式是：`目标引用::方法名称`。例如`Apple::getWeight`就是引用了`Apple`类中定义的方法`getWeight`。
 
 方法应用主要有三类：
@@ -421,7 +433,7 @@ Comparator<Apple> c =
 - 类::实例方法。如`String::length`
 - 对象::实例方法。假设有一个局部变量`expensiveTransaction`用于存放`Transaction`类型的对象，它支持实例方法`getValue`，则可以写为`expensiveTransaction::expensiveTransaction`
 
-#### 1.2.4.1. 构造函数引用
+#### 构造函数引用
 对于一个现有构造函数，可以利用它的名称和关键字`new`来创建它的一个引用：`ClassName::new`。例如，对于有一个`Apple`类如下：
 
 ```java
@@ -444,7 +456,7 @@ public class Apple {
 
 它包括三个构造函数：一个无参函数，一个含有一个参数，一个含有两个参数。
 
-##### 1.2.4.1.1. 无参构造函数
+##### 无参构造函数
 对于无参构造函数，可以使用`Supplier`接口与之匹配，生成一个`Apple`对象。如下：
 
 ```java
@@ -458,7 +470,7 @@ Supplier<Apple> supplier = () -> new Apple();
 Apple apple = supplier.get();
 ```
 
-##### 1.2.4.1.2. 一个参数的构造函数
+##### 一个参数的构造函数
 对于只含有一个参数的构造函数，可以使用`Function`接口与之匹配。如下：
 
 ```java
@@ -486,7 +498,7 @@ List<Integer> weights = Arrays.asList(100, 200, 150, 230);
 List<Apple> apples = map(weights, Apple::new);
 ```
 
-##### 1.2.4.1.3. 两个参数的构造函数
+##### 两个参数的构造函数
 可以使用`BiFunction`来匹配这样的构造函数，如下：
 
 ```java
@@ -509,10 +521,10 @@ public static Fruit giveMeFruit(String fruit, Integer weight) {
 }
 ```
 
-### 1.2.5. 复合lambda表达式
+### 复合lambda表达式
 [待续]
 
-## 1.3. 流
+## 流
 允许以声明性方式处理数据集合(说明想要完成什么，而不是说明如何去做)。可以把它们看成遍历数据集的高级迭代器。此外，流还可以透明地并行处理。
 
 假如目前有一个返回低热量菜肴的名称的需求，按照之前的写法，大概是这样的：
@@ -599,7 +611,7 @@ List<Dish> menu = Arrays.asList(
         new Dish("salmon", false, 450, Dish.Type.FISH) );
 ```
 
-### 1.3.1. 流的特性
+### 流的特性
 流的一个简短的定义是“从支持数据处理操作的源生成的元素序列”。这个定义中包含几个关键词：
 
 - 元素序列：流提供了一个接口，可以访问特定元素类型的一组有序值
@@ -611,16 +623,16 @@ List<Dish> menu = Arrays.asList(
 -  流水线：很多流操作本身会返回一个流，这样多个操作就可以链接起来，形成一个大的流水线
 - 内部迭代：与使用迭代器显式迭代的集合不同，流的迭代操作是在背后进行的
 
-### 1.3.2. 流与集合
+### 流与集合
 流与集合的差异，在于**什么时候进行计算**。集合中的每个元素都得先算出来才能添加到集合中，它更偏重于存储，是静态的概念。而只有在消费者要求的时候才会计算值，更偏重于对数据的计算和处理。**和迭代器类似，流只能遍历一次**。
 
-#### 1.3.2.1. 内部迭代和外部迭代
+#### 内部迭代和外部迭代
 使用 `Collection` 接口需要用户去做迭代(比如用 `for-each`)，这称为外部迭代。相反，`Streams`库使用内部迭代——它帮你把迭代做了，还把得到的流值存在了某个地方，只要给出
 一个函数说要干什么就可以了。
 
 内部迭代时，项目可以透明地并行处理，或者用更优化的顺序进行处理。**`Streams`库的内部迭代可以自动选择一种适合你硬件的数据表示和并行实现**。而使用外部迭代时，需要使用者自己管理所有的并行问题。
 
-### 1.3.3. 流操作
+### 流操作
 流操作基本可以分为两类：
 
 - 中间操作：例如`filter`、`map`和`limit`可以连成一条流水线。流的流水线背后的理念类似于**构建器模式**
@@ -632,7 +644,7 @@ List<Dish> menu = Arrays.asList(
 - 一个中间操作链，形成一条流的流水线
 - 一个终端操作，执行流水线，并能生成结果
 
-### 1.3.4. Stream API
+### Stream API
 `Stream API`提供的常见的中间操作如下：
 
 |操作  |类型  |返回类型  |操作参数 | 函数描述符|
@@ -653,9 +665,9 @@ List<Dish> menu = Arrays.asList(
 
 可以使用这些`API`实现如筛选、切片、映射、查找、匹配和归约等操作。除此之外，还有一些其他流，比如数值流、文件流、数组流和无限流。
 
-#### 1.3.4.1. 筛选和切片
+#### 筛选和切片
 
-##### 1.3.4.1.1. 用谓词进行筛选
+##### 用谓词进行筛选
 流支持使用谓词进行筛选。比如`filter`方法，会接受一个谓词，返回一个包含所有符合谓词的元素的流。例如，选出所有的素菜可以使用下面的写法：
 
 ```java
@@ -664,7 +676,7 @@ List<Dish> vegetarianMenu = menu.stream()
                                 .collect(toList());
 ```
 
-##### 1.3.4.1.2. 筛选各异的元素
+##### 筛选各异的元素
 `distinct`方法会返回一个元素各异(根据流所生成元素的`hashCode`和`equals`方法实现)的流。以下代码会筛选出列表中所有的偶数，并确保没有重复。
 
 ```java
@@ -675,7 +687,7 @@ numbers.stream()
        .forEach(System.out::println);
 ```
 
-##### 1.3.4.1.3. 截短流
+##### 截短流
 `limit(n)`方法会返回一个不超过给定长度的流。下面的代码是选出热量超过`300`卡路里的头三道菜:
 
 ```java
@@ -687,7 +699,7 @@ List<Dish> dishes = menu.stream()
 因为有了截短流，所以`filter`方法只会选出符合谓词的头三个元素，然后就返回，而不是将所有符合谓词的元素都选择出来。
 
 
-##### 1.3.4.1.4. 跳过元素
+##### 跳过元素
 `skip(n)`方法，返回一个扔掉了前`n`个元素的流。如果流中元素不足`n`个，则返回一个空流。下面的代码将跳过超过`300`卡路里的头两道菜，并返回剩下的。
 
 ```java
@@ -697,10 +709,10 @@ List<Dish> dishes = menu.stream()
                         .collect(toList()); 
 ```
 
-#### 1.3.4.2. 映射
+#### 映射
 `Stream API`提供了从某些对象中选择信息的方法：`map`和`flatmap`。
 
-##### 1.3.4.2.1. 对流中每一个元素应用函数
+##### 对流中每一个元素应用函数
 `map`方法会接受一个函数作为参数。这个函数会被应用到每个元素上，并将其映射成一个新的元素。下面的代码是找出每道菜的名称有多长。
 
 ```java
@@ -710,7 +722,7 @@ List<Integer> dishNameLengths = menu.stream()
                                     .collect(toList()); 
 ```
 
-##### 1.3.4.2.2. 流的扁平化
+##### 流的扁平化
 `flatMap`实现了一种叫做“扁平流”的流，即把一个流中的每个值都换成另一个流，然后把所有的流连接起来成为一个流。例子如下。
 
 ```java
@@ -741,10 +753,10 @@ List<int[]> pairs =
             .collect(toList()); 
 ```
 
-#### 1.3.4.3. 查找和匹配
+#### 查找和匹配
 `Stream API`通过`allMatch、anyMatch、noneMatch、findFirst`和`findAny`方法查看数据集中的某些元素是否匹配一个给定的属性。
 
-##### 1.3.4.3.1. 检查谓词是否至少匹配一个元素
+##### 检查谓词是否至少匹配一个元素
 `anyMatch`方法可以回答“流中是否有一个元素能匹配给定的谓词”。比如，可以用它来看看菜单里面是否有素食可选择：
 ```java
 if(menu.stream().anyMatch(Dish::isVegetarian)){ 
@@ -753,7 +765,7 @@ if(menu.stream().anyMatch(Dish::isVegetarian)){
 ```
 `anyMatch`方法返回一个``boolean`，因此是一个终端操作。
 
-##### 1.3.4.3.2. 检查谓词是否匹配所有元素
+##### 检查谓词是否匹配所有元素
 `allMatch`和`noneMatch`用于查看流中的元素是否都能/不能匹配给定的谓词。
 
 ```java
@@ -765,7 +777,7 @@ boolean isHealthy = menu.stream()
 ```
 `anyMatch、allMatch`和`noneMatch`这三个操作都用到了**短路**，这就是`Java`中`&&`和`||`运算符短路在流中的版本。
 
-##### 1.3.4.3.3. 查找元素
+##### 查找元素
 `findAny`方法将返回当前流中的任意元素。下面的代码可以找到一道素食菜肴。
 
 ```java
@@ -775,7 +787,7 @@ Optional<Dish> dish =
         .findAny(); 
 ```
 
-##### 1.3.4.3.4. 查找第一个元素
+##### 查找第一个元素
 `findFirst`方法返回流中的第一个元素，与`findAny`类似，只不过后者返回任意，且在使用并行流时限制较少。下面的代码能找出第一个平方
 能被`3`整除的数：
 
@@ -788,7 +800,7 @@ Optional<Integer> firstSquareDivisibleByThree =
                .findFirst(); // 9
 ```
 
-#### 1.3.4.4. 归约(reduce)
+#### 归约(reduce)
 如果需要将流中的元素反复进行结合，得到一个值，这个过程叫做归约(`reduce`)，或者折叠(`flod`)。联想到`map-reduce`的本质是分治，归约的过程其实就是归并。
 
 下面的代码是对数组列表中的元素求和：
@@ -829,7 +841,7 @@ int count = menu.stream()
                 .reduce(0, (a, b) -> a + b); 
 ```
 
-##### 1.3.4.4.1. 有状态和无状态
+##### 有状态和无状态
 流中有状态和无状态的定义是：
 
 - 有状态操作：在操作过程中需要内部状态来进行中间存储的，比如`reduce、sum、max`等操作
@@ -837,7 +849,7 @@ int count = menu.stream()
     - 无解状态：存储需要的中间状态是无限的
 - 无状态操作：在操作过程中不无要中间存储的操作，比如`map`或`filter`等操作会从输入流中获取每一个元素，并在输出流中得到`0`或`1`个结果
 
-#### 1.3.4.5. 数值流
+#### 数值流
 在处理数据流是有可能会含有拆装箱的操作，造成性能的损失，比如下面的例子：
 
 ```java
@@ -847,10 +859,10 @@ int calories = menu.stream()
 ```
 在计算时，每个`Integer`都会被拆箱成`int`型。为了避免这种损失，引入了原始类型流特化，专门支持处理数值流的方法。
 
-##### 1.3.4.5.1. 原始类型特化流
+##### 原始类型特化流
 `IntStream 、 DoubleStream` 和`LongStream` ，分别将流中的元素特化为 `int 、 long 和 double` ，从而避免了暗含的装箱成本。每个接口都带来了进行常用数值归约的新方法，比如对数值流求和的 `sum` ，找到最大元素的 `max` 。
 
-###### 1.3.4.5.1.1. 映射到数值流 
+###### 映射到数值流 
 将流转换为特化版本的常用方法是 `mapToInt 、 mapToDouble` 和 `mapToLong` 。这些方法和 `map` 方法的工作方式一样，只是它们返回的是一个特化流，而不是 `Stream<T>`。
 
 可以像下面这样用 `mapToInt` 对 `menu` 中的卡路里求和：
@@ -860,7 +872,7 @@ int calories = menu.stream()
                    .sum(); 
 ```
 
-###### 1.3.4.5.1.2. 转换回对象流
+###### 转换回对象流
 可以使用`boxed()`方法将数值流转化回对象流：
 
 ```java
@@ -869,7 +881,7 @@ IntStream intStream = menu.stream().mapToInt(Dish::getCalories);
 Stream<Integer> stream = intStream.boxed();
 ```
 
-###### 1.3.4.5.1.3. 默认值
+###### 默认值
 对于三种原始流特化，也分别有一个 `Optional` 原始类型特化版本： `OptionalInt 、 OptionalDouble` 和 `OptionalLong` 。 
 
 例如，要找到 `IntStream` 中的最大元素，可以调用 `max` 方法，它会返回一个 `OptionalInt` ：
@@ -883,7 +895,7 @@ OptionalInt maxCalories = menu.stream()
 int max = maxCalories.orElse(1);
 ```
 
-##### 1.3.4.5.2. 数值范围
+##### 数值范围
 `IntStream` 和 `LongStream` 的中有静态方法，可以生成数值范围：`range` 和 `rangeClosed` 。这两个方法都是第一个参数接受起始值，第二个参数接受结束值。但 `range` 是不包含结束值的，而 `rangeClosed` 则包含结束值。
 
 ```java
@@ -891,9 +903,9 @@ IntStream evenNumbers = IntStream.rangeClosed(1, 100)
                                  .filter(n -> n % 2 == 0);
 ```
 
-#### 1.3.4.6. 构件流
+#### 构件流
 
-##### 1.3.4.6.1. 由值创建流
+##### 由值创建流
 静态方法 `Stream.of` ，通过显式值创建一个流。它可以接受任意数量的参数。
 
 ```java
@@ -905,14 +917,14 @@ Stream<String> stream = Stream.of("Java 8 ", "Lambdas ", "In ", "Action");
 Stream<String> emptyStream = Stream.empty();
 ```
 
-##### 1.3.4.6.2. 由数组创建流 
+##### 由数组创建流 
 静态方法 `Arrays.stream` 从数组创建一个流。它接受一个数组作为参数：
 ```java
 int[] numbers = {2, 3, 5, 7, 11, 13}; 
 int sum = Arrays.stream(numbers).sum(); 
 ```
 
-##### 1.3.4.6.3. 由文件生成流
+##### 由文件生成流
 `Files.lines`会返回一个由指定文件中的各行构成的字符串流。下面的方法查看一个文件中有多少各不相同的词：
 ```java
 long uniqueWords = 0; 
@@ -927,10 +939,10 @@ catch(IOException e){
 } 
 ```
 
-##### 1.3.4.6.4. 由函数生成流：创建无限流
+##### 由函数生成流：创建无限流
 `Stream.iterate` 和 `Stream.generate`可以创建所谓的无限流：不像从固定集合创建的流那样有固定大小的流。由 `iterate` 和 `generate` 产生的流会用给定的函数按需创建值，因此可以无穷无尽地计算下去。
 
-###### 1.3.4.6.4.1. iterate
+###### iterate
 `iterate` 方法接受一个初始值，还有一个依次应用在每个产生的新值上的`Lambda`(`UnaryOperator<t>` 类型)。使用该方法产生斐波那契元组(`(0,  1), (1, 1), (1, 2), (2, 3), (3, 5), (5, 8), (8, 13), (13, 21) … `)的代码如下：
 ```java
 Stream.iterate(new int[]{0, 1}, 
@@ -939,12 +951,220 @@ Stream.iterate(new int[]{0, 1},
       .forEach(t -> System.out.println("(" + t[0] + "," + t[1] +")")); 
 ```
 
-###### 1.3.4.6.4.2. generate
+###### generate
 `generate` 不是依次对每个新生成的值应用函数的。它接受一个 `Supplier<T>` 类型的`Lambda`提供新的值。下面代码生成五个`0`到`1`之间的随机双精度数的流。
 
 ```java
 Stream.generate(Math::random) 
       .limit(5) 
       .forEach(System.out::println);
+```
+
+## 用流收集数据
+终端操作Collect其实是一个规约操作，它像reduceBy一样可以接受不同的做法(定义新的Collector接口)作为参数，将流中的元素累计成一个汇总结果。
+
+一般来说， Collector 会对元素应用一个转换函数（很多时候是不体现任何效果的恒等转换，例如toList ），并将结果累积在一个数据结构中，从而产生这一过程的最终输出。Collector 接口中方法的实现决定了如何对流执行归约操作。
+
+### 预定义收集器
+预定义收集器是指可以从Collectors类中提供的工厂方法(例如groupingBy)。它们主要提供三种功能：
+
+-  将流元素归约和汇总为一个值 
+- 元素分组
+- 元素分区。分区是分组的特殊情况，即使用谓词（返回一个布尔值的单参数函数）作为分组函数
+
+### 规约和汇总
+
+#### counting收集器
+继续按照前面菜肴的例子，可以利用counting 工厂方法返回的收集器，数一数菜单里有多少种菜：
+
+```java
+long howManyDishes = menu.stream().collect(Collectors.counting()); 
+```
+
+这还可以写得更为直接： 
+```java
+long howManyDishes = menu.stream().count(); 
+```
+
+#### 查找流的最大值和最小值
+Collectors.maxBy 和Collectors.minBy ，来计算流中的最大或最小值。这两个收集器接收一个 Comparator 参数来比较流中的元素。例如查找菜肴中热量最高的菜，可以使用如下代码:
+
+```java
+Comparator<Dish> dishCaloriesComparator = 
+    Comparator.comparingInt(Dish::getCalories); 
+ 
+Optional<Dish> mostCalorieDish = 
+    menu.stream() 
+        .collect(maxBy(dishCaloriesComparator));
+```
+
+#### 汇总
+Collectors.summingInt 。它可接受一个把对象映射为求和所需 int 的函数，并返回一个收集器；例如，求出菜单列表中的总热量的代码如下：
+
+```java
+int totalCalories = menu.stream().collect(summingInt(Dish::getCalories));
+```
+Collectors.summingLong 和 Collectors.summingDouble 方法的作用完全一样，可以用于求和字段为 long 或 double 的情况。
+
+Collectors.averagingInt ，连同对应的 averagingLong 和averagingDouble 可以计算数值的平均数：
+
+```java
+double avgCalories = 
+    menu.stream().collect(averagingInt(Dish::getCalories));
+```
+
+summarizingInt 工厂方法可以数出菜单中元素的个数，并得到菜肴热量总和、平均值、最大值和最小值： 
+
+```java
+IntSummaryStatistics menuStatistics = 
+        menu.stream().collect(summarizingInt(Dish::getCalories));
+```
+
+这个收集器会把所有这些信息收集到一个叫作 IntSummaryStatistics 的类里，它提供了方便的取值（getter）方法来访问结果。
+
+同样，相应的 summarizingLong 和 summarizingDouble 工厂方法有相关的 LongSummary-Statistics 和DoubleSummaryStatistics 类型，适用于收集的属性是原始类型 long 或double 的情况。
+
+#### 连接字符串
+joining 工厂方法返回的收集器会把对流中每一个对象应用 toString 方法得到的所有字符串连接成一个字符串。例如把菜肴中所有菜肴的名字连起来的操作为：
+
+```java
+String shortMenu = menu.stream().map(Dish::getName).collect(joining()); 
+```
+该方法还可以接受一个分隔符作为字符串之间的分界，如下：
+
+```java
+String shortMenu = menu.stream().map(Dish::getName).collect(joining(", "));
+```
+
+### 分组
+用 Collectors.groupingBy 工厂方法返回的收集器可以对流中的元素进行分组，例如，对菜单中的菜按照类型(type)进行分类的代码如下：
+
+```java
+Map<Dish.Type, List<Dish>> dishesByType = 
+                      menu.stream().collect(groupingBy(Dish::getType));
+```
+分组操作的结果是一个 Map ，把分组函数返回的值作为映射的键，把流中所有具有这个分类值的项目的列表作为对应的映射值。
+
+但是，分类函数不一定像方法引用那样可用，因为想用以分类的条件可能比简单的属性访问器要复杂。例如，可能想把热量不到400卡路里的菜划分为“低热量”（diet），热量400到700卡路里的菜划为“普通”（normal），高于700卡路里的划为“高热量”（fat）。由于 Dish 类的作者没有把这个操作写成一个方法，无法使用方法引用，但可以把这个逻辑写成Lambda表达式:
+
+```java
+public enum CaloricLevel { DIET, NORMAL, FAT } 
+ 
+Map<CaloricLevel, List<Dish>> dishesByCaloricLevel = menu.stream().collect( 
+        groupingBy(dish -> { 
+               if (dish.getCalories() <= 400) return CaloricLevel.DIET; 
+               else if (dish.getCalories() <= 700) return 
+    CaloricLevel.NORMAL; 
+        else return CaloricLevel.FAT; 
+         } )); 
+```
+
+#### 多级分组
+如果想要按照多个标准进行分类，就需要使用使用多级分组。要实现多级分组，需要使用一个由双参数版本的 Collectors.groupingBy 工厂方法创建的收集器，它除了普通的分类函数之外，还可以接受 collector 类型的第二个参数。那么要进行二级分组的话，可以把一个内层roupingBy传递给外层 groupingBy ，并定义一个为流中项目分类的二级标准。例如，按照菜肴种类和卡路里进行分类的代码如下：
+
+```java
+Map<Dish.Type, Map<CaloricLevel, List<Dish>>> dishesByTypeCaloricLevel = 
+menu.stream().collect(
+    // 一级分类函数
+    groupingBy(Dish::getType,  
+        // 二级分类函数
+        groupingBy(dish -> {  
+        if (dish.getCalories() <= 400) {
+            return CaloricLevel.DIET; 
+        } else if (dish.getCalories() <= 700) {
+            return CaloricLevel.NORMAL; 
+        }  else return CaloricLevel.FAT; 
+        } ) 
+    ) 
+);
+```
+
+二级分组的结果是一个两级 Map。的外层 Map 的键就是第一级分类函数生成的值，而这个 Map 的值又是一个 Map ，键是二级分类函数生成的值，最后，第二级 map 的值是流中元素构
+成的 List，是分别应用第一级和第二级分类函数所得到的对应第一级和第二级键的值。
+
+#### 按子组收集数据
+传递给第一个 groupingBy 的第二个收集器可以是任何类型，而不一定是另一个 groupingBy 。例如，要数一数菜单中每类菜有多少个，可以传递 counting 收集器作为
+groupingBy 收集器的第二个参数：
+
+```java
+Map<Dish.Type, Long> typesCount = menu.stream().collect( 
+                    groupingBy(Dish::getType, counting()));
+```
+
+##### 把收集器的结果转换为另一种类型
+下面的例子先按照菜肴的类型进行分类，之后选取每个种类中卡路里最高的菜肴：
+
+```java
+Map<Dish.Type, Optional<Dish>> mostCaloricByType = 
+    menu.stream() 
+        .collect(groupingBy(Dish::getType, 
+                            maxBy(comparingInt(Dish::getCalories))));
+```
+
+这个收集器的值如下：
+
+```java
+{FISH=Optional[salmon], OTHER=Optional[pizza], MEAT=Optional[pork]} 
+```
+
+如果想要把结果中的Optional类型去掉，就需要将结果转化为另一种类型，可以使用Collectors.collectingAndThen 工厂方法返回的收集器。
+
+```java
+Map<Dish.Type, Dish> mostCaloricByType = 
+    menu.stream() 
+        .collect(groupingBy(Dish::getType,    
+                 collectingAndThen( 
+                     maxBy(comparingInt(Dish::getCalories)),  
+                 Optional::get)));  
+```
+
+这个工厂方法接受两个参数——要转换的收集器以及转换函数，并返回另一个收集器。
+
+Optional.get()，这个操作放在这里是安全的，因为 reducing收集器永远都不会返回 Optional.empty() 。其结果是下面的 Map：
+
+```
+{FISH=salmon, OTHER=pizza, MEAT=pork}。
+```
+
+##### 与groupingBy联合使用的其他收集器的例子 
+一般来说，通过 groupingBy 工厂方法的第二个参数传递的收集器将会对分到同一组中的所有流元素执行进一步归约操作。除此之外，常常和 groupingBy 联合使用的另一个收集器是 mapping 方法生成的。这个方法接受两个参数：一个函数对流中的元素做变换，另一个则将变换的结果对象收集起来。其目的是在累加之前对每个输入元素应用一个映射函数，这样就可以让接受特定类型元素的收集器适应不同类型的对象。
+
+比如，对于每种类型的 Dish，菜单中都有哪些 CaloricLevel的实现方式如下：
+
+```java
+Map<Dish.Type, Set<CaloricLevel>> caloricLevelsByType = 
+menu.stream().collect( 
+   groupingBy(Dish::getType, mapping( 
+   dish -> {
+       if (dish.getCalories() <= 400) {
+           return CaloricLevel.DIET; 
+       } else if (dish.getCalories() <= 700) {
+           return CaloricLevel.NORMAL; 
+       } else {
+           return CaloricLevel.FAT; 
+           }, 
+   toSet() )));
+```
+结果为：
+
+```
+{OTHER=[DIET, NORMAL], MEAT=[DIET, NORMAL, FAT], FISH=[DIET, NORMAL]} 
+```
+
+但是，在这个例子中，对于返回的 Set 是什么类型并没有任何保证。但通过使用 toCollection ，就可以有更多的控制。例如，可以给它传递一个构造函数引用来要求 HashSet:
+
+```java
+Map<Dish.Type, Set<CaloricLevel>> caloricLevelsByType = 
+menu.stream().collect( 
+    groupingBy(Dish::getType, mapping( 
+    dish -> {
+        if (dish.getCaloeies() <= 400) {
+            return CaloricLevel.DIET;
+        } else if (dish.getCalories() <= 700) {
+            return CaloricLevel.NORMAL; 
+        } else {
+            return CaloricLevel.FAT; 
+            }, 
+    toCollection(HashSet::new) ))); 
 ```
 
