@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-- [`Java8`实战笔记](#java8%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0)
+- [Java8实战笔记](#java8%E5%AE%9E%E6%88%98%E7%AC%94%E8%AE%B0)
     - [行为参数化](#%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0%E5%8C%96)
         - [行为参数化的例子：筛选苹果](#%E8%A1%8C%E4%B8%BA%E5%8F%82%E6%95%B0%E5%8C%96%E7%9A%84%E4%BE%8B%E5%AD%90%E7%AD%9B%E9%80%89%E8%8B%B9%E6%9E%9C)
             - [第一次尝试：筛选绿苹果](#%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%9D%E8%AF%95%E7%AD%9B%E9%80%89%E7%BB%BF%E8%8B%B9%E6%9E%9C)
@@ -46,7 +46,7 @@
                 - [检查谓词是否匹配所有元素](#%E6%A3%80%E6%9F%A5%E8%B0%93%E8%AF%8D%E6%98%AF%E5%90%A6%E5%8C%B9%E9%85%8D%E6%89%80%E6%9C%89%E5%85%83%E7%B4%A0)
                 - [查找元素](#%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0)
                 - [查找第一个元素](#%E6%9F%A5%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0)
-            - [归约(reduce)](#%E5%BD%92%E7%BA%A6reduce)
+            - [归约reduce](#%E5%BD%92%E7%BA%A6reduce)
                 - [有状态和无状态](#%E6%9C%89%E7%8A%B6%E6%80%81%E5%92%8C%E6%97%A0%E7%8A%B6%E6%80%81)
             - [数值流](#%E6%95%B0%E5%80%BC%E6%B5%81)
                 - [原始类型特化流](#%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B%E7%89%B9%E5%8C%96%E6%B5%81)
@@ -73,6 +73,18 @@
             - [按子组收集数据](#%E6%8C%89%E5%AD%90%E7%BB%84%E6%94%B6%E9%9B%86%E6%95%B0%E6%8D%AE)
                 - [把收集器的结果转换为另一种类型](#%E6%8A%8A%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%9C%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%8F%A6%E4%B8%80%E7%A7%8D%E7%B1%BB%E5%9E%8B)
                 - [与groupingBy联合使用的其他收集器的例子](#%E4%B8%8Egroupingby%E8%81%94%E5%90%88%E4%BD%BF%E7%94%A8%E7%9A%84%E5%85%B6%E4%BB%96%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90)
+            - [分区](#%E5%88%86%E5%8C%BA)
+                - [多级分区](#%E5%A4%9A%E7%BA%A7%E5%88%86%E5%8C%BA)
+                - [一个例子：将数字按照质数和非质数进行分类](#%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90%E5%B0%86%E6%95%B0%E5%AD%97%E6%8C%89%E7%85%A7%E8%B4%A8%E6%95%B0%E5%92%8C%E9%9D%9E%E8%B4%A8%E6%95%B0%E8%BF%9B%E8%A1%8C%E5%88%86%E7%B1%BB)
+                - [自定义收集器](#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%94%B6%E9%9B%86%E5%99%A8)
+                - [建立新的结果容器：supplier方法](#%E5%BB%BA%E7%AB%8B%E6%96%B0%E7%9A%84%E7%BB%93%E6%9E%9C%E5%AE%B9%E5%99%A8supplier%E6%96%B9%E6%B3%95)
+                - [将元素添加到结果容器：accumulator方法](#%E5%B0%86%E5%85%83%E7%B4%A0%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%BB%93%E6%9E%9C%E5%AE%B9%E5%99%A8accumulator%E6%96%B9%E6%B3%95)
+                - [对结果容器应用最终转换：finisher方法](#%E5%AF%B9%E7%BB%93%E6%9E%9C%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8%E6%9C%80%E7%BB%88%E8%BD%AC%E6%8D%A2finisher%E6%96%B9%E6%B3%95)
+                - [合并两个结果容器：combiner方法](#%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E7%BB%93%E6%9E%9C%E5%AE%B9%E5%99%A8combiner%E6%96%B9%E6%B3%95)
+                - [characteristics方法](#characteristics%E6%96%B9%E6%B3%95)
+    - [并行数据处理与性能](#%E5%B9%B6%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E4%B8%8E%E6%80%A7%E8%83%BD)
+        - [串行流和并行流的转换](#%E4%B8%B2%E8%A1%8C%E6%B5%81%E5%92%8C%E5%B9%B6%E8%A1%8C%E6%B5%81%E7%9A%84%E8%BD%AC%E6%8D%A2)
+        - [正确使用并行流](#%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E5%B9%B6%E8%A1%8C%E6%B5%81)
 
 <!-- /TOC -->
 
@@ -1168,3 +1180,165 @@ menu.stream().collect(
     toCollection(HashSet::new) ))); 
 ```
 
+#### 分区
+分区是分组的特殊情况，它由一个谓词（返回一个布尔值的函数）作为分类函数，这儿函数叫做**分区函数**。分区得到的分组Map的键类型是Boolean，于是它最多可以分为两组——true是一组，false是一组。下面的代码可以将菜单中的素食和非素食分开：
+
+```java
+Map<Boolean, List<Dish>> partitionedMenu = menu.stream().collect(partitioningBy(Dish::isVegetarian));
+```
+
+##### 多级分区
+同样的，partitioningBy方法第二个参数也可以接收一个收集器，从而实现多级分区。下面的方法会产生一个二级Map：
+
+```java
+Map<Boolean, Map<Dish.Type, List<Dish>>> vegetarianDishesByType =
+menu.stream().collect(partitioningBy(Dish::isVegetarian,groupingBy(Dish::getType)));
+```
+
+结果为：
+```
+{false={FISH=[prawns, salmon], MEAT=[pork, beef, chicken]},true={OTHER=[french fries, rice, season fruit, pizza]}}
+```
+
+##### 一个例子：将数字按照质数和非质数进行分类
+下面的代码接受一个参数n，并将前n个自然数分为质数和非质数，如下：
+
+```java
+    public boolean isPrime(int candidate) {
+        // 仅需要测试小于等于待测数平方根的因子
+        int candidateRoot = (int)Math.sqrt(candidate);
+        // 产生一个自然数范围，从2开始；如果待测数不能被流中任意数字正常则返回true
+        return IntStream.rangeClosed(2, candidateRoot).noneMatch(i -> i % 2 == 0);
+    }
+
+    public Map<Boolean, List<Integer>> partitionPrimes(int n) {
+        // boxed()方法的作用是将数值流转换为流
+        return IntStream.rangeClosed(2, n)
+                .boxed()
+                .collect(Collectors.partitioningBy(candidate -> isPrime(candidate)));
+    }
+```
+
+如果传入10，则返回结果为：
+```
+{false=[4, 5, 6, 7, 8, 9, 10], true=[2, 3]}
+```
+
+##### 自定义收集器
+Collector接口的声明如下：
+```java
+public interface Collector<T, A, R> {
+    Supplier<A> supplier();
+    BiConsumer<A, T> accumulator();
+    Function<A, R> finisher();
+    BinaryOperator<A> combiner();
+    Set<Characteristics> characteristics();
+}
+```
+
+- T是流中要收集的项目的泛型。
+- A是累加器的类型，累加器是在收集过程中用于累积部分结果的对象。
+- R是收集操作得到的对象（通常但并不一定是集合）的类型。
+
+也可以说，T是供应源 A是累加器 R是组合器。
+
+其中，前四个方法都会返回一个被collect方法调用的函数，而第五个方法返回一个提示列表，告诉collect方法在执行规约操作的时候可以应用那些优化，比如并行度等。
+
+##### 建立新的结果容器：supplier方法
+在调用该方法时会创建一个空的累加器实例，供数据收集过程使用。比如下面的写法可以返回一个空的List：
+
+```java
+public Supplier<List<T>> supplier() {
+    return ArrayList::new;
+}
+```
+
+##### 将元素添加到结果容器：accumulator方法
+accumulator方法会返回执行归约操作的函数。当遍历到流中第n个元素时，这个函数执行时会有两个参数：保存归约结果的累加器（已收集了流中的前 n1 个项目），还有第n个元素本身。该函数将返回void，因为累加器是原位更新。
+
+将元素添加至当前列表的代码如下：
+
+```java
+public BiConsumer<List<T>, T> accumulator() {
+    return List::add;
+}
+```
+
+##### 对结果容器应用最终转换：finisher方法
+在遍历完流后，finisher方法必须返回在累积过程的最后要调用的一个函数，以便将累加器对象转换为整个集合操作的最终结果。例如：
+
+```java
+public Function<List<T>, List<T>> finisher() {
+    return Function.identity();
+}
+```
+
+##### 合并两个结果容器：combiner方法
+combiner方法会返回一个供归约操作使用的函数，它定义了对流的各个子部分进行并行处理时，各个子部分归约所得的累加器要如何合并。例如：
+
+```java
+public BinaryOperator<List<T>> combiner() {
+    return (list1, list2) -> {
+        list1.addAll(list2);
+        return list1; 
+    }
+}
+```
+
+##### characteristics方法
+characteristics会返回一个不可变的Characteristics集合，它定义了收集器的行为——尤其是关于流是否可以并行归约，以及可以使用哪些优化的提示。Characteristics是一个包含三个项目的枚举。
+
+- UNORDERED——归约结果不受流中项目的遍历和累积顺序的影响。
+- CONCURRENT——accumulator函数可以从多个线程同时调用，且该收集器可以并行归约流。如果收集器没有标为UNORDERED，那它仅在用于无序数据源时才可以并行归约。
+- IDENTITY_FINISH——这表明完成器方法返回的函数是一个恒等函数，可以跳过。这种情况下，累加器对象将会直接用作归约过程的最终结果。这也意味着，将累加器A不加检查地转换为结果R是安全的。
+
+## 并行数据处理与性能
+并行流就是一个把内容分成多个数据块，并用不同的线程分别处理每个数据块的流。
+
+### 串行流和并行流的转换
+可以调用parallel方法将串行流转变成并行流：
+
+```java
+public static long parallelSum(long n) {
+return Stream.iterate(1L, i -> i + 1)
+    .limit(n)
+    .parallel()
+    .reduce(0L, Long::sum);
+}
+```
+对并行流调用sequential方法就可以把它变成顺序流，sequential方法和parallel方法可以结合使用，可以更细化地控制在遍历流时哪些操作要并行执行，哪些要顺序执行。但最后一次parallel或sequential调用会影响整个流水线。在下面的例中，流水线会并行执行，因为最后调用的是它。
+
+```java
+stream.parallel()
+    .filter(...)
+    .sequential()
+    .map(...)
+    .parallel()
+    .reduce();
+```
+
+并行流内部使用了默认的ForkJoinPool，它默认的线程数量是机器的处理器数量， 这个值是由Runtime.getRuntime().available-Processors()得到的。可以通过系统属性java.util.concurrent.ForkJoinPool.common.parallelism来改变线程池大小，如下所示：
+
+```
+System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism","12");
+```
+这是一个全局设置，因此它将影响代码中所有的并行流，如果没有充足的理由，最好不要修改。
+
+### 正确使用并行流
+错用并行流而产生错误的首要原因，就是使用的算法改变了某些共享状态。
+
+```java
+public class Accumulator { 
+    public long total = 0; 
+    public void add(long value) { total += value; } 
+}
+
+public static long sideEffectParallelSum(long n) { 
+    Accumulator accumulator = new Accumulator(); 
+    LongStream.rangeClosed(1, n).parallel().forEach(accumulator::add); 
+    return accumulator.total; 
+
+}
+```
+
+这是因为total是一个共享变量，多个线程在同时访问累加器，执行total += value，而这个操作不是一个原子操作，会产生并发问题。

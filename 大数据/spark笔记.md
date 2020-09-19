@@ -1,5 +1,53 @@
 spark笔记
 
+<!-- TOC -->
+
+- [概念](#%E6%A6%82%E5%BF%B5)
+- [spark运作方式](#spark%E8%BF%90%E4%BD%9C%E6%96%B9%E5%BC%8F)
+- [spark安装](#spark%E5%AE%89%E8%A3%85)
+- [RDD编程](#rdd%E7%BC%96%E7%A8%8B)
+    - [构建开发环境](#%E6%9E%84%E5%BB%BA%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)
+    - [RDD介绍](#rdd%E4%BB%8B%E7%BB%8D)
+    - [创建RDD](#%E5%88%9B%E5%BB%BArdd)
+    - [RDD操作](#rdd%E6%93%8D%E4%BD%9C)
+        - [转化操作](#%E8%BD%AC%E5%8C%96%E6%93%8D%E4%BD%9C)
+        - [行动操作](#%E8%A1%8C%E5%8A%A8%E6%93%8D%E4%BD%9C)
+    - [向Spark传递函数](#%E5%90%91spark%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0)
+    - [专有RDD](#%E4%B8%93%E6%9C%89rdd)
+    - [持久化](#%E6%8C%81%E4%B9%85%E5%8C%96)
+- [键值对操作](#%E9%94%AE%E5%80%BC%E5%AF%B9%E6%93%8D%E4%BD%9C)
+    - [创建Pair RDD](#%E5%88%9B%E5%BB%BApair-rdd)
+    - [Pair RDD的转化操作](#pair-rdd%E7%9A%84%E8%BD%AC%E5%8C%96%E6%93%8D%E4%BD%9C)
+        - [聚合操作](#%E8%81%9A%E5%90%88%E6%93%8D%E4%BD%9C)
+    - [Pair RDD的行动操作](#pair-rdd%E7%9A%84%E8%A1%8C%E5%8A%A8%E6%93%8D%E4%BD%9C)
+    - [数据分区](#%E6%95%B0%E6%8D%AE%E5%88%86%E5%8C%BA)
+        - [与数据分区相关的操作](#%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%88%86%E5%8C%BA%E7%9B%B8%E5%85%B3%E7%9A%84%E6%93%8D%E4%BD%9C)
+- [数据读取与保存](#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96%E4%B8%8E%E4%BF%9D%E5%AD%98)
+    - [文件格式](#%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F)
+        - [文本格式](#%E6%96%87%E6%9C%AC%E6%A0%BC%E5%BC%8F)
+        - [JSON](#json)
+        - [CSV和TSV](#csv%E5%92%8Ctsv)
+        - [sequenceFile](#sequencefile)
+    - [文件系统](#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
+        - [本地/“常规”文件系统](#%E6%9C%AC%E5%9C%B0%E5%B8%B8%E8%A7%84%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F)
+        - [Amazon S3](#amazon-s3)
+        - [HDFS](#hdfs)
+    - [Spark SQL中的结构化数据](#spark-sql%E4%B8%AD%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE)
+- [Spark编程进阶](#spark%E7%BC%96%E7%A8%8B%E8%BF%9B%E9%98%B6)
+    - [累加器](#%E7%B4%AF%E5%8A%A0%E5%99%A8)
+- [spark sql](#spark-sql)
+    - [连接Spark sql](#%E8%BF%9E%E6%8E%A5spark-sql)
+    - [在应用中使用Saprk sql](#%E5%9C%A8%E5%BA%94%E7%94%A8%E4%B8%AD%E4%BD%BF%E7%94%A8saprk-sql)
+        - [初始化Spark sql](#%E5%88%9D%E5%A7%8B%E5%8C%96spark-sql)
+        - [基本查询示例](#%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B)
+        - [SchemaRDD](#schemardd)
+    - [读取和存储数据](#%E8%AF%BB%E5%8F%96%E5%92%8C%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE)
+        - [apache hive](#apache-hive)
+        - [json](#json)
+            - [将RDD转化为SchemaRDD](#%E5%B0%86rdd%E8%BD%AC%E5%8C%96%E4%B8%BAschemardd)
+
+<!-- /TOC -->
+
 ## 概念
 `Spark`是一个用来实现快速而通用的集群计算(分布式计算)的平台。
 
@@ -639,3 +687,124 @@ Spark提供了两种类型的共享变量：累加器（accumulator）与广播�
 ### 累加器
 累加器主要用于多个节点对一个变量进行共享性的操作，提供了将工作节点中的值聚合到驱动器程序中的简单语法。Accumulator只提供了累加的功能，只能累加，不能减少累加器只能在Driver端构建，并只能从Driver端读取结果，在Task端只能进行累加。
 
+## spark sql
+Spark sql提供了三种功能：
+
+- Spark sql可以从各种结构化的数据源(例如JSON、Hive、Parquet等)中读取数据
+- Spark sql不仅支持在Spark 程序内使用SQL 语句进行数据查询，也支持从类似商业智能软件Tableau 这样的外部工具中通过标准数据库连接器（JDBC/ODBC）连接SparkSQL 进行查询
+- 当在Spark 程序内使用Spark SQL 时，Spark SQL 支持SQL 与常规的Python/Java/Scala代码高度整合
+
+为了实现这些功能，Spark SQL 提供了一种特殊的RDD，叫作SchemaRDD。SchemaRDD是存放Row 对象的RDD，每个Row 对象代表一行记录。SchemaRDD 还包含记录的结构信息（即数据字段）。SchemaRDD 看起来和普通的RDD 很像，但是在内部，SchemaRDD 可以利用结构信息更加高效地存储数据。此外，SchemaRDD 还支持RDD 上所没有的一些新操作，比如运行SQL 查询。SchemaRDD 可以从外部数据源创建，也可以从查询结果或普通RDD 中创建。
+
+> 注：RDD、DataFrame(SchemaRDD)、Dataset这三者都是spark提供的分布式数据集。它们出现的版本分别为：RDD (Spark1.0) —> SchemaRDD(Spark1.3后改名为Dataframe) —> Dataset(Spark1.6)。
+
+### 连接Spark sql
+Apache Hive 是Hadoop 上的SQL 引擎，Spark SQL 编译时可以包含Hive 支持，也可以不包含。如果要在Spark SQL 中包含Hive 的库，并不需要事先安装Hive。
+
+连接带有Hive 支持的Spark SQL 的Maven依赖如下：
+
+```mavan
+groupId = org.apache.spark
+artifactId = spark-hive_2.10
+version = 1.2.0
+```
+
+如果不需要引入hive依赖，则可以使用spark-sql_2.10 来代替spark-hive_2.10。
+
+当使用Spark SQL 进行编程时，根据是否使用Hive 支持，有两个不同的入口。推荐使用的入口是HiveContext，它可以提供HiveQL 以及其他依赖于Hive 的功能的支持。更为基础的SQLContext 则支持Spark SQL 功能的一个子集，子集中去掉了需要依赖于Hive 的功能。
+
+最后，若要把Spark SQL 连接到一个部署好的Hive 上，你必须把hive-site.xml 复制到Spark 的配置文件目录中（$SPARK_HOME/conf）。
+
+即使没有部署好Hive，Spark SQL 也可以运行。在这种情况下，Spark SQL 会在当前的工作目录中创建出自己的Hive 元数据仓库，叫作metastore_db。此外，如果此时尝试使用HiveQL 中的CREATE TABLE（并非CREATE EXTERNAL TABLE）语句来创建表，这些表会被放在默认的文件系统中的/user/hive/warehouse 目录中（如果classpath 中有配好的hdfs-site.xml，默认的文件系统就是HDFS，否则就是本地文件系统）。
+
+
+### 在应用中使用Saprk sql
+要在应用中使用Spark sql，需要基于已有的SparkContext 创建出一个HiveContext（或者SQLContext）。
+
+#### 初始化Spark sql
+在Java中初始化Spark sql的语句如下：
+
+```java
+JavaSparkContext ctx = new JavaSparkContext(...);
+SQLContext sqlCtx = new HiveContext(ctx);
+```
+
+#### 基本查询示例
+下面的例子显示了从JSON文件中读取一部分数据，将这部分数据注册为一张临时表并赋予该表一个名字，之后从该表中查询数据。
+
+```java
+SchemaRDD input = hiveCtx.jsonFile(inputFile);
+// 注册输入的SchemaRDD
+input.registerTempTable("tweets");
+// 依据retweetCount（转发计数）选出推文
+SchemaRDD topTweets = hiveCtx.sql("SELECT text, retweetCount FROM
+tweets ORDER BY retweetCount LIMIT 10");
+```
+
+#### SchemaRDD
+SchemaRDD是一个由Row对象组成的RDD，Row对象只是对基本数据类型(如整型和字符串型的封装)，它的本质是一个定长的字段数组，在Java/Scala中有标准的getter方法获取Row中各个字段的值。
+
+SchemaRDD支持通过registerTempTable()方法注册为临时表，这样就可以通过HiveContext.sql或SQLContext.sql方法对其进行查询。这种临时表是HiveContext或者SQLContext中的临时变量，当应用退出时，这些临时变量就消失了。
+
+SchemaRDD中可以存储的数据类型和基本编程语言的对应关系如下表所示：
+
+|Spark SQL/HiveQL类型|Scala类型|Java类型|Python|
+|-|-|-|-|
+|TINYINT |Byte |Byte/byte| int/long ( 在-128 到127 之间)|
+|SMALLINT |Short| Short/short| int/long ( 在-32768 到32767之间)|
+|INT |Int |Int/int| int 或long|
+|BIGINT |Long |Long/long| long|
+|FLOAT| Float |Float /float|float|
+|DOUBLE |Double |Double/double| float|
+|DECIMAL |Scala.math.BigDecimal| java.math.BigDecimal| decimal.Decimal|
+|STRING |String |String |string|
+|BINARY |Array[Byte] |byte[] |bytearray|
+|BOOLEAN| Boolean |Boolean/boolean| bool|
+|TIMESTAMP| java.sql.TimeStamp| java.sql.TimeStamp| datetime.datetime|
+|ARRAY<DATA_TYPE> |Seq |List| list、tuple 或array|
+|MAP<KEY_TYPE, VAL_TYPE>| Map |Map| dict|
+|STRUCT<COL1:COL1_TYPE, ...>| Row| Row |Row|
+
+### 读取和存储数据
+#### apache hive
+在Java中读取hive中数据的例子如下：
+
+```java
+HiveContext hiveCtx = new HiveContext(sc);
+SchemaRDD rows = hiveCtx.sql("SELECT key, value FROM mytable");
+JavaRDD<Integer> keys = rdd.toJavaRDD().map(new Function<Row, Integer>() {
+public Integer call(Row row) { return row.getInt(0); }
+});
+```
+
+#### json
+在Java中读取json的方法是使用jsonFile()方法，如下：
+
+```java
+SchemaRDD input = hiveCtx.jsonFile(jsonFile);
+```
+
+##### 将RDD转化为SchemaRDD
+在Java中可以使用applySchema()方法将RDD转化为SchemaRDD，但是这个RDD 中的数据类型带有公有的getter 和setter 方法，并且可以被序列化。例子如下：
+
+```java
+class HappyPerson implements Serializable {
+    private String name;
+    private String favouriteBeverage;
+    public HappyPerson() {}
+    public HappyPerson(String n, String b) {
+        name = n; favouriteBeverage = b;
+    }
+    public String getName() { return name; }
+    public void setName(String n) { name = n; }
+    public String getFavouriteBeverage() { return favouriteBeverage; }
+    public void setFavouriteBeverage(String b) { favouriteBeverage = b; }
+};
+...
+ArrayList<HappyPerson> peopleList = new ArrayList<HappyPerson>();
+peopleList.add(new HappyPerson("holden", "coffee"));
+JavaRDD<HappyPerson> happyPeopleRDD = sc.parallelize(peopleList);
+SchemaRDD happyPeopleSchemaRDD = hiveCtx.applySchema(happyPeopleRDD,
+HappyPerson.class);
+happyPeopleSchemaRDD.registerTempTable("happy_people");
+```

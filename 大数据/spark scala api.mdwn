@@ -1,0 +1,76 @@
+|方法名|功能|参数|返回值|例子|
+|-|-|-|-|-|
+|get_json_object|从输入的Column中得到JSON对象中的字段，若输入的Column中的JSON格式有误，则返回null|第一个参数表示输入的Columun；第二个参数表示JOSN的路径,$表示根路径|json对象格式为levelJson = {"level1":1,"level2":3}，则get_json_object(levelJson, 
+
+"$.level1")返回的是包含1的Column|
+
+## functions.scala
+### get_json_object()
+该方法提供了一种使用jsonpath的方式提取json中字段的方式，例如，json格式为:
+
+```json
+// levelsExtra
+{
+,"level1": 0,,"level2": 1,,"level3": 2,,"level4": 3,,"level5": 4
+}
+```
+
+则提取其中的字段的方法为：
+
+```
+get_json_object(levelsExtra, 
+
+"$.level1")
+// 结果为0，类型为Column
+```
+
+### json_tuple()
+该方法可以达到和get_json_object()相同的功能，比如：
+
+```
+json_tuple(levelsExtra, 
+
+"level1")
+```
+
+但是同时解析多个字段的时候怎么搞?
+```
+json_tuple(levelsExtra, 
+
+"level2", 
+
+"level1")
+```
+### from_json(Column, 
+
+StructType)
+该方法根据传入的StructType将传入的包含JSON的Column转化成StructType类型，例如：
+
+```java
+StructType structType = new StructType(new StructField[]{
+    new StructField("level1", 
+
+DataTypes.IntegerType, 
+
+false, 
+
+Metadata.empty()),    new StructField("level2", 
+
+DataTypes.IntegerType, 
+
+false, 
+
+Metadata.empty())
+});
+
+Column fromJsonColumn = from_json(levelsExtra, 
+
+structType);
+// fromJsonColumn的类型为 [0,1]
+```
+
+### col()方法和Dataset.col()方法
+这两个方法所属的类不同，col()方法位于functions.scala文件中，而Dataset.col()方法位于Dataset.scala文件中。这两个方法大多数情况下的作用是一样的，都是取某一个Column。区别在于Dataset.col()方法是"resoveled"的，它直接与一个Dataset绑定；但col()方法更像是一个声明，它声明了一个Column，但是最终也会和某个Dataset绑定起来，比如说，一个绑定时机是使用withColumn方法的时候。
+
+参考：[What's the difference between Dataset.col() and functions.col() in Spark?](https://stackoverflow.com/questions/47965108/whats-the-difference-between-dataset-col-and-functions-col-in-spark)
+
