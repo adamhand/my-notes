@@ -293,7 +293,19 @@ select distinct username, password form t_user;
 |user|222222|
 
 ### limit关键字
-限制返回的行数。可以有两个参数，第一个参数为起始行(第一条数据的起始行为0)；第二个参数为返回的总行数。
+限制返回的行数。可以有两个参数，第一个参数为起始行(第一条数据的起始行为0)；第二个参数为返回的总行数。即：
+```sql
+select * from [表名] limit offset,count
+```
+offset默认为0，表示从第一行开始查询，count表示要返回的数据行数
+```sql
+select * from [表名] limit 100,2
+```
+等同于
+```sql
+select * from [表名] limit 2 offset 100
+```
+
 ```sql
 select * from [表名] limit 3; # 从第一条数据开始，共返回3行
 ```
